@@ -1,5 +1,7 @@
 package com.yugao.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -20,6 +22,7 @@ public class User {
 //    header_url	varchar(200)	YES
 //    create_time	timestamp	YES			on update CURRENT_TIMESTAMP
 
+    @TableId(type= IdType.AUTO)
     private Integer id;
     private String username;
     private String password;

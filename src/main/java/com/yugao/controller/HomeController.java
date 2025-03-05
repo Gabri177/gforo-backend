@@ -4,9 +4,11 @@ import com.yugao.domain.DiscussPost;
 import com.yugao.domain.Page;
 import com.yugao.domain.User;
 import com.yugao.result.ResultFormat;
+import com.yugao.result.ResultResponse;
 import com.yugao.service.DiscussPostService;
 import com.yugao.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/home")
+@RequestMapping("/home")
 public class HomeController {
 
     @Autowired
@@ -25,7 +27,7 @@ public class HomeController {
     private DiscussPostService discussPostService;
 
     @GetMapping("/{index}")
-    public ResultFormat getIndexPage(
+    public ResponseEntity<ResultFormat> getIndexPage(
             Page page,
             @RequestParam(defaultValue = "0") int orderMode,
             @PathVariable("index") Integer index) {
@@ -63,7 +65,7 @@ public class HomeController {
         result.put("limit", page.getLimit());
         result.put("discussPosts", discussPosts);
 
-        return ResultFormat.success(result);
+        return ResultResponse.success(result);
     }
 
 

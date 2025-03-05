@@ -1,0 +1,17 @@
+package com.yugao.util;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+public class MailTest {
+
+    @Autowired
+    private MailClient mailClient;
+
+    @Test
+    public void testSendMail() {
+        mailClient.sendMail("forestcat177@gmail.com", "Test", "Hello");
+    }
+}

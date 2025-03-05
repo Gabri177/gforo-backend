@@ -6,8 +6,23 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.gmail.com
+    username: gabrillo177@gmail.com
+    password: daoikogzxbbmqflr
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 8080
+
+frontend:
+    url: http://localhost:5173
 
 
 # logback
@@ -17,3 +32,4 @@ server:
 #    root: debug
 #  file:
 #    path: /Users/gabrielgao/Desktop/my_practices/log/gforo.log
+

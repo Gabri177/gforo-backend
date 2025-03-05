@@ -9,4 +9,5 @@ public class ResultCode {
     public static final int SYSTEM_EXCEPTION = 50000;
 
     public static final int UNKNOW_EXCEPTION = 60000;
+
 }
