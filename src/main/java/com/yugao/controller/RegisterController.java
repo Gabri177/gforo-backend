@@ -28,8 +28,6 @@ public class RegisterController {
     @Value("${frontend.url}")
     private String frontend_api;
 
-
-    // 用来生成uuid作为临时token并给用户发邮件
     @PostMapping
     public ResponseEntity<ResultFormat> handleRegister(@RequestBody User user) {
         // 直接加入数据库 但是账户是没有验证的状态

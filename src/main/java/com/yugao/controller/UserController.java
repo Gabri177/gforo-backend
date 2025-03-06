@@ -1,6 +1,5 @@
 package com.yugao.controller;
 
-import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.UserService;
