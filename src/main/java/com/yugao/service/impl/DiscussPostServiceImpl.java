@@ -2,13 +2,14 @@ package com.yugao.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.domain.DiscussPost;
 import com.yugao.mapper.DiscussPostMapper;
 import com.yugao.service.DiscussPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class DiscussPostServiceImpl implements DiscussPostService {
@@ -18,7 +19,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
 
     @Override
-    public List<DiscussPost> getDiscussPosts(int userId, int offset, int limit, int orderMode) {
+    public IPage<DiscussPost> getDiscussPosts(int userId, int current, int limit, int orderMode) {
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, 2);
         if (userId != 0) {
@@ -29,8 +30,9 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         } else if (orderMode == 1) {
             wrapper.orderByDesc(DiscussPost::getType, DiscussPost::getScore, DiscussPost::getCreateTime);
         }
-        wrapper.last("limit " + offset + ", " + limit);
-        return discussPostMapper.selectList(wrapper);
+
+        Page<DiscussPost> page = new Page<>(current, limit);
+        return discussPostMapper.selectPage(page, wrapper);
     }
 
 

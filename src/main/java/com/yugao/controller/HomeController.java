@@ -1,7 +1,7 @@
 package com.yugao.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yugao.domain.DiscussPost;
-import com.yugao.domain.Page;
 import com.yugao.domain.User;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
@@ -28,19 +28,17 @@ public class HomeController {
 
     @GetMapping("/{index}")
     public ResponseEntity<ResultFormat> getIndexPage(
-            Page page,
+            @RequestParam(defaultValue = "10") int limit,
             @RequestParam(defaultValue = "0") int orderMode,
             @PathVariable("index") Integer index) {
 
-        System.out.println(page);
         // 总帖子数量，用于分页
         int totalRows = discussPostService.getDiscussPostRows(0);
-        page.setRows(totalRows);
-        page.setCurrent(index);
 
         // 分页查询帖子
-        List<DiscussPost> list = discussPostService.getDiscussPosts(
-                0, page.getOffset(), page.getLimit(), orderMode);
+        IPage<DiscussPost> pages = discussPostService.getDiscussPosts(
+                0, index, limit, orderMode);
+        List<DiscussPost> list = pages.getRecords();
 
         // 封装帖子+作者+点赞数
         List<Map<String, Object>> discussPosts = new ArrayList<>();
@@ -61,8 +59,8 @@ public class HomeController {
         // 封装分页信息和数据
         Map<String, Object> result = new HashMap<>();
         result.put("totalRows", totalRows);
-        result.put("current", page.getCurrent());
-        result.put("limit", page.getLimit());
+        result.put("current", pages.getCurrent());
+        result.put("limit", limit);
         result.put("discussPosts", discussPosts);
 
         return ResultResponse.success(result);
