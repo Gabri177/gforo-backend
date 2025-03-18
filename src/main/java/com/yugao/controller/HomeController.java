@@ -28,10 +28,11 @@ public class HomeController {
 
     @GetMapping("/{index}")
     public ResponseEntity<ResultFormat> getIndexPage(
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "0") int orderMode,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "orderMode", defaultValue = "0") int orderMode,
             @PathVariable("index") Integer index) {
 
+        // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
         int totalRows = discussPostService.getDiscussPostRows(0);
 

@@ -22,15 +22,9 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     public IPage<DiscussPost> getDiscussPosts(int userId, int current, int limit, int orderMode) {
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, 2);
-        if (userId != 0) {
-            wrapper.eq(DiscussPost::getUserId, userId);
-        }
-        if (orderMode == 0) {
-            wrapper.orderByDesc(DiscussPost::getType, DiscussPost::getCreateTime);
-        } else if (orderMode == 1) {
-            wrapper.orderByDesc(DiscussPost::getType, DiscussPost::getScore, DiscussPost::getCreateTime);
-        }
-
+        wrapper.eq(userId != 0, DiscussPost::getUserId, userId);
+        wrapper.orderByDesc(orderMode == 0, DiscussPost::getType, DiscussPost::getCreateTime);
+        wrapper.orderByDesc(orderMode == 1, DiscussPost::getType, DiscussPost::getScore, DiscussPost::getCreateTime);
         Page<DiscussPost> page = new Page<>(current, limit);
         return discussPostMapper.selectPage(page, wrapper);
     }

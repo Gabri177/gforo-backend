@@ -6,7 +6,7 @@ import com.yugao.domain.DiscussPost;
 
 public interface DiscussPostService {
 
-    IPage<DiscussPost> getDiscussPosts(int userId, int offset, int limit, int orderMode);
+    IPage<DiscussPost> getDiscussPosts(int userId, int current, int limit, int orderMode);
     int getDiscussPostRows(int userId);
     int addDiscussPost(DiscussPost discussPost);
     DiscussPost getDiscussPostById(int id);

@@ -25,8 +25,8 @@ public class ResultResponse {
 
     // 错误返回（默认500）
     public static ResponseEntity<ResultFormat> error(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResultFormat.error(ResultCode.SYSTEM_EXCEPTION, message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, message));
     }
 
     // 错误返回（自定义状态码和业务错误码）

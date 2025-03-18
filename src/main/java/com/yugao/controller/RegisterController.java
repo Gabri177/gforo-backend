@@ -28,6 +28,11 @@ public class RegisterController {
     @Value("${frontend.url}")
     private String frontend_api;
 
+    /**
+     * 注册用户
+     * @param user
+     * @return ResultFormat
+     */
     @PostMapping
     public ResponseEntity<ResultFormat> handleRegister(@RequestBody User user) {
         // 直接加入数据库 但是账户是没有验证的状态
@@ -53,7 +58,12 @@ public class RegisterController {
         return ResultResponse.success("Email sent");
     }
 
-    // 当前端打开验证链接 前端会将token作为参数传递给后端 验证token
+    /**
+     * 当前端打开验证链接 前端会将token作为参数传递给后端 验证token是否正确
+     * @param userId
+     * @param token
+     * @return
+     */
     @GetMapping("/{userId}/{token}")
     public ResponseEntity<ResultFormat> verifyEmail(@PathVariable String userId, @PathVariable String token) {
 

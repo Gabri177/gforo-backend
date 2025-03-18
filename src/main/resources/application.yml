@@ -18,11 +18,25 @@ spring:
           auth: true
           starttls:
             enable: true
+  main:
+    banner-mode: off # ??springboot ? banner
+  data:
+    redis: # redis ??
+      password: Redis123456
+      connect-timeout: 1000
+      database: 0
+      host: localhost
+      port: 6379
 server:
   port: 8080
 
 frontend:
     url: http://localhost:5173
+
+mybatis-plus:
+  global-config:
+    banner: false # ??mybatis-plus ? banner
+
 
 
 # logback
