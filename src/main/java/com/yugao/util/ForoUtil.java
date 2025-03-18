@@ -1,7 +1,6 @@
 package com.yugao.util;
 
 import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,17 +21,5 @@ public class ForoUtil {
 //            return null;
 //        }
         return DigestUtils.md5DigestAsHex(key.getBytes());
-    }
-
-    public static String convertImageToBase64(BufferedImage image) {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", outputStream);
-            byte[] imageBytes = outputStream.toByteArray();
-            return Base64.getEncoder().encodeToString(imageBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
