@@ -1,7 +1,5 @@
 package com.yugao.controller;
 
-import com.wf.captcha.SpecCaptcha;
-import com.wf.captcha.base.Captcha;
 import com.yugao.domain.User;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
@@ -14,11 +12,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/login")

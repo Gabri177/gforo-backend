@@ -1,6 +1,5 @@
 package com.yugao.result;
 
-import com.yugao.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
