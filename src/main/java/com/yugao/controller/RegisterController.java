@@ -8,7 +8,6 @@ import com.yugao.service.UserService;
 import com.yugao.util.ForoUtil;
 import com.yugao.util.MailClient;
 import com.yugao.validation.ValidationGroups;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
