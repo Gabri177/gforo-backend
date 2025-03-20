@@ -29,6 +29,12 @@ public class ResultResponse {
                 .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, message));
     }
 
+    // 传递具体错误信息
+    public static ResponseEntity<ResultFormat> error(Object data, String message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, data, message));
+    }
+
     // 错误返回（自定义状态码和业务错误码）
     public static ResponseEntity<ResultFormat> error(HttpStatus status, int code, String message) {
         return ResponseEntity.status(status)

@@ -97,6 +97,13 @@
            <artifactId>jackson-databind</artifactId>
        </dependency>
 
+       <!-- 注释验证字段 -->
+       <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-validation</artifactId>
+       </dependency>
+
+
 
 	</dependencies>
 

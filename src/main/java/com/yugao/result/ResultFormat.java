@@ -38,4 +38,8 @@ public class ResultFormat {
     public static ResultFormat error(int code, String message) {
         return new ResultFormat(code, message);
     }
+
+    public static ResultFormat error(int code, Object data , String message) {
+        return new ResultFormat(code, message, data);
+    }
 }
