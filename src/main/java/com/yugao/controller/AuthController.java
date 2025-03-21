@@ -159,7 +159,7 @@ public class AuthController {
         // 检查数据库中的 refresh token 是否过期
         if (userToken.getExpiresAt().getTime() < System.currentTimeMillis()) {
             // refreshToken过期 删除数据库中的 user_token 登录数据, 同一个用户不能重复登录
-            userTokenService.deleteUserTokenByUserId(Integer.parseInt(userId));
+            userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
             redisTemplate.delete("access_token:" + userId);
 //            System.out.println("Refresh token is expired");
             return ResultResponse.error(HttpStatus.FORBIDDEN, ResultCode.REFRESHTOKEN_EXPIRED,"Refresh token is expired");
@@ -168,7 +168,7 @@ public class AuthController {
         // 没有过期 生成新的AccessToken
         String newAccessToken = jwtUtil.generateAccessToken(userId);
         redisTemplate.opsForValue().set("access_token:" + userId, newAccessToken, accessTopkenExpireTimeMillis, TimeUnit.MILLISECONDS);
-        userTokenService.updateAccessToken(Integer.parseInt(userId), newAccessToken);
+        userTokenService.updateAccessToken(Long.parseLong(userId), newAccessToken);
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("newAccessToken", newAccessToken);
         return ResultResponse.success(resultMap);

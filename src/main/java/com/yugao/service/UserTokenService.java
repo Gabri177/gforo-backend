@@ -11,14 +11,14 @@ public interface UserTokenService {
     Boolean saveUserToken(UserToken userToken);
 
     @Transactional
-    Boolean deleteUserTokenByUserId(int userId);
+    Boolean deleteUserTokenByUserId(Long userId);
 
     @Transactional
-    Boolean updateExpiresAt(Integer userId, Long expiresAt);
+    Boolean updateExpiresAt(Long userId, Long expiresAt);
 
     @Transactional
-    Boolean updateAccessToken(Integer userId, String accessToken);
+    Boolean updateAccessToken(Long userId, String accessToken);
 
     @Transactional
-    Boolean updateRefreshToken(Integer userId, String refreshToken);
+    Boolean updateRefreshToken(Long userId, String refreshToken);
 }

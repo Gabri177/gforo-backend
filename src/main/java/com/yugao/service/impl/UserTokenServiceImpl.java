@@ -26,12 +26,12 @@ public class UserTokenServiceImpl implements UserTokenService {
     }
 
     @Override
-    public Boolean deleteUserTokenByUserId(int userId) {
+    public Boolean deleteUserTokenByUserId(Long userId) {
         return userTokensMapper.deleteById(userId) > 0;
     }
 
     @Override
-    public Boolean updateExpiresAt(Integer userId, Long expiresAt) {
+    public Boolean updateExpiresAt(Long userId, Long expiresAt) {
         LambdaUpdateWrapper<UserToken> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(UserToken::getUserId, userId);
         wrapper.set(UserToken::getExpiresAt, expiresAt);
@@ -39,7 +39,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     }
 
     @Override
-    public Boolean updateAccessToken(Integer userId, String accessToken) {
+    public Boolean updateAccessToken(Long userId, String accessToken) {
         LambdaUpdateWrapper<UserToken> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(UserToken::getUserId, userId);
         wrapper.set(UserToken::getAccessToken, accessToken);
@@ -47,7 +47,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     }
 
     @Override
-    public Boolean updateRefreshToken(Integer userId, String refreshToken) {
+    public Boolean updateRefreshToken(Long userId, String refreshToken) {
         LambdaUpdateWrapper<UserToken> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(UserToken::getUserId, userId);
         wrapper.set(UserToken::getRefreshToken, refreshToken);
