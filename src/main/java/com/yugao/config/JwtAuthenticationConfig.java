@@ -33,6 +33,7 @@ public class JwtAuthenticationConfig extends OncePerRequestFilter {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // 配置Jwt过滤器的白名单
     private static final List<String> WHITE_LIST = List.of(
             "/api/auth",
             "/api/register",
