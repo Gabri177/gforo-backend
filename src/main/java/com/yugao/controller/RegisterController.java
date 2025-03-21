@@ -5,8 +5,8 @@ import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.UserService;
-import com.yugao.util.ForoUtil;
-import com.yugao.util.MailClient;
+import com.yugao.util.EncryptedUtil;
+import com.yugao.util.MailClientUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class RegisterController {
 
     @Autowired
-    private MailClient mailClient;
+    private MailClientUtil mailClient;
 
     @Autowired
     private UserService userService;
@@ -52,10 +52,10 @@ public class RegisterController {
 
         // 直接加入数据库 但是账户是没有验证的状态
         user.setSalt(UUID.randomUUID().toString().substring(0, 5));
-        user.setPassword(ForoUtil.md5(user.getPassword() + user.getSalt()));
+        user.setPassword(EncryptedUtil.md5(user.getPassword() + user.getSalt()));
         user.setType(0);
         user.setStatus(0);
-        user.setActivationCode(ForoUtil.generateUUID());
+        user.setActivationCode(EncryptedUtil.generateUUID());
         user.setCreateTime(new Date());
         userService.addUser(user);
 

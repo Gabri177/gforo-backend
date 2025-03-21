@@ -18,13 +18,13 @@ public interface DiscussPostService {
 
     @Transactional
     int updateCommentCount(int id, int commentCount);
-    @Transactional
 
+    @Transactional
     int updateType(int id, int type);
-    @Transactional
 
+    @Transactional
     int updateStatus(int id, int status);
-    @Transactional
 
+    @Transactional
     int updateScore(int id, double score);
 }

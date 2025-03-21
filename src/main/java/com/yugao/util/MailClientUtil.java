@@ -10,9 +10,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MailClient {
+public class MailClientUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailClientUtil.class);
 
     @Autowired
     private JavaMailSender mailSender;

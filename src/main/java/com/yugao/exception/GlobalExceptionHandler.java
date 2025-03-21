@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.util.ErrorParse;
+import com.yugao.util.ErrorParseUtil;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
             TypeMismatchDataAccessException.class})
     public ResponseEntity<ResultFormat> handleSQLException(Exception e) {
         // 解析错误信息 修改错误信息需要修改ErrorParse类
-        String message = ErrorParse.parseDuplicateEntryMessage(e.getMessage());
+        String message = ErrorParseUtil.parseDuplicateEntryMessage(e.getMessage());
         System.out.println("SQLException: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, message));

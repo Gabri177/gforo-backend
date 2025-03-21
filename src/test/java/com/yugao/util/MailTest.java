@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MailTest {
 
     @Autowired
-    private MailClient mailClient;
+    private MailClientUtil mailClient;
 
     @Test
     public void testSendMail() {

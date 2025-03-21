@@ -3,7 +3,7 @@ package com.yugao.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ErrorParse {
+public class ErrorParseUtil {
 
     // 定义唯一约束字段 -> 友好错误消息的映射
     private static final Map<String, String> UNIQUE_CONSTRAINT_MESSAGES = new HashMap<>();
