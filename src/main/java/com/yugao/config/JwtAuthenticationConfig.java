@@ -70,7 +70,6 @@ public class JwtAuthenticationConfig extends OncePerRequestFilter {
             return ;
         }
         filterChain.doFilter(request, response);
-        return ;
     }
 
 

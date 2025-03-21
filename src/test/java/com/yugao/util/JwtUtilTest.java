@@ -11,7 +11,7 @@ public class JwtUtilTest {
     private JwtUtil jwtUtil;
 
     @Test
-    public void JwtUtilTest() {
+    public void jwtUtilTest() {
         String newToken = jwtUtil.generateAccessToken("1234");
         System.out.println(newToken);
         String username = jwtUtil.getUserIdWithToken(newToken);
