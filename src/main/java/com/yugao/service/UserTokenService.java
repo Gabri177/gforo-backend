@@ -1,7 +1,6 @@
 package com.yugao.service;
 
 import com.yugao.domain.UserToken;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface UserTokenService {
 

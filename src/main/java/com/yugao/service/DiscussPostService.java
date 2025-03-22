@@ -2,7 +2,6 @@ package com.yugao.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yugao.domain.DiscussPost;
-import org.springframework.transaction.annotation.Transactional;
 
 
 public interface DiscussPostService {
