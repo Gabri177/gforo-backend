@@ -39,7 +39,7 @@ mybatis-plus:
 
 jwt:
   secretKey: aHR0cHM6Ly93d3cueXVnYW8uY29tL3NlY3JldC1rZXk=
-  accessTokenExpiredMillis: 20000  # 1 hour
+  accessTokenExpiredMillis: 3600000  # 1 hour
   refreshTokenExpiredMillis: 2592000000 # 30 days
 
 # logback

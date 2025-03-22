@@ -1,5 +1,6 @@
 package com.yugao.controller;
 
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
 import com.yugao.exception.BusinessException;
@@ -54,7 +55,7 @@ public class AuthController {
      * @param user
      * @return
      */
-    @PostMapping()
+    @PostMapping("/login")
     public ResponseEntity<ResultFormat> login(
             @Validated({ValidationGroups.Login.class}) @RequestBody User user) {
         if (user.getPassword() == null || user.getUsername() == null) {
@@ -62,7 +63,8 @@ public class AuthController {
         }
 
         // 从 Redis 读取用户是否通过了验证码验证
-        String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
+        // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
+        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(user.getUsername());
         String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
 
         // 检查验证码是否正确 防止用接口恶意登录
@@ -82,10 +84,16 @@ public class AuthController {
         // 删除redis中存储的验证码
         redisTemplate.delete(redisValidateStatusKey);
 
-        // 检查用户是否已经登录 如果已经登陆则不允许重复登录
+        // 检查用户是否已经登录 如果已经登录 则删除之前的登录信息
+        // 这样之前的用户无法刷新access token 除非重新登录
+        // 同一个时间仅允许一个用户登录
         UserToken onlineUser = userTokenService.findByUserId(loginUser.getId());
         if (onlineUser != null) {
-            return ResultResponse.error(ResultCode.LOGIN_REPEATED, "User already logged in");
+            System.out.println("User already logged in. Deleting previous login information");
+            Boolean isDeleted = userTokenService.deleteUserTokenByUserId(onlineUser.getId());
+            if (!isDeleted) {
+                throw new BusinessException("Repeat Login SQL Error: deleting token failed.");
+            }
         }
 
         // 生成token
@@ -102,7 +110,8 @@ public class AuthController {
                 .atZone(ZoneId.systemDefault())
                 .toInstant()));
         // 存储到redis中
-        redisTemplate.opsForValue().set("access_token:" + loginUser.getId(),
+        // "access_token:" + loginUser.getId()
+        redisTemplate.opsForValue().set(RedisKeyConstants.userIdAccessToken(loginUser.getId()),
                 accessToken, accessTopkenExpireTimeMillis, TimeUnit.MILLISECONDS);
         // 存储到Sql中
         try {
@@ -125,8 +134,26 @@ public class AuthController {
      * 退出登录  未完成
      * @return
      */
-    @DeleteMapping
-    public ResponseEntity<ResultFormat> logout(@RequestParam("username") String username) {
+    @DeleteMapping("/logout")
+    public ResponseEntity<ResultFormat> logout(@RequestHeader("Authorization") String accessToken) {
+        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+            return ResultResponse.error(HttpStatus.UNAUTHORIZED, ResultCode.TOKEN_INVALID,
+                    "Invalid access token, illegal logout");
+        }
+        accessToken = accessToken.replace("Bearer ", "");
+        String userId = jwtUtil.getUserIdWithToken(accessToken);
+        if (userId == null) {
+            return ResultResponse.error(HttpStatus.UNAUTHORIZED, ResultCode.ACCESSTOKEN_UNAUTHORIZED,
+                    "Access token is invalid: unauthorized logout");
+        }
+        System.out.println("logout UserId: " + userId);
+        // 删除数据库中的 user_token 登录数据
+        Boolean isLogout = userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
+        System.out.println("isLogout: " + isLogout);
+        if (!isLogout) {
+            return ResultResponse.error(HttpStatus.UNAUTHORIZED, ResultCode.LOGOUT_WITHOUT_LOGIN,
+                    "You are not logged in, please login first");
+        }
         return ResultResponse.success("Logout successfully");
     }
 

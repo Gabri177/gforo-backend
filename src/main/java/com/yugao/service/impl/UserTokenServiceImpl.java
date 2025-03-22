@@ -27,7 +27,9 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public Boolean deleteUserTokenByUserId(Long userId) {
-        return userTokensMapper.deleteById(userId) > 0;
+        LambdaUpdateWrapper<UserToken> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(UserToken::getUserId, userId);
+        return userTokensMapper.delete(wrapper) > 0;
     }
 
     @Override

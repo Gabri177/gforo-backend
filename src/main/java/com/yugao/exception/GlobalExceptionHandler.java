@@ -29,14 +29,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultFormat> handleBusinessException(BusinessException e) {
         System.out.println("BusinessException: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, "Bussiness error"));
+                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION,
+                        e.getMessage() != null ? e.getMessage() : "Bussiness error"));
     }
     // 系统异常处理
     @ExceptionHandler(SystemException.class)
     public ResponseEntity<ResultFormat> handleSystemException(Exception e) {
         System.out.println("SystemException: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.SYSTEM_EXCEPTION, "System error"));
+                .body(ResultFormat.error(ResultCode.SYSTEM_EXCEPTION,
+                        e.getMessage() != null ? e.getMessage() : "System error"));
     }
 
     // SQL异常处理

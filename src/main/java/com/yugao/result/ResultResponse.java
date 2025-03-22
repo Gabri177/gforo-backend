@@ -20,7 +20,7 @@ public class ResultResponse {
 
     // 成功返回（仅消息）
     public static ResponseEntity<ResultFormat> success(String message) {
-        return ResponseEntity.ok(ResultFormat.success(message, null));
+        return ResponseEntity.ok(ResultFormat.success(null, message));
     }
 
     // 错误返回（默认500）

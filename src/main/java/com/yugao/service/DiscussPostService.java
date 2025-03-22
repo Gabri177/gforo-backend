@@ -11,20 +11,15 @@ public interface DiscussPostService {
 
     int getDiscussPostRows(int userId);
 
-    @Transactional
     int addDiscussPost(DiscussPost discussPost);
 
     DiscussPost getDiscussPostById(int id);
 
-    @Transactional
     int updateCommentCount(int id, int commentCount);
 
-    @Transactional
     int updateType(int id, int type);
 
-    @Transactional
     int updateStatus(int id, int status);
 
-    @Transactional
     int updateScore(int id, double score);
 }

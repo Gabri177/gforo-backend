@@ -2,6 +2,7 @@ package com.yugao.controller;
 
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,8 @@ public class CaptchaController {
         String captchaText = specCaptcha.text().toLowerCase();
 
         // 存入 Redis（有效期 5 分钟）
-        redisTemplate.opsForValue().set("captcha:" + captchaId, captchaText, 5, TimeUnit.MINUTES);
+        // "captcha:" + captchaId
+        redisTemplate.opsForValue().set(RedisKeyConstants.captchaId(captchaId), captchaText, 5, TimeUnit.MINUTES);
 
         // 返回验证码图片 + captchaId
         Map<String, String> result = new HashMap<>();
@@ -51,7 +53,11 @@ public class CaptchaController {
     public ResponseEntity<ResultFormat> checkCaptcha(@RequestParam("code") String verCode,
                                                      @RequestParam("id") String captchaId,
                                                      @RequestParam("username") String username) {
-        String redisKey = "captcha:" + captchaId;
+        /**
+         * 这里最好不要依赖于requestparam的参数 设置为非必须 自己检查并精细返回错误
+         */
+        // String redisKey = "captcha:" + captchaId;
+        String redisKey = RedisKeyConstants.captchaId(captchaId);
         String redisCaptchaText = redisTemplate.opsForValue().get(redisKey);
         if (redisCaptchaText == null) {
             return ResultResponse.error("Captcha expired");
@@ -63,7 +69,8 @@ public class CaptchaController {
         // 验证成功后删除验证码
         redisTemplate.delete(redisKey);
         // 存储验证码验证状态，设置 5 分钟有效期
-        redisTemplate.opsForValue().set("captcha_verified:" + username, "true", 5, TimeUnit.MINUTES);
+        // "captcha_verified:" + username
+        redisTemplate.opsForValue().set(RedisKeyConstants.usernameCaptchaVerified(username), "true", 5, TimeUnit.MINUTES);
 
         return ResultResponse.success("Captcha correct");
     }
@@ -76,7 +83,8 @@ public class CaptchaController {
     @DeleteMapping("/{captchaId}")
     public ResponseEntity<ResultFormat> logout(@PathVariable String captchaId) {
 
-        redisTemplate.delete("captcha:" + captchaId);
+        // "captcha:" + captchaId
+        redisTemplate.delete(RedisKeyConstants.captchaId(captchaId));
         return ResultResponse.success("删除成功");
     }
 }
