@@ -16,7 +16,7 @@ public class DiscussPostController {
 
     @GetMapping
     public ResponseEntity<ResultFormat> getDiscussPosts(
-            @RequestParam(required = true) int userId,
+            @RequestParam(required = true) Long userId,
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer limit
     ) {

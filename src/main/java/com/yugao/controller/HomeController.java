@@ -34,11 +34,12 @@ public class HomeController {
 
         // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
-        int totalRows = discussPostService.getDiscussPostRows(0);
+        Long totalRows = discussPostService.getDiscussPostRows(0L);
 
         // 分页查询帖子
+        // userId = 0 表示查询所有用户的帖子
         IPage<DiscussPost> pages = discussPostService.getDiscussPosts(
-                0, index, limit, orderMode);
+                0L, index, limit, orderMode);
         List<DiscussPost> list = pages.getRecords();
 
         // 封装帖子+作者+点赞数

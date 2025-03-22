@@ -4,7 +4,7 @@ import com.yugao.domain.UserToken;
 
 public interface UserTokenService {
 
-    UserToken findByUserId(int userId);
+    UserToken findByUserId(Long userId);
 
     Boolean saveUserToken(UserToken userToken);
 

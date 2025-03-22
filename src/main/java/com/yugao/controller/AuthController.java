@@ -177,7 +177,7 @@ public class AuthController {
         if (userId == null) {
             return ResultResponse.error(HttpStatus.UNAUTHORIZED, ResultCode.REFRESHTOKEN_UNAUTHORIZED, "Invalid refresh token");
         }
-        UserToken userToken = userTokenService.findByUserId(Integer.parseInt(userId));
+        UserToken userToken = userTokenService.findByUserId(Long.parseLong(userId));
         if (userToken == null || !userToken.getRefreshToken().equals(refreshToken)) {
 //            System.out.println("Invalid refresh token");
             return ResultResponse.error(HttpStatus.UNAUTHORIZED, ResultCode.REFRESHTOKEN_UNAUTHORIZED,"Invalid refresh token");

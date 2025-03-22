@@ -5,7 +5,7 @@ import com.yugao.domain.User;
 public interface UserService {
 
 
-    User getUserById(int Id);
+    User getUserById(Long Id);
 
     User getUserByName(String username);
 
@@ -13,9 +13,9 @@ public interface UserService {
 
     boolean  addUser(User user);
 
-    boolean  updateStatus(int id, int status);
+    boolean  updateStatus(Long id, int status);
 
-    boolean  updateHeader(int id, String headerUrl);
+    boolean  updateHeader(Long id, String headerUrl);
 
-    boolean  updatePassword(int id, String password);
+    boolean  updatePassword(Long id, String password);
 }

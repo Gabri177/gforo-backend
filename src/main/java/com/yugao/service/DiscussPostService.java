@@ -6,19 +6,19 @@ import com.yugao.domain.DiscussPost;
 
 public interface DiscussPostService {
 
-    IPage<DiscussPost> getDiscussPosts(int userId, int current, int limit, int orderMode);
+    IPage<DiscussPost> getDiscussPosts(Long userId, int current, int limit, int orderMode);
 
-    int getDiscussPostRows(int userId);
+    Long getDiscussPostRows(Long userId);
 
     int addDiscussPost(DiscussPost discussPost);
 
-    DiscussPost getDiscussPostById(int id);
+    DiscussPost getDiscussPostById(Long id);
 
-    int updateCommentCount(int id, int commentCount);
+    int updateCommentCount(Long id, int commentCount);
 
-    int updateType(int id, int type);
+    int updateType(Long id, int type);
 
-    int updateStatus(int id, int status);
+    int updateStatus(Long id, int status);
 
-    int updateScore(int id, double score);
+    int updateScore(Long id, double score);
 }

@@ -46,9 +46,12 @@ public class JwtUtil {
     public String generateToken(String userId, long expiredMillis) {
 
         return Jwts.builder()
+                // 注意 这里保存的是user表的用户id 是primary key
                 .subject(userId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiredMillis))
+                // 可以添加自定义信息 看后面需要吧
+                // .claim("username", username)
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }

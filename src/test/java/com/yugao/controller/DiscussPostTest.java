@@ -28,7 +28,7 @@ public class DiscussPostTest {
     @Test
     public void TestGetAll() {
         DiscussPost discussPost = discussPostMapper.selectById(281);
-        User user = userService.getUserById(101);
+        User user = userService.getUserById(101L);
 
         System.out.println("Discuss Post " + discussPost);
         System.out.println("User " + user);
@@ -36,7 +36,7 @@ public class DiscussPostTest {
 
     @Test
     public void TestGetPage() {
-        IPage<DiscussPost> records = discussPostService.getDiscussPosts(0, 0, 1, 0);
+        IPage<DiscussPost> records = discussPostService.getDiscussPosts(0L, 0, 1, 0);
         System.out.println(records.getRecords());
     }
 

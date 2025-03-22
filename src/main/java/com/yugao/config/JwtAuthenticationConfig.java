@@ -58,6 +58,7 @@ public class JwtAuthenticationConfig extends OncePerRequestFilter {
                 // 查询 Redis 中的 access token
                 String redisToken = redisTemplate.opsForValue().get("access_token:" + userId);
                 if (redisToken != null && redisToken.equals(token)) {
+                    // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userId, null, null);
                     SecurityContextHolder.getContext().setAuthentication(authentication);

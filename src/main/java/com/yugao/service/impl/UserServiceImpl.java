@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(Long id) {
         return userMapper.selectById(id);
     }
 
@@ -40,21 +40,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateStatus(int id, int status) {
+    public boolean updateStatus(Long id, int status) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId, id).set(User::getStatus, status);
         return userMapper.update(null, wrapper) > 0;
     }
 
     @Override
-    public boolean updateHeader(int id, String headerUrl) {
+    public boolean updateHeader(Long id, String headerUrl) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId, id).set(User::getHeaderUrl, headerUrl);
         return userMapper.update(null, wrapper) > 0;
     }
 
     @Override
-    public boolean updatePassword(int id, String password) {
+    public boolean updatePassword(Long id, String password) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId, id).set(User::getPassword, password);
         return userMapper.update(null, wrapper) > 0;

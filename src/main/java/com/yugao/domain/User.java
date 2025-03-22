@@ -27,7 +27,7 @@ public class User {
 //    create_time	timestamp	YES			on update CURRENT_TIMESTAMP
 
     @TableId(type= IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Username cannot be empty", groups = {ValidationGroups.DefaultGroup.class})
     @Size(min = 6, max = 20, message = "Username length must be between 6 and 20", groups = {ValidationGroups.DefaultGroup.class})

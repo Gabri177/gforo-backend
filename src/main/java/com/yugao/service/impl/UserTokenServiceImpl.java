@@ -14,7 +14,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     private UserTokensMapper userTokensMapper;
 
     @Override
-    public UserToken findByUserId(int userId) {
+    public UserToken findByUserId(Long userId) {
         LambdaUpdateWrapper<UserToken> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(UserToken::getUserId, userId);
         return userTokensMapper.selectOne(wrapper);

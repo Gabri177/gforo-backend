@@ -84,7 +84,7 @@ public class RegisterController {
 
         if (token == null || userId == null)
             return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Invalid token");
-        User user = userService.getUserById(Integer.parseInt(userId));
+        User user = userService.getUserById(Long.parseLong(userId));
         if (user == null)
             return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"User not found");
 

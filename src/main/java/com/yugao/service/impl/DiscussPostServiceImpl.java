@@ -19,7 +19,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
 
     @Override
-    public IPage<DiscussPost> getDiscussPosts(int userId, int current, int limit, int orderMode) {
+    public IPage<DiscussPost> getDiscussPosts(Long userId, int current, int limit, int orderMode) {
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, 2);
         wrapper.eq(userId != 0, DiscussPost::getUserId, userId);
@@ -31,12 +31,12 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
 
     @Override
-    public int getDiscussPostRows(int userId) {
+    public Long getDiscussPostRows(Long userId) {
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, 2);
         if (userId != 0)
             wrapper.eq(DiscussPost::getUserId, userId);
-        return Math.toIntExact(discussPostMapper.selectCount(wrapper));
+        return discussPostMapper.selectCount(wrapper);
     }
 
     @Override
@@ -45,33 +45,33 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     }
 
     @Override
-    public DiscussPost getDiscussPostById(int id) {
+    public DiscussPost getDiscussPostById(Long id) {
         return discussPostMapper.selectById(id);
     }
 
     @Override
-    public int updateCommentCount(int id, int commentCount) {
+    public int updateCommentCount(Long id, int commentCount) {
         LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getCommentCount, commentCount);
         return discussPostMapper.update(null, wrapper);
     }
 
     @Override
-    public int updateType(int id, int type) {
+    public int updateType(Long id, int type) {
         LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getType, type);
         return discussPostMapper.update(null, wrapper);
     }
 
     @Override
-    public int updateStatus(int id, int status) {
+    public int updateStatus(Long id, int status) {
         LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getStatus, status);
         return discussPostMapper.update(null, wrapper);
     }
 
     @Override
-    public int updateScore(int id, double score) {
+    public int updateScore(Long id, double score) {
         LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getScore, score);
         return discussPostMapper.update(null, wrapper);

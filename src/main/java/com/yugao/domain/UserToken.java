@@ -22,7 +22,7 @@ public class UserToken {
     @TableId(type= IdType.AUTO)
     private Long id;
 
-    private int userId;
+    private Long userId;
 
     private String accessToken;
 

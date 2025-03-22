@@ -17,7 +17,7 @@ public final class RedisKeyConstants {
         return CAPTCHA_VERIFIED + username;
     }
 
-    public static String userIdAccessToken(Integer userId) {
+    public static String userIdAccessToken(Long userId) {
         return ACCESS_TOKEN + userId;
     }
 }
