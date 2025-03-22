@@ -1,6 +1,8 @@
 package com.yugao.controller;
 
+import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
+import com.yugao.dto.UserDTO;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
@@ -36,14 +38,14 @@ public class RegisterController {
 
     /**
      * 注册用户
-     * @param user
+     * @param userDTO
      * @return ResultFormat
      */
     @PostMapping
-    public ResponseEntity<ResultFormat> handleRegister(@Validated({ValidationGroups.Register.class}) @RequestBody User user) {
+    public ResponseEntity<ResultFormat> handleRegister(@Validated({ValidationGroups.Register.class}) @RequestBody UserDTO userDTO) {
 
         // 检查验证码是否正确
-        String redisKey = "captcha_verified:" + user.getUsername();
+        String redisKey = "captcha_verified:" + userDTO.getUsername();
         String redisCaptchaStatus = redisTemplate.opsForValue().get(redisKey);
         if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {
             return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Illegal registration");
@@ -51,25 +53,21 @@ public class RegisterController {
         redisTemplate.delete(redisKey);
 
         // 直接加入数据库 但是账户是没有验证的状态
-        user.setSalt(UUID.randomUUID().toString().substring(0, 5));
-        user.setPassword(EncryptedUtil.md5(user.getPassword() + user.getSalt()));
-        user.setType(0);
-        user.setStatus(0);
-        user.setActivationCode(EncryptedUtil.generateUUID());
-        user.setCreateTime(new Date());
-        userService.addUser(user);
+        User userDomain = UserConverter.toDomain(userDTO);
+
+        userService.addUser(userDomain);
 
         // 发送邮件 用于验证邮箱 这一部分未来可能抽象出来 用于想未来验证邮箱的人群
         // 因为主键自动回填的机制 所以不需要再从数据库取出user来读取Id
         // 注意有两种方式 一种是通过xml配置 一种是通过注解
         // user = userService.getUserByEmail(user.getEmail());
-        mailClient.sendMail(user.getEmail(),
-                    user.getUsername() + ", Please verify your email address",
+        mailClient.sendMail(userDomain.getEmail(),
+                    userDomain.getUsername() + ", Please verify your email address",
                     "Click the link to verify your email:\n\t\t\t" +
                             frontend_api + "/register/" +
-                            user.getId() + "/" +
-                            user.getActivationCode());
-        System.out.println("Registering user: " + user);
+                            userDomain.getId() + "/" +
+                            userDomain.getActivationCode());
+        System.out.println("Registering user: " + userDomain);
         return ResultResponse.success("Email sent");
     }
 

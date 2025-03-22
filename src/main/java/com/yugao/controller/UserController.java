@@ -1,10 +1,12 @@
 package com.yugao.controller;
 
+import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.UserService;
+import com.yugao.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +30,13 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = Long.parseLong(authentication.getPrincipal().toString());
 
-        User userMe = userService.getUserById(userId);
-        if (userMe == null) {
+        User userDomain = userService.getUserById(userId);
+
+        if (userDomain == null) {
             return ResultResponse.error(ResultCode.USER_NOT_FOUND, "user not found");
         }
-        return ResultResponse.success(userMe, "userinfo get success");
+
+        UserVO userVO = UserConverter.toVO(userDomain);
+        return ResultResponse.success(userVO, "userinfo get success");
     }
 }

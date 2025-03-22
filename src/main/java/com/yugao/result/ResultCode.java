@@ -11,8 +11,9 @@ public class ResultCode {
     public static final int BUSINESS_EXCEPTION = 40000;
     // AuthController
     public static final int LOGOUT_WITHOUT_LOGIN = 40001;
+    public static final int LOGIN_WITHOUT_CAPTCHA = 40002;
     // UserController
-    public static final int USER_NOT_FOUND = 40002;
+    public static final int USER_NOT_FOUND = 40003;
 
 
     public static final int SYSTEM_EXCEPTION = 50000;

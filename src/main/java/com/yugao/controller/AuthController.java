@@ -3,6 +3,7 @@ package com.yugao.controller;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
+import com.yugao.dto.UserDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
@@ -52,31 +53,28 @@ public class AuthController {
 
     /**
      * 验证是否通过验证 并登录
-     * @param user
+     * @param userDTO
      * @return
      */
     @PostMapping("/login")
     public ResponseEntity<ResultFormat> login(
-            @Validated({ValidationGroups.Login.class}) @RequestBody User user) {
-        if (user.getPassword() == null || user.getUsername() == null) {
-            return ResultResponse.error("Username or password cannot be empty");
-        }
+            @Validated({ValidationGroups.Login.class}) @RequestBody UserDTO userDTO) {
 
         // 从 Redis 读取用户是否通过了验证码验证
         // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
-        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(user.getUsername());
+        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userDTO.getUsername());
         String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
 
         // 检查验证码是否正确 防止用接口恶意登录
         if (redisValidateStatus == null || !redisValidateStatus.equalsIgnoreCase("true")) {
-            return ResultResponse.error("Ilegal login");
+            return ResultResponse.error(ResultCode.LOGIN_WITHOUT_CAPTCHA, "You have not passed the captcha verification");
         }
 
-        User loginUser = userService.getUserByName(user.getUsername());
+        User loginUser = userService.getUserByName(userDTO.getUsername());
         if (loginUser == null) {
             return ResultResponse.error("User does not exist");
         }
-        String passwd = EncryptedUtil.md5(user.getPassword() + loginUser.getSalt());
+        String passwd = EncryptedUtil.md5(userDTO.getPassword() + loginUser.getSalt());
         if (!loginUser.getPassword().equals(passwd)) {
             return ResultResponse.error("Error password");
         }
@@ -87,10 +85,10 @@ public class AuthController {
         // 检查用户是否已经登录 如果已经登录 则删除之前的登录信息
         // 这样之前的用户无法刷新access token 除非重新登录
         // 同一个时间仅允许一个用户登录
-        UserToken onlineUser = userTokenService.findByUserId(loginUser.getId());
-        if (onlineUser != null) {
+        UserToken onlineUserToken = userTokenService.findByUserId(loginUser.getId());
+        if (onlineUserToken != null) {
             System.out.println("User already logged in. Deleting previous login information");
-            Boolean isDeleted = userTokenService.deleteUserTokenByUserId(onlineUser.getId());
+            Boolean isDeleted = userTokenService.deleteUserTokenByUserId(onlineUserToken.getUserId());
             if (!isDeleted) {
                 throw new BusinessException("Repeat Login SQL Error: deleting token failed.");
             }
@@ -124,14 +122,11 @@ public class AuthController {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("access_token", accessToken);
         resultMap.put("refresh_token", refreshToken);
-        resultMap.put("username", loginUser.getUsername());
-        resultMap.put("email", loginUser.getEmail());
-        resultMap.put("headerUrl", loginUser.getHeaderUrl());
         return ResultResponse.success(resultMap);
     }
 
     /**
-     * 退出登录  未完成
+     * 退出登录
      * @return
      */
     @DeleteMapping("/logout")
