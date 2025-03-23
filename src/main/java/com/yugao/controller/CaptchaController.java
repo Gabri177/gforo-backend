@@ -5,7 +5,10 @@ import com.wf.captcha.base.Captcha;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +22,17 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/captcha")
 public class CaptchaController {
 
+//    @Autowired
+//    private StringRedisTemplate redisTemplate;
+
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisService redisService;
+
+    @Value("${captcha.expire-time-minutes}")
+    private Long captchaExpireTimeMinutes;
+
+    @Value("${captcha.verified-expire-time-minutes}")
+    private Long captchaVerifiedExpireTimeMinutes;
 
     /**
      * 获取验证码
@@ -37,9 +49,11 @@ public class CaptchaController {
         String captchaId = UUID.randomUUID().toString();
         String captchaText = specCaptcha.text().toLowerCase();
 
-        // 存入 Redis（有效期 5 分钟）
+        // 存入 Redis（有效期 3 分钟）
         // "captcha:" + captchaId
-        redisTemplate.opsForValue().set(RedisKeyConstants.captchaId(captchaId), captchaText, 5, TimeUnit.MINUTES);
+        //redisTemplate.opsForValue().set(RedisKeyConstants.captchaId(captchaId), captchaText, 3, TimeUnit.MINUTES);
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaId(captchaId),
+                captchaText, captchaExpireTimeMinutes);
 
         // 返回验证码图片 + captchaId
         Map<String, String> result = new HashMap<>();
@@ -58,7 +72,8 @@ public class CaptchaController {
          */
         // String redisKey = "captcha:" + captchaId;
         String redisKey = RedisKeyConstants.captchaId(captchaId);
-        String redisCaptchaText = redisTemplate.opsForValue().get(redisKey);
+        //String redisCaptchaText = redisTemplate.opsForValue().get(redisKey);
+        String redisCaptchaText = redisService.get(redisKey);
         if (redisCaptchaText == null) {
             return ResultResponse.error("Captcha expired");
         }
@@ -67,11 +82,14 @@ public class CaptchaController {
         }
 
         // 验证成功后删除验证码
-        redisTemplate.delete(redisKey);
-        // 存储验证码验证状态，设置 5 分钟有效期
+        //redisTemplate.delete(redisKey);
+        redisService.delete(redisKey);
+        // 存储验证码验证状态，设置 3 分钟有效期
         // "captcha_verified:" + username
-        redisTemplate.opsForValue().set(RedisKeyConstants.usernameCaptchaVerified(username), "true", 5, TimeUnit.MINUTES);
-
+        //redisTemplate.opsForValue().set(RedisKeyConstants.usernameCaptchaVerified(username), "true", 3, TimeUnit.MINUTES);
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.usernameCaptchaVerified(username),
+                "true", captchaVerifiedExpireTimeMinutes);
+        System.out.println("Captcha correct :" +  RedisKeyConstants.usernameCaptchaVerified(username));
         return ResultResponse.success("Captcha correct");
     }
 
@@ -84,7 +102,8 @@ public class CaptchaController {
     public ResponseEntity<ResultFormat> logout(@PathVariable String captchaId) {
 
         // "captcha:" + captchaId
-        redisTemplate.delete(RedisKeyConstants.captchaId(captchaId));
+        //redisTemplate.delete(RedisKeyConstants.captchaId(captchaId));
+        redisService.delete(RedisKeyConstants.captchaId(captchaId));
         return ResultResponse.success("删除成功");
     }
 }

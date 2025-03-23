@@ -1,8 +1,10 @@
 package com.yugao.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
+import com.yugao.service.RedisService;
 import com.yugao.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +27,9 @@ import java.util.List;
 public class JwtAuthenticationConfig extends OncePerRequestFilter {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisService redisService;
+//    @Autowired
+//    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -56,7 +60,8 @@ public class JwtAuthenticationConfig extends OncePerRequestFilter {
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
                 // 查询 Redis 中的 access token
-                String redisToken = redisTemplate.opsForValue().get("access_token:" + userId);
+                //String redisToken = redisTemplate.opsForValue().get("access_token:" + userId);
+                String redisToken = redisService.get(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)));
                 if (redisToken != null && redisToken.equals(token)) {
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =

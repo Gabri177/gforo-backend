@@ -42,6 +42,10 @@ jwt:
   accessTokenExpiredMillis: 3600000  # 1 hour
   refreshTokenExpiredMillis: 2592000000 # 30 days
 
+captcha:
+  expire-time-minutes: 3
+  verified-expire-time-minutes: 3
+
 # logback
 
 #logging:

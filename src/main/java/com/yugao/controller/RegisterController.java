@@ -6,8 +6,8 @@ import com.yugao.dto.UserDTO;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.service.RedisService;
 import com.yugao.service.UserService;
-import com.yugao.util.EncryptedUtil;
 import com.yugao.util.MailClientUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/register")
@@ -33,8 +31,11 @@ public class RegisterController {
     @Value("${frontend.url}")
     private String frontend_api;
 
+//    @Autowired
+//    private StringRedisTemplate redisTemplate;
+
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisService redisService;
 
     /**
      * 注册用户
@@ -46,11 +47,13 @@ public class RegisterController {
 
         // 检查验证码是否正确
         String redisKey = "captcha_verified:" + userDTO.getUsername();
-        String redisCaptchaStatus = redisTemplate.opsForValue().get(redisKey);
+        //String redisCaptchaStatus = redisTemplate.opsForValue().get(redisKey);
+        String redisCaptchaStatus = redisService.get(redisKey);
         if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {
             return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Illegal registration");
         }
-        redisTemplate.delete(redisKey);
+        //redisTemplate.delete(redisKey);
+        redisService.delete(redisKey);
 
         // 直接加入数据库 但是账户是没有验证的状态
         User userDomain = UserConverter.toDomain(userDTO);

@@ -4,14 +4,17 @@ import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
 import com.yugao.dto.UserDTO;
+import com.yugao.dto.UserForgetPasswordDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.service.RedisService;
 import com.yugao.service.UserService;
 import com.yugao.service.UserTokenService;
 import com.yugao.util.EncryptedUtil;
 import com.yugao.util.JwtUtil;
+import com.yugao.util.MailClientUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,13 +43,19 @@ public class AuthController {
     private UserTokenService userTokenService;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisService redisService;
+
+//    @Autowired
+//    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private MailClientUtil mailClient;
+
     @Value("${jwt.accessTokenExpiredMillis}")
-    private long accessTopkenExpireTimeMillis;
+    private long accessTokenExpireTimeMillis;
 
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
@@ -63,7 +72,8 @@ public class AuthController {
         // 从 Redis 读取用户是否通过了验证码验证
         // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
         String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userDTO.getUsername());
-        String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
+        //String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
+        String redisValidateStatus = redisService.get(redisValidateStatusKey);
 
         // 检查验证码是否正确 防止用接口恶意登录
         if (redisValidateStatus == null || !redisValidateStatus.equalsIgnoreCase("true")) {
@@ -80,7 +90,8 @@ public class AuthController {
         }
 
         // 删除redis中存储的验证码
-        redisTemplate.delete(redisValidateStatusKey);
+        //redisTemplate.delete(redisValidateStatusKey);
+        redisService.delete(redisValidateStatusKey);
 
         // 检查用户是否已经登录 如果已经登录 则删除之前的登录信息
         // 这样之前的用户无法刷新access token 除非重新登录
@@ -109,8 +120,10 @@ public class AuthController {
                 .toInstant()));
         // 存储到redis中
         // "access_token:" + loginUser.getId()
-        redisTemplate.opsForValue().set(RedisKeyConstants.userIdAccessToken(loginUser.getId()),
-                accessToken, accessTopkenExpireTimeMillis, TimeUnit.MILLISECONDS);
+//        redisTemplate.opsForValue().set(RedisKeyConstants.userIdAccessToken(loginUser.getId()),
+//                 accessToken, accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
+        redisService.set(RedisKeyConstants.userIdAccessToken(loginUser.getId()), accessToken,
+                accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
         // 存储到Sql中
         try {
             userTokenService.saveUserToken(userToken);
@@ -182,18 +195,27 @@ public class AuthController {
         if (userToken.getExpiresAt().getTime() < System.currentTimeMillis()) {
             // refreshToken过期 删除数据库中的 user_token 登录数据, 同一个用户不能重复登录
             userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
-            redisTemplate.delete("access_token:" + userId);
+            //redisTemplate.delete("access_token:" + userId);
+            redisService.delete(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)));
 //            System.out.println("Refresh token is expired");
             return ResultResponse.error(HttpStatus.FORBIDDEN, ResultCode.REFRESHTOKEN_EXPIRED,"Refresh token is expired");
         }
 
         // 没有过期 生成新的AccessToken
         String newAccessToken = jwtUtil.generateAccessToken(userId);
-        redisTemplate.opsForValue().set("access_token:" + userId, newAccessToken, accessTopkenExpireTimeMillis, TimeUnit.MILLISECONDS);
+        //redisTemplate.opsForValue().set("access_token:" + userId, newAccessToken, accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
+        redisService.set(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)), newAccessToken,
+                accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
         userTokenService.updateAccessToken(Long.parseLong(userId), newAccessToken);
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("newAccessToken", newAccessToken);
         return ResultResponse.success(resultMap);
+    }
+
+    @GetMapping("/forget-password")
+    public ResponseEntity<ResultFormat> getSixDigVerifyCode(
+            @Validated @RequestBody UserForgetPasswordDTO userForgetPasswordDTO) {
+        return ResultResponse.success(userForgetPasswordDTO);
     }
 
 }

@@ -24,8 +24,4 @@ public class RedisConfig {
         return template;
     }
 
-    @Bean
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        return new StringRedisTemplate(redisConnectionFactory);
-    }
 }
