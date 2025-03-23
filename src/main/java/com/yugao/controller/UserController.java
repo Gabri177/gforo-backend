@@ -8,7 +8,6 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.UserService;
 import com.yugao.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
