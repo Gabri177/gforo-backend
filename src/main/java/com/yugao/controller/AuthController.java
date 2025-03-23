@@ -5,6 +5,7 @@ import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
 import com.yugao.dto.UserDTO;
 import com.yugao.dto.UserForgetPasswordDTO;
+import com.yugao.dto.UserForgetPasswordResetDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
@@ -15,10 +16,10 @@ import com.yugao.service.UserTokenService;
 import com.yugao.util.EncryptedUtil;
 import com.yugao.util.JwtUtil;
 import com.yugao.util.MailClientUtil;
+import com.yugao.util.VerificationUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -59,6 +60,12 @@ public class AuthController {
 
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
+
+    @Value("${resetPassword.sixDigVerifyCodeExpireTimeMinutes}")
+    private long resetPasswordSixDigVerifyCodeExpireTimeMinutes;
+
+    @Value("${resetPassword.verifiedSixDigVerifyCodeExpireTimeMinutes}")
+    private long verifiedSixDigVerifyCodeExpireTimeMinutes;
 
     /**
      * 验证是否通过验证 并登录
@@ -212,10 +219,122 @@ public class AuthController {
         return ResultResponse.success(resultMap);
     }
 
-    @GetMapping("/forget-password")
+    /**
+     * 忘记密码
+     * @param userForgetPasswordDTO
+     * @return 返回六位数验证码
+     */
+    @PostMapping("/forget-password/send-code")
     public ResponseEntity<ResultFormat> getSixDigVerifyCode(
             @Validated @RequestBody UserForgetPasswordDTO userForgetPasswordDTO) {
-        return ResultResponse.success(userForgetPasswordDTO);
+
+        System.out.println("Forget Password: " + userForgetPasswordDTO.getUsername() + " " + userForgetPasswordDTO.getEmail());
+
+        // 从 Redis 读取用户是否通过了验证码验证
+        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userForgetPasswordDTO.getUsername());
+        String redisValidateStatus = redisService.get(redisValidateStatusKey);
+
+        // 检查验证码是否正确 防止用接口恶意登录
+        if (redisValidateStatus == null || !redisValidateStatus.equalsIgnoreCase("true")) {
+            return ResultResponse.error(ResultCode.LOGIN_WITHOUT_CAPTCHA, "You have not passed the captcha verification");
+        }
+
+        User existUser = userService.getUserByName(userForgetPasswordDTO.getUsername());
+        if (existUser == null) {
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND, "User does not exist");
+        }
+        if (!existUser.getEmail().equals(userForgetPasswordDTO.getEmail())) {
+            return ResultResponse.error(ResultCode.EMAIL_NOT_MATCH, "Email does not match");
+        }
+
+        // 生成六位数验证码
+        String sixDigVerifyCode = VerificationUtil.generateSixNumVerifCode();
+
+
+
+        // 删除redis中存储的验证码
+        redisService.delete(redisValidateStatusKey);
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.usernameForgetPasswordSixDigitCode(userForgetPasswordDTO.getUsername()),
+                sixDigVerifyCode,
+                resetPasswordSixDigVerifyCodeExpireTimeMinutes);
+
+        String htmlContent = "<p>Your six-digit verification code is: " +
+                "<span style='color:red; font-size:20px; font-weight:bold'>" +
+                sixDigVerifyCode +
+                "</span>.</p>" +
+                "<p>This code will expire in " +
+                "<span style='color:orange; font-weight:bold'>" +
+                resetPasswordSixDigVerifyCodeExpireTimeMinutes +
+                "</span> minutes.</p>";
+
+        mailClient.sendHtmlMail(
+                userForgetPasswordDTO.getEmail(),
+                "GForo: User: " + userForgetPasswordDTO.getUsername() + " - Reset Password",
+                htmlContent
+        );
+        return ResultResponse.success("Please check your email for the six-digit verification code");
     }
+
+    @PostMapping("/forget-password/{verify-code}")
+    public ResponseEntity<ResultFormat> verifySixDigCode(
+            @Validated @RequestBody UserForgetPasswordDTO userForgetPasswordDTO,
+            @PathVariable("verify-code") String code) {
+
+        String redisSixDigCodeKey =
+                RedisKeyConstants.usernameForgetPasswordSixDigitCode(userForgetPasswordDTO.getUsername());
+        String redisSixDigCode = redisService.get(redisSixDigCodeKey);
+        if (redisSixDigCode == null) {
+            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_EXPIRED, "Verification code expired");
+        }
+        if (!redisSixDigCode.equalsIgnoreCase(code)) {
+            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_NOT_MATCH, "Verification code does not match");
+        }
+
+        // 删除redis中存储的验证码
+        redisService.delete(redisSixDigCodeKey);
+        // 设置一个标志位 用来表示用户已经验证过验证码
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.usernameForgetPasswordSixDigitCodeVerifyed(userForgetPasswordDTO.getUsername()),
+                "true",
+                verifiedSixDigVerifyCodeExpireTimeMinutes
+        );
+        return ResultResponse.success("Verification code correct");
+    }
+
+    @PostMapping("/forget-password/reset")
+    public ResponseEntity<ResultFormat> resetPassword(
+            @Validated @RequestBody UserForgetPasswordResetDTO userForgetPasswordResetDTO
+            ) {
+
+        String redisSixDigCodeVerifyedKey =
+                RedisKeyConstants.usernameForgetPasswordSixDigitCodeVerifyed(userForgetPasswordResetDTO.getUsername());
+        String redisSixDigCodeVerifyed = redisService.get(redisSixDigCodeVerifyedKey);
+        if (redisSixDigCodeVerifyed == null) {
+            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_EXPIRED, "Verification code expired");
+        }
+        if (!redisSixDigCodeVerifyed.equalsIgnoreCase("true")) {
+            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_NOT_MATCH, "Verification code does not match");
+        }
+
+        User existUser = userService.getUserByName(userForgetPasswordResetDTO.getUsername());
+        if (existUser == null) {
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND, "User does not exist");
+        }
+
+        // 删除redis中存储的验证码
+        redisService.delete(redisSixDigCodeVerifyedKey);
+
+        String salt = existUser.getSalt();
+        String newPassword = EncryptedUtil.md5(userForgetPasswordResetDTO.getPassword() + salt);
+        Boolean res = userService.updatePassword(existUser.getId(), newPassword);
+        if (!res) {
+            return ResultResponse.error(ResultCode.SQL_UPDATING_ERROR, "Error updating password");
+        }
+
+        return ResultResponse.success("Password reset successfully");
+    }
+
+
 
 }

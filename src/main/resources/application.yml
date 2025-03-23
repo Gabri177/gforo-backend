@@ -46,6 +46,10 @@ captcha:
   expire-time-minutes: 3
   verified-expire-time-minutes: 3
 
+resetPassword:
+  sixDigVerifyCodeExpireTimeMinutes: 3
+  verifiedSixDigVerifyCodeExpireTimeMinutes: 3
+
 # logback
 
 #logging:
