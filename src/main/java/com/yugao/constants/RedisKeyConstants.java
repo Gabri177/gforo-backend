@@ -8,7 +8,6 @@ public final class RedisKeyConstants {
     public static final String REGISTER = "register:";
     public static final String FORGET_PASSWORD = "forget_password:";
 
-
     // 验证码图片相关
     private static final String CAPTCHA_VERIFIED = "captcha_verified:";
     private static final String CAPTCHA = "captcha:";

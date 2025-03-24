@@ -1,5 +1,6 @@
 package com.yugao.service;
 
+
 import java.util.concurrent.TimeUnit;
 
 public interface RedisService {
@@ -10,11 +11,7 @@ public interface RedisService {
 
     String get(String key);
 
-    boolean hasKey(String key);
-
     void delete(String key);
-
-    Long increment(String key, long delta);
 
     void setTemporarilyByMinutes(String key, String value, long timeoutByMinutes);
 }
