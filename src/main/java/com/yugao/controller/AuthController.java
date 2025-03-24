@@ -3,7 +3,7 @@ package com.yugao.controller;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
-import com.yugao.dto.UserDTO;
+import com.yugao.dto.UserRegisterDTO;
 import com.yugao.dto.UserForgetPasswordDTO;
 import com.yugao.dto.UserForgetPasswordResetDTO;
 import com.yugao.exception.BusinessException;
@@ -69,16 +69,16 @@ public class AuthController {
 
     /**
      * 验证是否通过验证 并登录
-     * @param userDTO
+     * @param userRegisterDTO
      * @return
      */
     @PostMapping("/login")
     public ResponseEntity<ResultFormat> login(
-            @Validated({ValidationGroups.Login.class}) @RequestBody UserDTO userDTO) {
+            @Validated({ValidationGroups.Login.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
 
         // 从 Redis 读取用户是否通过了验证码验证
         // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
-        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userDTO.getUsername());
+        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userRegisterDTO.getUsername());
         //String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
         String redisValidateStatus = redisService.get(redisValidateStatusKey);
 
@@ -87,11 +87,11 @@ public class AuthController {
             return ResultResponse.error(ResultCode.LOGIN_WITHOUT_CAPTCHA, "You have not passed the captcha verification");
         }
 
-        User loginUser = userService.getUserByName(userDTO.getUsername());
+        User loginUser = userService.getUserByName(userRegisterDTO.getUsername());
         if (loginUser == null) {
             return ResultResponse.error("User does not exist");
         }
-        String passwd = EncryptedUtil.md5(userDTO.getPassword() + loginUser.getSalt());
+        String passwd = EncryptedUtil.md5(userRegisterDTO.getPassword() + loginUser.getSalt());
         if (!loginUser.getPassword().equals(passwd)) {
             return ResultResponse.error("Error password");
         }

@@ -1,6 +1,7 @@
 package com.yugao.service;
 
 import com.yugao.domain.User;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService {
 
@@ -10,6 +11,8 @@ public interface UserService {
     User getUserByName(String username);
 
     User getUserByEmail(String email);
+
+    boolean updateUser(User user);
 
     boolean  addUser(User user);
 

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserDTO {
+public class UserRegisterDTO {
 
     @NotBlank(message = "Username cannot be empty", groups = {ValidationGroups.DefaultGroup.class})
     @Size(min = 6, max = 20, message = "Username length must be between 6 and 20", groups = {ValidationGroups.DefaultGroup.class})
@@ -20,4 +20,7 @@ public class UserDTO {
     @NotBlank(message = "Email cannot be empty", groups = {ValidationGroups.Register.class})
     @Email(message = "Email format is incorrect", groups = {ValidationGroups.Register.class})
     private String email;
+
+    @NotBlank(message = "Avatar cannot be empty", groups = {ValidationGroups.Register.class})
+    private String headerUrl;
 }

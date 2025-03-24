@@ -1,7 +1,8 @@
-package com.yugao.config;
+package com.yugao.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.constants.SecurityWhiteListConstants;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.RedisService;
@@ -15,15 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 // 因为有过滤器 先经过过滤器然后再被Security拦截
 // 两个同时起作用5
 @Component
-public class JwtAuthenticationConfig extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private RedisService redisService;
@@ -36,19 +39,13 @@ public class JwtAuthenticationConfig extends OncePerRequestFilter {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // 配置Jwt过滤器的白名单
-    private static final List<String> WHITE_LIST = List.of(
-            "/api/auth",
-            "/api/register",
-            "/api/captcha",
-            "/api/home"
-    );
+    private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (WHITE_LIST.stream().anyMatch(path::startsWith)) {
+        if (Arrays.stream(SecurityWhiteListConstants.URLS).anyMatch(pattern -> antPathMatcher.match(pattern, path))) {
             filterChain.doFilter(request, response);
             return;
         }

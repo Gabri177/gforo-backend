@@ -43,4 +43,6 @@ public class User {
     private String headerUrl;
 
     private Date createTime;
+
+    private String bio;
 }

@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
                 errmsgs.put(error.getField(), error.getDefaultMessage())
         );
         String msg = errmsgs.toString();
-        return ResultResponse.error(errmsgs, "Please check your username and password format");
+        return ResultResponse.error(errmsgs, "Please check your input format!");
     }
 
 

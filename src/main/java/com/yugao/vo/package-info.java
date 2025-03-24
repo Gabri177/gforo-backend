@@ -8,7 +8,7 @@
  * - 与实体类（domain）保持解耦，便于前后端字段隔离和演化。
  * <p>
  * 例如：
- * {@link com.yugao.vo.UserVO} 仅包含用户公开信息，
+ * {@link com.yugao.vo.UserInfoVO} 仅包含用户公开信息，
  * 可由 {@code UserConverter} 将 {@code User} 实体安全转换而来。
  * <p>
  * 默认本包内所有方法参数和返回值不可为 null。

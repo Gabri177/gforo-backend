@@ -18,7 +18,11 @@ public class ResultCode {
     public static final int SIX_DIGIT_CODE_NOT_MATCH = 40005;
     public static final int SIX_DIGIT_CODE_EXPIRED = 40006;
     public static final int SQL_UPDATING_ERROR = 40007;
-
+    public static final int USER_ALREADY_VERIFIED = 40008;
+    public static final int USER_INFO_INVALID = 40009;
+    public static final int EMAIL_ALREADY_VERIFIED = 40010;
+    public static final int NEW_PASSWORD_SAME = 40011;
+    public static final int OLD_PASSWORD_INCORRECT = 40012;
 
     public static final int SYSTEM_EXCEPTION = 50000;
 
