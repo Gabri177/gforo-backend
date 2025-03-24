@@ -51,7 +51,7 @@ public class RegisterController {
             @Validated({ValidationGroups.Register.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
 
         // 检查验证码是否正确
-        String redisKey = "captcha_verified:" + userRegisterDTO.getUsername();
+        String redisKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
         //String redisCaptchaStatus = redisTemplate.opsForValue().get(redisKey);
         String redisCaptchaStatus = redisService.get(redisKey);
         if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {

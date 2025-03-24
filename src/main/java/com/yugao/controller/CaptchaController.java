@@ -49,7 +49,7 @@ public class CaptchaController {
         // 存入 Redis（有效期 3 分钟）
         // "captcha:" + captchaId
         //redisTemplate.opsForValue().set(RedisKeyConstants.captchaId(captchaId), captchaText, 3, TimeUnit.MINUTES);
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaId(captchaId),
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.captcha(captchaId),
                 captchaText, captchaExpireTimeMinutes);
 
         // 返回验证码图片 + captchaId
@@ -63,12 +63,13 @@ public class CaptchaController {
     @PostMapping
     public ResponseEntity<ResultFormat> checkCaptcha(@RequestParam("code") String verCode,
                                                      @RequestParam("id") String captchaId,
-                                                     @RequestParam("username") String username) {
+                                                     @RequestParam("username") String username,
+                                                     @RequestParam("scene") String scene) {
         /**
          * 这里最好不要依赖于requestparam的参数 设置为非必须 自己检查并精细返回错误
          */
         // String redisKey = "captcha:" + captchaId;
-        String redisKey = RedisKeyConstants.captchaId(captchaId);
+        String redisKey = RedisKeyConstants.captcha(captchaId);
         //String redisCaptchaText = redisTemplate.opsForValue().get(redisKey);
         String redisCaptchaText = redisService.get(redisKey);
         if (redisCaptchaText == null) {
@@ -84,9 +85,9 @@ public class CaptchaController {
         // 存储验证码验证状态，设置 3 分钟有效期
         // "captcha_verified:" + username
         //redisTemplate.opsForValue().set(RedisKeyConstants.usernameCaptchaVerified(username), "true", 3, TimeUnit.MINUTES);
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.usernameCaptchaVerified(username),
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaVerified(scene, username),
                 "true", captchaVerifiedExpireTimeMinutes);
-        System.out.println("Captcha correct :" +  RedisKeyConstants.usernameCaptchaVerified(username));
+        System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(scene, username));
         return ResultResponse.success("Captcha correct");
     }
 
@@ -100,7 +101,7 @@ public class CaptchaController {
 
         // "captcha:" + captchaId
         //redisTemplate.delete(RedisKeyConstants.captchaId(captchaId));
-        redisService.delete(RedisKeyConstants.captchaId(captchaId));
+        redisService.delete(RedisKeyConstants.captcha(captchaId));
         return ResultResponse.success("删除成功");
     }
 }

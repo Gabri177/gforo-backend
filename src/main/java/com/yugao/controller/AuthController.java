@@ -78,7 +78,7 @@ public class AuthController {
 
         // 从 Redis 读取用户是否通过了验证码验证
         // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
-        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userRegisterDTO.getUsername());
+        String redisValidateStatusKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
         //String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
         String redisValidateStatus = redisService.get(redisValidateStatusKey);
 
@@ -231,7 +231,9 @@ public class AuthController {
         System.out.println("Forget Password: " + userForgetPasswordDTO.getUsername() + " " + userForgetPasswordDTO.getEmail());
 
         // 从 Redis 读取用户是否通过了验证码验证
-        String redisValidateStatusKey = RedisKeyConstants.usernameCaptchaVerified(userForgetPasswordDTO.getUsername());
+        String redisValidateStatusKey = RedisKeyConstants.captchaVerified(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getUsername());
         String redisValidateStatus = redisService.get(redisValidateStatusKey);
 
         // 检查验证码是否正确 防止用接口恶意登录
