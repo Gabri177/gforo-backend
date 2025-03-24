@@ -50,6 +50,10 @@ resetPassword:
   sixDigVerifyCodeExpireTimeMinutes: 3
   verifiedSixDigVerifyCodeExpireTimeMinutes: 3
 
+email:
+  active-account:
+    request-expire-time-minutes: 1
+
 # logback
 
 #logging:

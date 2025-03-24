@@ -11,6 +11,8 @@ public final class RedisKeyConstants {
     // 忘记密码六位验证码
     public static final String FORGET_PASSWORD_SIX_DIGIT_CODE = "forget_password_six_digit_code:";
     public static final String FORGET_PASSWORD_SIX_DIGIT_CODE_VERIFYED = "forget_password_six_digit_code_verify:";
+    // 请求账号激活邮件
+    public static final String REQUEST_ACCOUNT_ACTIVATION_EMAIL = "request_account_activation_email:";
 
     public static String captchaId(String captchaId) {
         return CAPTCHA_ID + captchaId;
@@ -30,5 +32,9 @@ public final class RedisKeyConstants {
 
     public static String usernameForgetPasswordSixDigitCodeVerifyed(String username) {
         return FORGET_PASSWORD_SIX_DIGIT_CODE_VERIFYED + username;
+    }
+
+    public static String emailRequestAccountActivationEmail(String email) {
+        return REQUEST_ACCOUNT_ACTIVATION_EMAIL + email;
     }
 }

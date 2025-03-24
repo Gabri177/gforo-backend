@@ -1,5 +1,6 @@
 package com.yugao.controller;
 
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
 import com.yugao.dto.UserRegisterDTO;
@@ -30,6 +31,9 @@ public class RegisterController {
 
     @Value("${frontend.url}")
     private String frontend_api;
+
+    @Value("${email.active-account.request-expire-time-minutes}")
+    private Long emailRequestTimeInterval;
 
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
@@ -73,6 +77,12 @@ public class RegisterController {
     public ResponseEntity<ResultFormat> verifyEmail(
             @Validated @RequestBody UserVerifyEmailDTO userVerifyEmailDTO) {
 
+        String redisKey = RedisKeyConstants.emailRequestAccountActivationEmail(userVerifyEmailDTO.getEmail());
+        String redisStatus = redisService.get(redisKey);
+        if (redisStatus != null && redisStatus.equalsIgnoreCase("true")) {
+            return ResultResponse.error(ResultCode.TOO_SHORT_INTERVAL,"You can't request email verification again in a short time");
+        }
+
         System.out.println("Verifying email: " + userVerifyEmailDTO);
         User existUser = userService.getUserById(userVerifyEmailDTO.getId());
         if (existUser == null) {
@@ -85,8 +95,13 @@ public class RegisterController {
         if (existUser.getStatus() == 1) {
             return ResultResponse.error(ResultCode.USER_ALREADY_VERIFIED,"Email already verified");
         }
-        System.out.println("Email sending to: " + existUser.getEmail());
 
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.emailRequestAccountActivationEmail(userVerifyEmailDTO.getEmail()),
+                "true",
+                emailRequestTimeInterval);
+
+        System.out.println("Email sending to: " + existUser.getEmail());
         // 发送邮件 用于验证邮箱 这一部分未来可能抽象出来 用于想未来验证邮箱的人群
         // 因为主键自动回填的机制 所以不需要再从数据库取出user来读取Id
         // 注意有两种方式 一种是通过xml配置 一种是通过注解
@@ -106,7 +121,7 @@ public class RegisterController {
                 existUser.getUsername() + ", Please verify your email address",
                 htmlContent
         );
-        System.out.println("Email Verify user: " + existUser);
+        System.out.println("Email Verify Send to user: " + existUser);
         return ResultResponse.success("Email sent");
     }
 
