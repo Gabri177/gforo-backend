@@ -1,4 +1,4 @@
-package com.yugao.service;
+package com.yugao.service.data;
 
 import com.yugao.domain.UserToken;
 

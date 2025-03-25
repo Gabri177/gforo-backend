@@ -1,4 +1,4 @@
-package com.yugao.service.impl;
+package com.yugao.service.data.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -7,7 +7,7 @@ import com.yugao.domain.User;
 import com.yugao.dto.UserInfoUpdateDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
-import com.yugao.service.UserService;
+import com.yugao.service.data.UserService;
 import com.yugao.util.EncryptedUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

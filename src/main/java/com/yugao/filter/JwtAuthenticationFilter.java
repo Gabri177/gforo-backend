@@ -1,11 +1,10 @@
 package com.yugao.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yugao.constants.RedisKeyConstants;
 import com.yugao.constants.SecurityWhiteListConstants;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.RedisService;
+import com.yugao.service.base.RedisService;
 import com.yugao.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 // 因为有过滤器 先经过过滤器然后再被Security拦截
 // 两个同时起作用5

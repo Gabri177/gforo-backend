@@ -1,7 +1,7 @@
-package com.yugao.service.impl;
+package com.yugao.service.base.impl;
 
 import com.yugao.constants.RedisKeyConstants;
-import com.yugao.service.RedisService;
+import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;

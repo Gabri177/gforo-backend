@@ -1,4 +1,4 @@
-package com.yugao.service.impl;
+package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.domain.DiscussPost;
 import com.yugao.mapper.DiscussPostMapper;
-import com.yugao.service.DiscussPostService;
+import com.yugao.service.data.DiscussPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

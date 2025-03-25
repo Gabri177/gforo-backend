@@ -1,8 +1,7 @@
-package com.yugao.service;
+package com.yugao.service.data;
 
 import com.yugao.domain.User;
 import com.yugao.dto.UserInfoUpdateDTO;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService {
 

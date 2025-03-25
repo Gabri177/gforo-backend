@@ -10,9 +10,9 @@ import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.service.RedisService;
-import com.yugao.service.UserService;
-import com.yugao.service.UserTokenService;
+import com.yugao.service.base.RedisService;
+import com.yugao.service.data.UserService;
+import com.yugao.service.data.UserTokenService;
 import com.yugao.util.*;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +77,7 @@ public class AuthController {
         if (loginUser == null) {
             return ResultResponse.error("User does not exist");
         }
-//        String passwd = EncryptedUtil.md5(userRegisterDTO.getPassword() + loginUser.getSalt());
-//        if (!loginUser.getPassword().equals(passwd)) {
-//            return ResultResponse.error("Error password");
-//        }
+
         if (!PasswordUtil.matches(userRegisterDTO.getPassword(), loginUser.getPassword())) {
             return ResultResponse.error(ResultCode.PASSWORD_NOT_MATCH, "Error password");
         }

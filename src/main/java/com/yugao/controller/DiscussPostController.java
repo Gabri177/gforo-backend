@@ -2,7 +2,7 @@ package com.yugao.controller;
 
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.service.DiscussPostService;
+import com.yugao.service.data.DiscussPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -5,7 +5,7 @@ import com.wf.captcha.base.Captcha;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.service.RedisService;
+import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
