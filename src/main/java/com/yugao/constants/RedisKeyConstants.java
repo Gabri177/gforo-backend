@@ -15,7 +15,7 @@ public final class RedisKeyConstants {
 
     // 数字验证码相关
     private static final String SIX_DIGIT_CODE = "six_digit_code:";
-    private static final String SIX_DIGIT_CODE_VERIFYED = "six_digit_code_verify:";
+    private static final String SIX_DIGIT_CODE_VERIFIED = "six_digit_code_verify:";
 
     // 访问令牌 (Access Token) 相关
     private static final String ACCESS_TOKEN = "access_token:";
@@ -41,8 +41,8 @@ public final class RedisKeyConstants {
         return SIX_DIGIT_CODE + scene + username;
     }
 
-    public static String sixDigitCodeVerifyed(String scene, String username) {
-        return SIX_DIGIT_CODE_VERIFYED + scene + username;
+    public static String sixDigitCodeVerified(String scene, String username) {
+        return SIX_DIGIT_CODE_VERIFIED + scene + username;
     }
 
     public static String emailActivationInterval(String email) {

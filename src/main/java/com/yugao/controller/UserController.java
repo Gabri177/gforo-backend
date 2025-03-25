@@ -118,15 +118,10 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = Long.parseLong(authentication.getPrincipal().toString());
 
-
         if (!userId.equals(userVerifyEmailDTO.getId())) {
             return ResultResponse.error(ResultCode.USER_INFO_INVALID,"You can't request email verification for other user");
         }
-//        String redisKey = RedisKeyConstants.emailRequestAccountActivationEmail(userVerifyEmailDTO.getEmail());
-//        String redisStatus = redisService.get(redisKey);
-//        if (redisStatus != null && redisStatus.equalsIgnoreCase("true")) {
-//            return ResultResponse.error(ResultCode.TOO_SHORT_INTERVAL,"You can't request email verification again in a short time");
-//        }
+
         boolean res = redisService.verifyEmailActivationInterval(userVerifyEmailDTO.getEmail());
         if (res) {
             return ResultResponse.error(ResultCode.TOO_SHORT_INTERVAL,"You can't request email verification again in a short time");
@@ -146,10 +141,6 @@ public class UserController {
             return ResultResponse.error(ResultCode.USER_ALREADY_VERIFIED,"Email already verified");
         }
 
-//        redisService.setTemporarilyByMinutes(
-//                RedisKeyConstants.emailRequestAccountActivationEmail(userVerifyEmailDTO.getEmail()),
-//                "true",
-//                emailRequestTimeInterval);
         redisService.setEmailActivationIntervalByMinutes(userVerifyEmailDTO.getEmail());
 
         System.out.println("Email sending to: " + existUser.getEmail());

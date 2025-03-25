@@ -268,7 +268,6 @@ public class AuthController {
         }
 
         // 删除redis中存储的验证码
-//        redisService.delete(redisSixDigCodeKey);
         redisService.deleteSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, code);
         // 设置一个标志位 用来表示用户已经验证过验证码
         redisService.setVerifiedSigDigitCodeByMinutes(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());

@@ -143,7 +143,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void setVerifiedSigDigitCodeByMinutes(String scene, String username) {
         setTemporarilyByMinutes(
-                RedisKeyConstants.sixDigitCodeVerifyed(scene, username),
+                RedisKeyConstants.sixDigitCodeVerified(scene, username),
                 "true",
                 verifiedSixDigVerifyCodeExpireTimeMinutes
         );
@@ -151,13 +151,13 @@ public class RedisServiceImpl implements RedisService {
     // 判断是否已经通过数字验证码验证
     @Override
     public boolean verifyVerifiedSigDigitCode(String scene, String username) {
-        return hasKey(RedisKeyConstants.sixDigitCodeVerifyed(scene, username)) &&
-                "true".equals(get(RedisKeyConstants.sixDigitCodeVerifyed(scene, username)));
+        return hasKey(RedisKeyConstants.sixDigitCodeVerified(scene, username)) &&
+                "true".equals(get(RedisKeyConstants.sixDigitCodeVerified(scene, username)));
     }
     // 删除通过数字验证码验证的标志
     @Override
     public void deleteVerifiedSigDigitCode(String scene, String username) {
-        delete(RedisKeyConstants.sixDigitCodeVerifyed(scene, username));
+        delete(RedisKeyConstants.sixDigitCodeVerified(scene, username));
     }
 
     /**
