@@ -19,9 +19,6 @@ import java.util.UUID;
 @RequestMapping("/captcha")
 public class CaptchaController {
 
-//    @Autowired
-//    private StringRedisTemplate redisTemplate;
-
     @Autowired
     private RedisService redisService;
 
@@ -48,9 +45,7 @@ public class CaptchaController {
 
         // 存入 Redis（有效期 3 分钟）
         // "captcha:" + captchaId
-        //redisTemplate.opsForValue().set(RedisKeyConstants.captchaId(captchaId), captchaText, 3, TimeUnit.MINUTES);
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captcha(captchaId),
-                captchaText, captchaExpireTimeMinutes);
+        redisService.setCaptchaByMinutes(captchaId, captchaText);
 
         // 返回验证码图片 + captchaId
         Map<String, String> result = new HashMap<>();
@@ -68,25 +63,17 @@ public class CaptchaController {
         /**
          * 这里最好不要依赖于requestparam的参数 设置为非必须 自己检查并精细返回错误
          */
-        // String redisKey = "captcha:" + captchaId;
-        String redisKey = RedisKeyConstants.captcha(captchaId);
-        //String redisCaptchaText = redisTemplate.opsForValue().get(redisKey);
-        String redisCaptchaText = redisService.get(redisKey);
-        if (redisCaptchaText == null) {
-            return ResultResponse.error("Captcha expired");
-        }
-        if (!redisCaptchaText.equals(verCode.toLowerCase())) {
+        boolean res = redisService.verifyCaptcha(captchaId, verCode);
+        if (!res) {
             return ResultResponse.error("Captcha incorrect");
         }
 
         // 验证成功后删除验证码
-        //redisTemplate.delete(redisKey);
-        redisService.delete(redisKey);
-        // 存储验证码验证状态，设置 3 分钟有效期
-        // "captcha_verified:" + username
-        //redisTemplate.opsForValue().set(RedisKeyConstants.usernameCaptchaVerified(username), "true", 3, TimeUnit.MINUTES);
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaVerified(scene, username),
-                "true", captchaVerifiedExpireTimeMinutes);
+        redisService.deleteCaptcha(captchaId);
+        // 存储验证码验证状态，设置配置中的分钟数量为有效期
+        redisService.setVerifiedCaptchaByMinutes(scene, username);
+
+
         System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(scene, username));
         return ResultResponse.success("Captcha correct");
     }
@@ -100,8 +87,8 @@ public class CaptchaController {
     public ResponseEntity<ResultFormat> logout(@PathVariable String captchaId) {
 
         // "captcha:" + captchaId
-        //redisTemplate.delete(RedisKeyConstants.captchaId(captchaId));
-        redisService.delete(RedisKeyConstants.captcha(captchaId));
+        redisService.deleteCaptcha(captchaId);
+
         return ResultResponse.success("删除成功");
     }
 }

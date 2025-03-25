@@ -31,7 +31,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,26 +45,17 @@ public class AuthController {
     @Autowired
     private RedisService redisService;
 
-//    @Autowired
-//    private StringRedisTemplate redisTemplate;
-
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private MailClientUtil mailClient;
 
-    @Value("${jwt.accessTokenExpiredMillis}")
-    private long accessTokenExpireTimeMillis;
-
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
 
     @Value("${resetPassword.sixDigVerifyCodeExpireTimeMinutes}")
     private long resetPasswordSixDigVerifyCodeExpireTimeMinutes;
-
-    @Value("${resetPassword.verifiedSixDigVerifyCodeExpireTimeMinutes}")
-    private long verifiedSixDigVerifyCodeExpireTimeMinutes;
 
     /**
      * 验证是否通过验证 并登录
@@ -77,15 +67,16 @@ public class AuthController {
             @Validated({ValidationGroups.Login.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
 
         // 从 Redis 读取用户是否通过了验证码验证
-        // String redisValidateStatusKey = "captcha_verified:" + user.getUsername();
-        String redisValidateStatusKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
-        //String redisValidateStatus = redisTemplate.opsForValue().get(redisValidateStatusKey);
-        String redisValidateStatus = redisService.get(redisValidateStatusKey);
-
         // 检查验证码是否正确 防止用接口恶意登录
-        if (redisValidateStatus == null || !redisValidateStatus.equalsIgnoreCase("true")) {
+        boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
+        if (!res) {
             return ResultResponse.error(ResultCode.LOGIN_WITHOUT_CAPTCHA, "You have not passed the captcha verification");
         }
+
+        // 删除redis中存储的验证码
+//        redisService.delete(redisValidateStatusKey);
+        redisService.deleteVerifiedCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
+
 
         User loginUser = userService.getUserByName(userRegisterDTO.getUsername());
         if (loginUser == null) {
@@ -95,10 +86,6 @@ public class AuthController {
         if (!loginUser.getPassword().equals(passwd)) {
             return ResultResponse.error("Error password");
         }
-
-        // 删除redis中存储的验证码
-        //redisTemplate.delete(redisValidateStatusKey);
-        redisService.delete(redisValidateStatusKey);
 
         // 检查用户是否已经登录 如果已经登录 则删除之前的登录信息
         // 这样之前的用户无法刷新access token 除非重新登录
@@ -127,10 +114,7 @@ public class AuthController {
                 .toInstant()));
         // 存储到redis中
         // "access_token:" + loginUser.getId()
-//        redisTemplate.opsForValue().set(RedisKeyConstants.userIdAccessToken(loginUser.getId()),
-//                 accessToken, accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
-        redisService.set(RedisKeyConstants.userIdAccessToken(loginUser.getId()), accessToken,
-                accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
+        redisService.setUserAccessToken(loginUser.getId(), accessToken);
         // 存储到Sql中
         try {
             userTokenService.saveUserToken(userToken);
@@ -202,17 +186,13 @@ public class AuthController {
         if (userToken.getExpiresAt().getTime() < System.currentTimeMillis()) {
             // refreshToken过期 删除数据库中的 user_token 登录数据, 同一个用户不能重复登录
             userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
-            //redisTemplate.delete("access_token:" + userId);
-            redisService.delete(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)));
-//            System.out.println("Refresh token is expired");
+            redisService.deleteUserAccessToken(Long.parseLong(userId));
             return ResultResponse.error(HttpStatus.FORBIDDEN, ResultCode.REFRESHTOKEN_EXPIRED,"Refresh token is expired");
         }
 
         // 没有过期 生成新的AccessToken
         String newAccessToken = jwtUtil.generateAccessToken(userId);
-        //redisTemplate.opsForValue().set("access_token:" + userId, newAccessToken, accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
-        redisService.set(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)), newAccessToken,
-                accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
+        redisService.setUserAccessToken(Long.parseLong(userId), newAccessToken);
         userTokenService.updateAccessToken(Long.parseLong(userId), newAccessToken);
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("newAccessToken", newAccessToken);
@@ -231,15 +211,14 @@ public class AuthController {
         System.out.println("Forget Password: " + userForgetPasswordDTO.getUsername() + " " + userForgetPasswordDTO.getEmail());
 
         // 从 Redis 读取用户是否通过了验证码验证
-        String redisValidateStatusKey = RedisKeyConstants.captchaVerified(
-                RedisKeyConstants.FORGET_PASSWORD,
-                userForgetPasswordDTO.getUsername());
-        String redisValidateStatus = redisService.get(redisValidateStatusKey);
-
         // 检查验证码是否正确 防止用接口恶意登录
-        if (redisValidateStatus == null || !redisValidateStatus.equalsIgnoreCase("true")) {
+        boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
+        if (!res) {
             return ResultResponse.error(ResultCode.LOGIN_WITHOUT_CAPTCHA, "You have not passed the captcha verification");
         }
+
+        // 删除redis中存储的验证码
+        redisService.deleteVerifiedCaptcha(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
 
         User existUser = userService.getUserByName(userForgetPasswordDTO.getUsername());
         if (existUser == null) {
@@ -252,14 +231,12 @@ public class AuthController {
         // 生成六位数验证码
         String sixDigVerifyCode = VerificationUtil.generateSixNumVerifCode();
 
-
-
-        // 删除redis中存储的验证码
-        redisService.delete(redisValidateStatusKey);
-        redisService.setTemporarilyByMinutes(
-                RedisKeyConstants.usernameForgetPasswordSixDigitCode(userForgetPasswordDTO.getUsername()),
-                sixDigVerifyCode,
-                resetPasswordSixDigVerifyCodeExpireTimeMinutes);
+        // 存储到redis中
+        redisService.setSigDigitCodeByMinutes(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getUsername(),
+                sixDigVerifyCode
+        );
 
         String htmlContent = "<p>Your six-digit verification code is: " +
                 "<span style='color:red; font-size:20px; font-weight:bold'>" +
@@ -283,24 +260,20 @@ public class AuthController {
             @Validated @RequestBody UserForgetPasswordDTO userForgetPasswordDTO,
             @PathVariable("verify-code") String code) {
 
-        String redisSixDigCodeKey =
-                RedisKeyConstants.usernameForgetPasswordSixDigitCode(userForgetPasswordDTO.getUsername());
-        String redisSixDigCode = redisService.get(redisSixDigCodeKey);
-        if (redisSixDigCode == null) {
-            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_EXPIRED, "Verification code expired");
-        }
-        if (!redisSixDigCode.equalsIgnoreCase(code)) {
+        boolean res = redisService.verifySigDigitCode(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getUsername(),
+                code
+        );
+        if (!res) {
             return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_NOT_MATCH, "Verification code does not match");
         }
 
         // 删除redis中存储的验证码
-        redisService.delete(redisSixDigCodeKey);
+//        redisService.delete(redisSixDigCodeKey);
+        redisService.deleteSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, code);
         // 设置一个标志位 用来表示用户已经验证过验证码
-        redisService.setTemporarilyByMinutes(
-                RedisKeyConstants.usernameForgetPasswordSixDigitCodeVerifyed(userForgetPasswordDTO.getUsername()),
-                "true",
-                verifiedSixDigVerifyCodeExpireTimeMinutes
-        );
+        redisService.setVerifiedSigDigitCodeByMinutes(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         return ResultResponse.success("Verification code correct");
     }
 
@@ -309,34 +282,30 @@ public class AuthController {
             @Validated @RequestBody UserForgetPasswordResetDTO userForgetPasswordResetDTO
             ) {
 
-        String redisSixDigCodeVerifyedKey =
-                RedisKeyConstants.usernameForgetPasswordSixDigitCodeVerifyed(userForgetPasswordResetDTO.getUsername());
-        String redisSixDigCodeVerifyed = redisService.get(redisSixDigCodeVerifyedKey);
-        if (redisSixDigCodeVerifyed == null) {
-            return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_EXPIRED, "Verification code expired");
-        }
-        if (!redisSixDigCodeVerifyed.equalsIgnoreCase("true")) {
+        boolean res = redisService.verifyVerifiedSigDigitCode(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordResetDTO.getUsername()
+        );
+        if (!res) {
             return ResultResponse.error(ResultCode.SIX_DIGIT_CODE_NOT_MATCH, "Verification code does not match");
         }
+
+        // 删除redis中存储的验证码
+        redisService.deleteVerifiedSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordResetDTO.getUsername());
 
         User existUser = userService.getUserByName(userForgetPasswordResetDTO.getUsername());
         if (existUser == null) {
             return ResultResponse.error(ResultCode.USER_NOT_FOUND, "User does not exist");
         }
 
-        // 删除redis中存储的验证码
-        redisService.delete(redisSixDigCodeVerifyedKey);
-
         String salt = existUser.getSalt();
         String newPassword = EncryptedUtil.md5(userForgetPasswordResetDTO.getPassword() + salt);
-        Boolean res = userService.updatePassword(existUser.getId(), newPassword);
-        if (!res) {
+        boolean resu = userService.updatePassword(existUser.getId(), newPassword);
+        if (!resu) {
             return ResultResponse.error(ResultCode.SQL_UPDATING_ERROR, "Error updating password");
         }
 
         return ResultResponse.success("Password reset successfully");
     }
-
-
 
 }

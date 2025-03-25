@@ -30,8 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private RedisService redisService;
-//    @Autowired
-//    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -56,9 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
                 // 查询 Redis 中的 access token
-                //String redisToken = redisTemplate.opsForValue().get("access_token:" + userId);
-                String redisToken = redisService.get(RedisKeyConstants.userIdAccessToken(Long.parseLong(userId)));
-                if (redisToken != null && redisToken.equals(token)) {
+                boolean res = redisService.verifyUserAccessToken(Long.parseLong(userId), token);
+                if (res) {
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userId, null, null);
