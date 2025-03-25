@@ -15,7 +15,6 @@ public class User {
 //    id	int	NO	PRI		auto_increment
 //    username	varchar(50)	YES	MUL
 //    password	varchar(50)	YES
-//    salt	varchar(50)	YES
 //    email	varchar(100)	YES
 //    type	int	YES
 //    status	int	YES
@@ -29,8 +28,6 @@ public class User {
     private String username;
 
     private String password;
-
-    private String salt;
 
     private String email;
 

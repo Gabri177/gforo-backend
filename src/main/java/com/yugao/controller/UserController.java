@@ -12,6 +12,7 @@ import com.yugao.service.RedisService;
 import com.yugao.service.UserService;
 import com.yugao.util.EncryptedUtil;
 import com.yugao.util.MailClientUtil;
+import com.yugao.util.PasswordUtil;
 import com.yugao.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,20 +73,23 @@ public class UserController {
         }
 
         if (userChangePasswordDTO.getOldPassword().equals(userChangePasswordDTO.getNewPassword())) {
-            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "tow password is the same");
+            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "two password is the same");
         }
 
-        String oldPassword = EncryptedUtil.md5(userChangePasswordDTO.getOldPassword() + userDomain.getSalt());
-        String newPassword = EncryptedUtil.md5(userChangePasswordDTO.getNewPassword() + userDomain.getSalt());
-        if (!userDomain.getPassword().equals(oldPassword)) {
+//        String oldPassword = EncryptedUtil.md5(userChangePasswordDTO.getOldPassword() + userDomain.getSalt());
+//        String newPassword = EncryptedUtil.md5(userChangePasswordDTO.getNewPassword() + userDomain.getSalt());
+        String oldRawPassword = userChangePasswordDTO.getOldPassword();
+        String newRawPassword = userChangePasswordDTO.getNewPassword();
+        String currentPassword = userDomain.getPassword();
+        if (!PasswordUtil.matches(oldRawPassword, currentPassword)) {
             return ResultResponse.error(ResultCode.OLD_PASSWORD_INCORRECT, "old password is error");
         }
 
-        if (userDomain.getPassword().equals(newPassword)) {
+        if (PasswordUtil.matches(newRawPassword, currentPassword)) {
             return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "new password is the same as old password");
         }
 
-        userService.updatePassword(userId, newPassword);
+        userService.updatePassword(userId, PasswordUtil.encode(newRawPassword));
         return ResultResponse.success("password change success");
     }
 

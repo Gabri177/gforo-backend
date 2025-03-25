@@ -3,6 +3,7 @@ package com.yugao.converter;
 import com.yugao.domain.User;
 import com.yugao.dto.UserRegisterDTO;
 import com.yugao.util.EncryptedUtil;
+import com.yugao.util.PasswordUtil;
 import com.yugao.vo.UserInfoVO;
 
 import java.util.Date;
@@ -13,8 +14,7 @@ public class UserConverter {
     public static User toDomain(UserRegisterDTO userRegisterDTO) {
         User user = new User();
         user.setUsername(userRegisterDTO.getUsername());
-        user.setSalt(UUID.randomUUID().toString().substring(0, 5));
-        user.setPassword(EncryptedUtil.md5(userRegisterDTO.getPassword() + user.getSalt()));
+        user.setPassword(PasswordUtil.encode(userRegisterDTO.getPassword()));
         user.setEmail(userRegisterDTO.getEmail());
         user.setHeaderUrl(userRegisterDTO.getHeaderUrl());
         user.setType(0);

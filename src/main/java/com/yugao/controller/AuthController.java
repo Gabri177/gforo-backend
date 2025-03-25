@@ -13,10 +13,7 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.RedisService;
 import com.yugao.service.UserService;
 import com.yugao.service.UserTokenService;
-import com.yugao.util.EncryptedUtil;
-import com.yugao.util.JwtUtil;
-import com.yugao.util.MailClientUtil;
-import com.yugao.util.VerificationUtil;
+import com.yugao.util.*;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,17 +71,18 @@ public class AuthController {
         }
 
         // 删除redis中存储的验证码
-//        redisService.delete(redisValidateStatusKey);
         redisService.deleteVerifiedCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
-
 
         User loginUser = userService.getUserByName(userRegisterDTO.getUsername());
         if (loginUser == null) {
             return ResultResponse.error("User does not exist");
         }
-        String passwd = EncryptedUtil.md5(userRegisterDTO.getPassword() + loginUser.getSalt());
-        if (!loginUser.getPassword().equals(passwd)) {
-            return ResultResponse.error("Error password");
+//        String passwd = EncryptedUtil.md5(userRegisterDTO.getPassword() + loginUser.getSalt());
+//        if (!loginUser.getPassword().equals(passwd)) {
+//            return ResultResponse.error("Error password");
+//        }
+        if (!PasswordUtil.matches(userRegisterDTO.getPassword(), loginUser.getPassword())) {
+            return ResultResponse.error(ResultCode.PASSWORD_NOT_MATCH, "Error password");
         }
 
         // 检查用户是否已经登录 如果已经登录 则删除之前的登录信息
@@ -298,8 +296,9 @@ public class AuthController {
             return ResultResponse.error(ResultCode.USER_NOT_FOUND, "User does not exist");
         }
 
-        String salt = existUser.getSalt();
-        String newPassword = EncryptedUtil.md5(userForgetPasswordResetDTO.getPassword() + salt);
+//        String salt = existUser.getSalt();
+//        String newPassword = EncryptedUtil.md5(userForgetPasswordResetDTO.getPassword() + salt);
+        String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean resu = userService.updatePassword(existUser.getId(), newPassword);
         if (!resu) {
             return ResultResponse.error(ResultCode.SQL_UPDATING_ERROR, "Error updating password");
