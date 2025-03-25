@@ -12,8 +12,8 @@ public class RedisServiceTest {
 
     @Test
     public void test() {
-        redisService.set("test", "test");
-        System.out.println(redisService.get("test"));
+//        redisService.set("test", "test");
+//        System.out.println(redisService.get("test"));
     }
 
 }

@@ -1,19 +1,7 @@
 package com.yugao.service;
 
 
-import java.util.concurrent.TimeUnit;
-
 public interface RedisService {
-
-    void set(String key, String value);
-
-    void set(String key, String value, long timeout, TimeUnit unit);
-
-    String get(String key);
-
-    void delete(String key);
-
-    void setTemporarilyByMinutes(String key, String value, long timeoutByMinutes);
 
     // 给验证码设置过期时间
     void setCaptchaByMinutes(String captchaId, String captchaText);
@@ -59,5 +47,14 @@ public interface RedisService {
 
     // 删除通过数字验证码验证的标志
     void deleteVerifiedSigDigitCode(String scene, String username);
+
+    // 设置邮箱激活间隔时间
+    void setEmailActivationIntervalByMinutes(String email);
+
+    // 检查邮箱是否设置了激活间隔时间
+    boolean verifyEmailActivationInterval(String email);
+
+    // 删除邮箱激活间隔时间
+    void deleteEmailActivationInterval(String email);
 }
 

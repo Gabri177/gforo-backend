@@ -28,10 +28,6 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
-
-//    @Autowired
-//    private StringRedisTemplate redisTemplate;
-
     @Autowired
     private RedisService redisService;
 
@@ -45,15 +41,18 @@ public class RegisterController {
             @Validated({ValidationGroups.Register.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
 
         // 检查验证码是否正确
-        String redisKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
-        //String redisCaptchaStatus = redisTemplate.opsForValue().get(redisKey);
-        String redisCaptchaStatus = redisService.get(redisKey);
-        if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {
-            return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Illegal registration");
-        }
-        //redisTemplate.delete(redisKey);
-        redisService.delete(redisKey);
+//        String redisKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
+//        String redisCaptchaStatus = redisService.get(redisKey);
+//        if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {
+//            return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Illegal registration");
+//        }
 
+        boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
+        if (!res) {
+            return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA,"You have not passed the captcha verification");
+        }
+//        redisService.delete(redisKey);
+        redisService.deleteCaptcha(RedisKeyConstants.REGISTER);
         // 直接加入数据库 但是账户是没有验证的状态
         User userDomain = UserConverter.toDomain(userRegisterDTO);
 

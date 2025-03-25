@@ -16,8 +16,6 @@ public final class RedisKeyConstants {
     // 数字验证码相关
     private static final String SIX_DIGIT_CODE = "six_digit_code:";
     private static final String SIX_DIGIT_CODE_VERIFYED = "six_digit_code_verify:";
-    private static final String FORGET_PASSWORD_SIX_DIGIT_CODE = "forget_password_six_digit_code:";
-    private static final String FORGET_PASSWORD_SIX_DIGIT_CODE_VERIFYED = "forget_password_six_digit_code_verify:";
 
     // 访问令牌 (Access Token) 相关
     private static final String ACCESS_TOKEN = "access_token:";
@@ -47,10 +45,8 @@ public final class RedisKeyConstants {
         return SIX_DIGIT_CODE_VERIFYED + scene + username;
     }
 
-    public static String emailRequestAccountActivationEmail(String email) {
+    public static String emailActivationInterval(String email) {
         return REQUEST_ACCOUNT_ACTIVATION_EMAIL + email;
     }
-
-
 
 }

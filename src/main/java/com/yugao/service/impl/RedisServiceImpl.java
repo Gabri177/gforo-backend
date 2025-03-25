@@ -30,18 +30,21 @@ public class RedisServiceImpl implements RedisService {
     @Value("${resetPassword.verifiedSixDigVerifyCodeExpireTimeMinutes}")
     private long verifiedSixDigVerifyCodeExpireTimeMinutes;
 
+    @Value("${email.active-account.request-expire-time-minutes}")
+    private Long emailRequestTimeInterval;
+
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    public void set(String key, String value) {
+    private void set(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
     }
 
-    public String get(String key) {
+    private String get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void set(String key, String value, long timeout, TimeUnit unit) {
+    private void set(String key, String value, long timeout, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, value, timeout, unit);
     }
 
@@ -49,14 +52,12 @@ public class RedisServiceImpl implements RedisService {
         return redisTemplate.hasKey(key);
     }
 
-    @Override
-    public void delete(String key) {
+    private void delete(String key) {
         redisTemplate.delete(key);
     }
 
 
-    @Override
-    public void setTemporarilyByMinutes(String key, String value, long timeoutByMinutes) {
+    private void setTemporarilyByMinutes(String key, String value, long timeoutByMinutes) {
         redisTemplate.opsForValue().set(key, value, timeoutByMinutes, TimeUnit.MINUTES);
     }
 
@@ -92,23 +93,34 @@ public class RedisServiceImpl implements RedisService {
         delete(RedisKeyConstants.captchaVerified(scene, username));
     }
 
+    /**
+     * 访问令牌相关业务逻辑
+     */
+    // 设置用户访问令牌
     @Override
     public void setUserAccessToken(Long userId, String accessToken) {
         set(RedisKeyConstants.userIdAccessToken(userId), accessToken,
                 accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
     }
-
+    // 删除用户访问令牌
     @Override
     public void deleteUserAccessToken(Long userId) {
         delete(RedisKeyConstants.userIdAccessToken(userId));
     }
-
+    // 验证用户访问令牌
     @Override
     public boolean verifyUserAccessToken(Long userId, String accessToken){
         String redisAccessToken = get(RedisKeyConstants.userIdAccessToken(userId));
         return accessToken != null && accessToken.equals(redisAccessToken);
     }
 
+    /**
+     * 数字验证码相关业务逻辑
+     * @param scene 场景
+     * @param username 用户名
+     * @param sixDigitCode 六位数字验证码
+     */
+    // 设置数字验证码过期时间
     @Override
     public void setSigDigitCodeByMinutes(String scene, String username, String sixDigitCode) {
         setTemporarilyByMinutes(
@@ -116,18 +128,18 @@ public class RedisServiceImpl implements RedisService {
                 sixDigitCode,
                 resetPasswordSixDigVerifyCodeExpireTimeMinutes);
     }
-
+    // 判断是否通过数字验证码验证
     @Override
     public boolean verifySigDigitCode(String scene, String username, String sixDigitCode) {
         String redisSixDigitCode = get(RedisKeyConstants.sixDigitCode(scene, username));
         return sixDigitCode != null && sixDigitCode.equals(redisSixDigitCode);
     }
-
+    // 删除数字验证码
     @Override
     public void deleteSigDigitCode(String scene, String username) {
         delete(RedisKeyConstants.sixDigitCode(scene, username));
     }
-
+    // 设置通过数字验证码验证的标志过期时间
     @Override
     public void setVerifiedSigDigitCodeByMinutes(String scene, String username) {
         setTemporarilyByMinutes(
@@ -136,23 +148,39 @@ public class RedisServiceImpl implements RedisService {
                 verifiedSixDigVerifyCodeExpireTimeMinutes
         );
     }
-
+    // 判断是否已经通过数字验证码验证
     @Override
     public boolean verifyVerifiedSigDigitCode(String scene, String username) {
         return hasKey(RedisKeyConstants.sixDigitCodeVerifyed(scene, username)) &&
                 "true".equals(get(RedisKeyConstants.sixDigitCodeVerifyed(scene, username)));
     }
-
+    // 删除通过数字验证码验证的标志
     @Override
     public void deleteVerifiedSigDigitCode(String scene, String username) {
         delete(RedisKeyConstants.sixDigitCodeVerifyed(scene, username));
     }
 
+    /**
+     * 邮箱激活相关业务逻辑
+     */
+    // 设置邮箱激活请求的过期时间
+    @Override
+    public void setEmailActivationIntervalByMinutes(String email) {
+        setTemporarilyByMinutes(
+                RedisKeyConstants.emailActivationInterval(email),
+                "true",
+                emailRequestTimeInterval);
+    }
+    // 判断请求激活的时间标志是否过期
+    @Override
+    public boolean verifyEmailActivationInterval(String email) {
+        return hasKey(RedisKeyConstants.emailActivationInterval(email)) &&
+                "true".equals(get(RedisKeyConstants.emailActivationInterval(email)));
+    }
+    // 删除邮箱激活请求的时间标志
+    @Override
+    public void deleteEmailActivationInterval(String email) {
+        delete(RedisKeyConstants.emailActivationInterval(email));
+    }
 
-//    public void setEmailActivationIntervalBy(){
-//        setTemporarilyByMinutes(
-//                RedisKeyConstants.usernameForgetPasswordSixDigitCode(userForgetPasswordDTO.getUsername()),
-//                sixDigVerifyCode,
-//                resetPasswordSixDigVerifyCodeExpireTimeMinutes);
-//    }
 }

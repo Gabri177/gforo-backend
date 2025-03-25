@@ -24,6 +24,7 @@ public class ResultCode {
     public static final int NEW_PASSWORD_SAME = 40011;
     public static final int OLD_PASSWORD_INCORRECT = 40012;
     public static final int TOO_SHORT_INTERVAL = 40013;
+    public static final int NO_PASS_THE_CAPTCHA = 40014;
 
     public static final int SYSTEM_EXCEPTION = 50000;
 
