@@ -1,16 +1,15 @@
 package com.yugao.controller;
 
-import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
 import com.yugao.dto.UserChangePasswordDTO;
+import com.yugao.dto.UserInfoUpdateDTO;
 import com.yugao.dto.UserVerifyEmailDTO;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.RedisService;
 import com.yugao.service.UserService;
-import com.yugao.util.EncryptedUtil;
 import com.yugao.util.MailClientUtil;
 import com.yugao.util.PasswordUtil;
 import com.yugao.vo.UserInfoVO;
@@ -37,9 +36,6 @@ public class UserController {
 
     @Value("${frontend.url}")
     private String frontend_api;
-
-    @Value("${email.active-account.request-expire-time-minutes}")
-    private Long emailRequestTimeInterval;
 
     @GetMapping("/info")
     public ResponseEntity<ResultFormat> getUserInfo(@RequestHeader("Authorization") String token) {
@@ -76,8 +72,6 @@ public class UserController {
             return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "two password is the same");
         }
 
-//        String oldPassword = EncryptedUtil.md5(userChangePasswordDTO.getOldPassword() + userDomain.getSalt());
-//        String newPassword = EncryptedUtil.md5(userChangePasswordDTO.getNewPassword() + userDomain.getSalt());
         String oldRawPassword = userChangePasswordDTO.getOldPassword();
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         String currentPassword = userDomain.getPassword();
@@ -94,7 +88,8 @@ public class UserController {
     }
 
     @PutMapping("/info")
-    public ResponseEntity<ResultFormat> updateUserInfo(@RequestBody UserInfoVO userInfoVO) {
+    public ResponseEntity<ResultFormat> updateUserInfo(
+            @Validated @RequestBody UserInfoUpdateDTO userInfoUpdateDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = Long.parseLong(authentication.getPrincipal().toString());
@@ -105,11 +100,7 @@ public class UserController {
             return ResultResponse.error(ResultCode.USER_NOT_FOUND, "user not found");
         }
 
-        userDomain.setUsername(userInfoVO.getUsername());
-        userDomain.setBio(userInfoVO.getBio());
-        userDomain.setHeaderUrl(userInfoVO.getHeaderUrl());
-
-        userService.updateUser(userDomain);
+        userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO);
 
         return ResultResponse.success("userinfo update success");
     }
