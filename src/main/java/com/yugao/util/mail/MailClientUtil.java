@@ -1,4 +1,4 @@
-package com.yugao.util;
+package com.yugao.util.mail;
 
 
 import jakarta.mail.internet.MimeMessage;

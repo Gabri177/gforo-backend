@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.util.ErrorParseUtil;
+import com.yugao.util.common.ErrorParseUtil;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;

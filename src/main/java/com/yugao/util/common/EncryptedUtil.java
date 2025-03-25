@@ -1,6 +1,5 @@
-package com.yugao.util;
+package com.yugao.util.common;
 
-import org.springframework.util.DigestUtils;
 import java.util.UUID;
 
 public class EncryptedUtil {

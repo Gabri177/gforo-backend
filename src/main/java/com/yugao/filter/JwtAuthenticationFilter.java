@@ -5,7 +5,7 @@ import com.yugao.constants.SecurityWhiteListConstants;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.base.RedisService;
-import com.yugao.util.JwtUtil;
+import com.yugao.util.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

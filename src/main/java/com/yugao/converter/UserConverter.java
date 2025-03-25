@@ -2,12 +2,11 @@ package com.yugao.converter;
 
 import com.yugao.domain.User;
 import com.yugao.dto.UserRegisterDTO;
-import com.yugao.util.EncryptedUtil;
-import com.yugao.util.PasswordUtil;
+import com.yugao.util.common.EncryptedUtil;
+import com.yugao.util.security.PasswordUtil;
 import com.yugao.vo.UserInfoVO;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class UserConverter {
 

@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.post;
 
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;

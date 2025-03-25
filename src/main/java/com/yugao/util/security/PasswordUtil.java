@@ -1,4 +1,4 @@
-package com.yugao.util;
+package com.yugao.util.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

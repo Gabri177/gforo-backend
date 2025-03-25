@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.captcha;
 
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;

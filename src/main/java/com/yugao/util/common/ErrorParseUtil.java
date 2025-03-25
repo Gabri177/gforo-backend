@@ -1,4 +1,4 @@
-package com.yugao.util;
+package com.yugao.util.common;
 
 import java.util.HashMap;
 import java.util.Map;

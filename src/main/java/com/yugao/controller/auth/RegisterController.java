@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.auth;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;

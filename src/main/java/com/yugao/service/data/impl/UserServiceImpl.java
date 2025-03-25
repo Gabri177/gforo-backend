@@ -8,7 +8,7 @@ import com.yugao.dto.UserInfoUpdateDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
 import com.yugao.service.data.UserService;
-import com.yugao.util.EncryptedUtil;
+import com.yugao.util.common.EncryptedUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

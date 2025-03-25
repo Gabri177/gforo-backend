@@ -1,4 +1,4 @@
-package com.yugao.util;
+package com.yugao.util.security;
 
 import com.yugao.exception.BusinessException;
 import io.jsonwebtoken.ExpiredJwtException;

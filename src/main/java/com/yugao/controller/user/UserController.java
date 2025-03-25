@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.user;
 
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
@@ -10,8 +10,8 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
-import com.yugao.util.MailClientUtil;
-import com.yugao.util.PasswordUtil;
+import com.yugao.util.mail.MailClientUtil;
+import com.yugao.util.security.PasswordUtil;
 import com.yugao.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

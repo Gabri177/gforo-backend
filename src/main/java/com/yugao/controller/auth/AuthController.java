@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.auth;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
@@ -13,7 +13,10 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.data.UserTokenService;
-import com.yugao.util.*;
+import com.yugao.util.captcha.VerificationUtil;
+import com.yugao.util.mail.MailClientUtil;
+import com.yugao.util.security.JwtUtil;
+import com.yugao.util.security.PasswordUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

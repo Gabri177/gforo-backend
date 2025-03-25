@@ -1,4 +1,4 @@
-package com.yugao.controller;
+package com.yugao.controller.system;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yugao.domain.DiscussPost;
