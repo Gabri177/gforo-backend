@@ -61,10 +61,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 }
-                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCode.ACCESSTOKEN_EXPIRED, "Access token expired");
+                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCode.ACCESSTOKEN_EXPIRED);
                 return ;
             }
-            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCode.ACCESSTOKEN_UNAUTHORIZED,"Unauthorized");
+            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCode.ACCESSTOKEN_UNAUTHORIZED);
             return ;
         }
         filterChain.doFilter(request, response);
@@ -74,19 +74,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * 统一返回 JSON 格式的错误信息
      */
-    private void sendJsonErrorResponse(HttpServletResponse response, int code, int errorCode, String message) throws IOException {
+    private void sendJsonErrorResponse(HttpServletResponse response, int code, ResultCode errorCode) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(code);
-        ResultFormat errorResponse = ResultFormat.error(errorCode, message);
+        ResultFormat errorResponse = ResultFormat.error(errorCode);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         response.getWriter().flush();
     }
 
-    private void sendJsonSuccessResponse(HttpServletResponse response, Object data, String message) throws IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpStatus.OK.value());
-        ResultFormat successResponse = ResultFormat.success(data, message);
-        response.getWriter().write(objectMapper.writeValueAsString(successResponse));
-        response.getWriter().flush();
-    }
+//    private void sendJsonSuccessResponse(HttpServletResponse response, Object data, String message) throws IOException {
+//        response.setContentType("application/json;charset=UTF-8");
+//        response.setStatus(HttpStatus.OK.value());
+//        ResultFormat successResponse = ResultFormat.success(data, message);
+//        response.getWriter().write(objectMapper.writeValueAsString(successResponse));
+//        response.getWriter().flush();
+//    }
 }

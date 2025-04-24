@@ -1,45 +1,67 @@
 package com.yugao.result;
 
-public class ResultCode {
+public enum ResultCode {
 
-    public static final int SUCCESS = 20000;
+    // 成功
+    SUCCESS(20000, "Success"),
 
-    /**
-     * 40000~49999 为业务异常错误码
-     */
-    // 默认业务异常
-    public static final int BUSINESS_EXCEPTION = 40000;
-    // Auth
-    public static final int LOGOUT_WITHOUT_LOGIN = 40001;
-    public static final int LOGIN_WITHOUT_CAPTCHA = 40002;
-    // User
-    public static final int USER_NOT_FOUND = 40003;
-    public static final int EMAIL_NOT_MATCH = 40004;
-    public static final int SIX_DIGIT_CODE_NOT_MATCH = 40005;
-    public static final int SIX_DIGIT_CODE_EXPIRED = 40006;
-    public static final int SQL_UPDATING_ERROR = 40007;
-    public static final int USER_ALREADY_VERIFIED = 40008;
-    public static final int USER_INFO_INVALID = 40009;
-    public static final int EMAIL_ALREADY_VERIFIED = 40010;
-    public static final int NEW_PASSWORD_SAME = 40011;
-    public static final int OLD_PASSWORD_INCORRECT = 40012;
-    public static final int TOO_SHORT_INTERVAL = 40013;
-    public static final int NO_PASS_THE_CAPTCHA = 40014;
-    public static final int PASSWORD_NOT_MATCH = 40015;
+    // 业务异常 40000~49999
+    BUSINESS_EXCEPTION(40000, "Business Error Unknown"),
+    LOGOUT_WITHOUT_LOGIN(40001, "Logout without login"),
+    LOGIN_WITHOUT_CAPTCHA(40002, "Login without passing captcha"),
+    USER_NOT_FOUND(40003, "User not found"),
+    EMAIL_NOT_MATCH(40004, "Email not match"),
+    SIX_DIGIT_CODE_NOT_MATCH(40005, "Six-digit code does not match"),
+    SIX_DIGIT_CODE_EXPIRED(40006, "Six-digit code expired"),
+    SQL_EXCEPTION(40007, "SQL error"),
+    SQL_UPDATING_ERROR(40008, "SQL updating error"),
+    USER_ALREADY_VERIFIED(40009, "User already verified"),
+    USER_INFO_INVALID(400010, "User info invalid"),
+    EMAIL_ALREADY_VERIFIED(40011, "Email already verified"),
+    NEW_PASSWORD_SAME(40012, "New password cannot be same as old"),
+    OLD_PASSWORD_INCORRECT(40013, "Old password incorrect"),
+    TOO_SHORT_INTERVAL(40014, "Operation interval too short"),
+    NO_PASS_THE_CAPTCHA(40015, "Captcha not passed"),
+    PASSWORD_NOT_MATCH(40016, "Password does not match"),
+    SQL_TRANSACTION_ERROR(40017, "SQL transaction error"),
+    INPUT_FORMAT_ERROR(40018, "Input format error"),
+    CAPTCHA_VERIFIED_ERROR(40019, "Captcha verified error"),
 
-    public static final int SYSTEM_EXCEPTION = 50000;
+    // 系统异常
+    SYSTEM_EXCEPTION(50000, "System Exception"),
 
-    public static final int UNKNOW_EXCEPTION = 60000;
+    // 未知异常
+    UNKNOWN_EXCEPTION(60000, "Unknown Exception"),
 
+    // 权限相关 70000~79999
+    TOKEN_INVALID(70000, "Token invalid"),
+    ACCESSTOKEN_UNAUTHORIZED(70001, "Access token unauthorized"),
+    ACCESSTOKEN_EXPIRED(70002, "Access token expired"),
+    REFRESHTOKEN_UNAUTHORIZED(70003, "Refresh token unauthorized"),
+    REFRESHTOKEN_EXPIRED(70004, "Refresh token expired");
 
-    /**
-     * 70000~79999 为用户权限相关错误码
-     */
-    // AuthController JwtAuthenticationFilter RegisterController
-    public static final int TOKEN_INVALID = 70000;
-    public static final int ACCESSTOKEN_UNAUTHORIZED = 70001;
-    public static final int ACCESSTOKEN_EXPIRED = 70002;
-    public static final int REFRESHTOKEN_UNAUTHORIZED = 70003;
-    public static final int REFRESHTOKEN_EXPIRED = 70004;
+    private final int code;
+    private final String message;
 
+    ResultCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public int code() {
+        return code;
+    }
+
+    public String message() {
+        return message;
+    }
+
+    public static ResultCode fromCode(int code) {
+        for (ResultCode value : ResultCode.values()) {
+            if (value.code == code) {
+                return value;
+            }
+        }
+        return UNKNOWN_EXCEPTION;
+    }
 }

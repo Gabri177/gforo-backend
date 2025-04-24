@@ -46,7 +46,7 @@ public class RegisterController {
 
         boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
         if (!res) {
-            return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA,"You have not passed the captcha verification");
+            return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA);
         }
 //        redisService.delete(redisKey);
         redisService.deleteCaptcha(RedisKeyConstants.REGISTER);

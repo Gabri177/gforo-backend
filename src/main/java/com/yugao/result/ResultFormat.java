@@ -14,31 +14,18 @@ public class ResultFormat {
     public ResultFormat() {
     }
 
-    public ResultFormat(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public ResultFormat(int code, String message, Object data) {
-        this.code = code;
-        this.message = message;
+    public ResultFormat(ResultCode resultCode, Object data) {
+        this.code = resultCode.code();
+        this.message = resultCode.message();
         this.data = data;
     }
 
     // default success resultformat constructor
     public static ResultFormat success(Object data) {
-        return new ResultFormat(ResultCode.SUCCESS, "Success", data);
+        return new ResultFormat(ResultCode.SUCCESS, data);
     }
 
-    public static ResultFormat success(Object data, String message) {
-        return new ResultFormat(ResultCode.SUCCESS, message, data);
-    }
-
-    public static ResultFormat error(int code, String message) {
-        return new ResultFormat(code, message);
-    }
-
-    public static ResultFormat error(int code, Object data , String message) {
-        return new ResultFormat(code, message, data);
+    public static ResultFormat error(ResultCode resultCode) {
+        return new ResultFormat(resultCode, null);
     }
 }

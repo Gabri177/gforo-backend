@@ -46,11 +46,11 @@ public class UserController {
         User userDomain = userService.getUserById(userId);
 
         if (userDomain == null) {
-            return ResultResponse.error(ResultCode.USER_NOT_FOUND, "user not found");
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND);
         }
 
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
-        return ResultResponse.success(userInfoVO, "userinfo get success");
+        return ResultResponse.success(userInfoVO);
     }
 
     @PutMapping ("/change-password")
@@ -65,22 +65,22 @@ public class UserController {
         User userDomain = userService.getUserById(userId);
 
         if (userDomain == null) {
-            return ResultResponse.error(ResultCode.USER_NOT_FOUND, "user not found");
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND);
         }
 
         if (userChangePasswordDTO.getOldPassword().equals(userChangePasswordDTO.getNewPassword())) {
-            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "two password is the same");
+            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME);
         }
 
         String oldRawPassword = userChangePasswordDTO.getOldPassword();
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         String currentPassword = userDomain.getPassword();
         if (!PasswordUtil.matches(oldRawPassword, currentPassword)) {
-            return ResultResponse.error(ResultCode.OLD_PASSWORD_INCORRECT, "old password is error");
+            return ResultResponse.error(ResultCode.OLD_PASSWORD_INCORRECT);
         }
 
         if (PasswordUtil.matches(newRawPassword, currentPassword)) {
-            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME, "new password is the same as old password");
+            return ResultResponse.error(ResultCode.NEW_PASSWORD_SAME);
         }
 
         userService.updatePassword(userId, PasswordUtil.encode(newRawPassword));
@@ -97,7 +97,7 @@ public class UserController {
         User userDomain = userService.getUserById(userId);
 
         if (userDomain == null) {
-            return ResultResponse.error(ResultCode.USER_NOT_FOUND, "user not found");
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND);
         }
 
         userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO);
@@ -119,26 +119,26 @@ public class UserController {
         Long userId = Long.parseLong(authentication.getPrincipal().toString());
 
         if (!userId.equals(userVerifyEmailDTO.getId())) {
-            return ResultResponse.error(ResultCode.USER_INFO_INVALID,"You can't request email verification for other user");
+            return ResultResponse.error(ResultCode.USER_INFO_INVALID);
         }
 
         boolean res = redisService.verifyEmailActivationInterval(userVerifyEmailDTO.getEmail());
         if (res) {
-            return ResultResponse.error(ResultCode.TOO_SHORT_INTERVAL,"You can't request email verification again in a short time");
+            return ResultResponse.error(ResultCode.TOO_SHORT_INTERVAL);
         }
         redisService.deleteEmailActivationInterval(userVerifyEmailDTO.getEmail());
 
         System.out.println("Verifying email: " + userVerifyEmailDTO);
         User existUser = userService.getUserById(userVerifyEmailDTO.getId());
         if (existUser == null) {
-            return ResultResponse.error(ResultCode.USER_NOT_FOUND,"User not found");
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND);
         }
         if (!existUser.getUsername().equals(userVerifyEmailDTO.getUsername()) ||
                 !existUser.getEmail().equals(userVerifyEmailDTO.getEmail())) {
-            return ResultResponse.error(ResultCode.USER_INFO_INVALID,"Invalid user information");
+            return ResultResponse.error(ResultCode.USER_INFO_INVALID);
         }
         if (existUser.getStatus() == 1) {
-            return ResultResponse.error(ResultCode.USER_ALREADY_VERIFIED,"Email already verified");
+            return ResultResponse.error(ResultCode.USER_ALREADY_VERIFIED);
         }
 
         redisService.setEmailActivationIntervalByMinutes(userVerifyEmailDTO.getEmail());
@@ -180,20 +180,20 @@ public class UserController {
         Long currentUserId = Long.parseLong(authentication.getPrincipal().toString());
 
         if (token == null || userId == null)
-            return ResultResponse.error(ResultCode.TOKEN_INVALID,"Invalid token");
+            return ResultResponse.error(ResultCode.TOKEN_INVALID);
         if (!userId.equals(currentUserId.toString()))
-            return ResultResponse.error(ResultCode.TOKEN_INVALID,"Invalid token");
+            return ResultResponse.error(ResultCode.TOKEN_INVALID);
         User user = userService.getUserById(Long.parseLong(userId));
         if (user == null)
-            return ResultResponse.error(ResultCode.USER_NOT_FOUND,"User not found");
+            return ResultResponse.error(ResultCode.USER_NOT_FOUND);
         if (user.getStatus() == 1)
-            return ResultResponse.error(ResultCode.EMAIL_ALREADY_VERIFIED,"Email already verified");
+            return ResultResponse.error(ResultCode.EMAIL_ALREADY_VERIFIED);
 
         System.out.println("Verifying email with token: " + token);
         System.out.println("User id: " + userId);
         if (!token.equals(user.getActivationCode())){
             System.out.println("Invalid token");
-            return ResultResponse.error(ResultCode.TOKEN_INVALID,"Invalid token");
+            return ResultResponse.error(ResultCode.TOKEN_INVALID);
         } else {
             System.out.println("Email verified");
             userService.updateStatus(user.getId(), 1);

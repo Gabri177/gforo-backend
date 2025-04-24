@@ -28,17 +28,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ResultFormat> handleBusinessException(BusinessException e) {
         System.out.println("BusinessException: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION,
-                        e.getMessage() != null ? e.getMessage() : "Bussiness error"));
+        return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION);
     }
     // 系统异常处理
     @ExceptionHandler(SystemException.class)
     public ResponseEntity<ResultFormat> handleSystemException(Exception e) {
         System.out.println("SystemException: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.SYSTEM_EXCEPTION,
-                        e.getMessage() != null ? e.getMessage() : "System error"));
+        return ResultResponse.error(ResultCode.SYSTEM_EXCEPTION);
     }
 
     // SQL异常处理
@@ -56,16 +52,14 @@ public class GlobalExceptionHandler {
         // 解析错误信息 修改错误信息需要修改ErrorParse类
         String message = ErrorParseUtil.parseDuplicateEntryMessage(e.getMessage());
         System.out.println("SQLException: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, message));
+        return ResultResponse.error(ResultCode.SQL_EXCEPTION);
     }
 
     // 事务异常处理
     @ExceptionHandler({TransactionSystemException.class, UnexpectedRollbackException.class})
     public ResponseEntity<ResultFormat> handleTransactionException(Exception e) {
         System.out.println("TransactionException: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.BUSINESS_EXCEPTION, "Transaction error occurred"));
+        return ResultResponse.error(ResultCode.SQL_TRANSACTION_ERROR);
     }
 
     // 未知异常处理
@@ -73,8 +67,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultFormat> handleException(Exception e) {
         System.out.println("UnknownException: " + e.getMessage());
         System.out.println(e.getClass());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(ResultCode.SYSTEM_EXCEPTION, "Unknown error"));
+        return ResultResponse.error(ResultCode.UNKNOWN_EXCEPTION);
     }
 
     // 参数校验异常处理
@@ -86,7 +79,7 @@ public class GlobalExceptionHandler {
                 errmsgs.put(error.getField(), error.getDefaultMessage())
         );
         String msg = errmsgs.toString();
-        return ResultResponse.error(errmsgs, "Please check your input format!");
+        return ResultResponse.error(ResultCode.INPUT_FORMAT_ERROR);
     }
 
 

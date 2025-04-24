@@ -3,6 +3,7 @@ package com.yugao.controller.captcha;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
@@ -65,7 +66,7 @@ public class CaptchaController {
          */
         boolean res = redisService.verifyCaptcha(captchaId, verCode);
         if (!res) {
-            return ResultResponse.error("Captcha incorrect");
+            return ResultResponse.error(ResultCode.CAPTCHA_VERIFIED_ERROR);
         }
 
         // 验证成功后删除验证码
