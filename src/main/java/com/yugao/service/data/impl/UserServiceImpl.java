@@ -7,6 +7,7 @@ import com.yugao.domain.User;
 import com.yugao.dto.UserInfoUpdateDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
+import com.yugao.result.ResultCode;
 import com.yugao.service.data.UserService;
 import com.yugao.util.common.EncryptedUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService {
         // 查询当前用户
         User user = getUserById(id);
         if (user == null) {
-            throw new BusinessException("User not found");
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 更新基本字段

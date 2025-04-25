@@ -1,20 +1,22 @@
 package com.yugao.exception;
 
+import com.yugao.result.ResultCode;
+
 public class SystemException extends RuntimeException {
 
-    public SystemException() {
-        super();
+    private final ResultCode resultCode;
+
+    public SystemException(){
+        super(ResultCode.SYSTEM_EXCEPTION.getMessage());
+        this.resultCode = ResultCode.SYSTEM_EXCEPTION;
     }
 
-    public SystemException(String message) {
-        super(message);
+    public SystemException(ResultCode resultCode) {
+        super(resultCode.getMessage());
+        this.resultCode = resultCode;
     }
 
-    public SystemException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SystemException(Throwable cause) {
-        super(cause);
+    public ResultCode getResultCode() {
+        return resultCode;
     }
 }

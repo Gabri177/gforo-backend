@@ -82,11 +82,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.getWriter().flush();
     }
 
-//    private void sendJsonSuccessResponse(HttpServletResponse response, Object data, String message) throws IOException {
-//        response.setContentType("application/json;charset=UTF-8");
-//        response.setStatus(HttpStatus.OK.value());
-//        ResultFormat successResponse = ResultFormat.success(data, message);
-//        response.getWriter().write(objectMapper.writeValueAsString(successResponse));
-//        response.getWriter().flush();
-//    }
 }

@@ -1,21 +1,11 @@
 package com.yugao.controller.captcha;
 
-import com.wf.captcha.SpecCaptcha;
-import com.wf.captcha.base.Captcha;
-import com.yugao.constants.RedisKeyConstants;
-import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
-import com.yugao.result.ResultResponse;
-import com.yugao.service.base.RedisService;
 import com.yugao.service.business.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/captcha")

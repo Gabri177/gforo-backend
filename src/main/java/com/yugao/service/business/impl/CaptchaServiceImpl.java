@@ -23,12 +23,6 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Autowired
     private RedisService redisService;
 
-    @Value("${captcha.expire-time-minutes}")
-    private Long captchaExpireTimeMinutes;
-
-    @Value("${captcha.verified-expire-time-minutes}")
-    private Long captchaVerifiedExpireTimeMinutes;
-
     @Override
     public ResponseEntity<ResultFormat> generateCaptcha() {
         // 生成验证码

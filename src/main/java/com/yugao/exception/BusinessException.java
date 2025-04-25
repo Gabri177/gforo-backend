@@ -1,20 +1,23 @@
 package com.yugao.exception;
 
+import com.yugao.result.ResultCode;
+
 public class BusinessException extends RuntimeException {
 
+    private final ResultCode resultCode;
+
     public BusinessException() {
-        super();
+        super(ResultCode.BUSINESS_EXCEPTION.getMessage());
+        this.resultCode = ResultCode.BUSINESS_EXCEPTION;
     }
 
-    public BusinessException(String message) {
-        super(message);
+    public BusinessException(ResultCode resultCode) {
+        super(resultCode.getMessage());
+        this.resultCode = resultCode;
     }
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public BusinessException(Throwable cause) {
-        super(cause);
+    public ResultCode getResultCode() {
+        return resultCode;
     }
 }
+

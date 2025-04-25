@@ -25,24 +25,15 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public ResponseEntity<ResultFormat> registerAccount(UserRegisterDTO userRegisterDTO) {
-        // 检查验证码是否正确
-//        String redisKey = RedisKeyConstants.captchaVerified(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
-//        String redisCaptchaStatus = redisService.get(redisKey);
-//        if (redisCaptchaStatus == null || !redisCaptchaStatus.equalsIgnoreCase("true")) {
-//            return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION,"Illegal registration");
-//        }
 
         boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
         if (!res) {
             return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA);
         }
-//        redisService.delete(redisKey);
         redisService.deleteCaptcha(RedisKeyConstants.REGISTER);
         // 直接加入数据库 但是账户是没有验证的状态
         User userDomain = UserConverter.toDomain(userRegisterDTO);
-
         userService.addUser(userDomain);
-
         return ResultResponse.success("Register success");
     }
 }

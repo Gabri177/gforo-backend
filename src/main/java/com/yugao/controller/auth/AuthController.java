@@ -48,7 +48,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResultFormat> login(
             @Validated({ValidationGroups.Login.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
-
         return authService.login(userRegisterDTO);
     }
 

@@ -26,6 +26,10 @@ public enum ResultCode {
     SQL_TRANSACTION_ERROR(40017, "SQL transaction error"),
     INPUT_FORMAT_ERROR(40018, "Input format error"),
     CAPTCHA_VERIFIED_ERROR(40019, "Captcha verified error"),
+    JWT_SETTING_ERROR(40020, "JWT setting error"),
+    JWT_INIT_ERROR(40021, "JWT init error"),
+    SQL_USERNAME_EXIST(40022, "Username already exists"),
+    SQL_EMAIL_EXIST(40023, "Email already exists"),
 
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),
@@ -52,7 +56,7 @@ public enum ResultCode {
         return code;
     }
 
-    public String message() {
+    public String getMessage() {
         return message;
     }
 

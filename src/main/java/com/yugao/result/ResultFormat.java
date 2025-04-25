@@ -16,7 +16,7 @@ public class ResultFormat {
 
     public ResultFormat(ResultCode resultCode, Object data) {
         this.code = resultCode.code();
-        this.message = resultCode.message();
+        this.message = resultCode.getMessage();
         this.data = data;
     }
 

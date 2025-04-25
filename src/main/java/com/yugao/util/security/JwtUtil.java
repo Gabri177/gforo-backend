@@ -1,6 +1,7 @@
 package com.yugao.util.security;
 
 import com.yugao.exception.BusinessException;
+import com.yugao.result.ResultCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -29,11 +30,11 @@ public class JwtUtil {
     public void init() {
         try {
             if (secretKey == null || secretKey.length() < 32) {
-                throw new BusinessException("JWT secret key must be at least 32 characters long and Base64 encoded!");
+                throw new BusinessException(ResultCode.JWT_SETTING_ERROR);
             }
             key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         } catch (IllegalArgumentException e) {
-            throw new BusinessException("Error initializing JWT secret key: " + e.getMessage(), e);
+            throw new BusinessException(ResultCode.JWT_INIT_ERROR);
         }
     }
 

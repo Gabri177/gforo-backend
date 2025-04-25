@@ -28,13 +28,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ResultFormat> handleBusinessException(BusinessException e) {
         System.out.println("BusinessException: " + e.getMessage());
-        return ResultResponse.error(ResultCode.BUSINESS_EXCEPTION);
+        return ResultResponse.error(e.getResultCode());
     }
     // 系统异常处理
     @ExceptionHandler(SystemException.class)
-    public ResponseEntity<ResultFormat> handleSystemException(Exception e) {
+    public ResponseEntity<ResultFormat> handleSystemException(SystemException e) {
         System.out.println("SystemException: " + e.getMessage());
-        return ResultResponse.error(ResultCode.SYSTEM_EXCEPTION);
+        return ResultResponse.error(e.getResultCode());
     }
 
     // SQL异常处理
@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
         // 解析错误信息 修改错误信息需要修改ErrorParse类
         String message = ErrorParseUtil.parseDuplicateEntryMessage(e.getMessage());
         System.out.println("SQLException: " + e.getMessage());
+        if (e.getMessage().contains("Duplicate entry")) {
+            if (e.getMessage().contains("uniq_username"))
+                return ResultResponse.error(ResultCode.SQL_USERNAME_EXIST);
+            else if (e.getMessage().contains("uniq_email"))
+                return ResultResponse.error(ResultCode.SQL_EMAIL_EXIST);
+        }
         return ResultResponse.error(ResultCode.SQL_EXCEPTION);
     }
 
