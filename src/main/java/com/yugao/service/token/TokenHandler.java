@@ -2,14 +2,11 @@ package com.yugao.service.token;
 
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
-import com.yugao.dto.UserRegisterDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
-import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserTokenService;
 import com.yugao.util.security.JwtUtil;
-import com.yugao.util.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

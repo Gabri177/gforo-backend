@@ -1,37 +1,15 @@
 package com.yugao.controller.auth;
 
-import com.yugao.constants.RedisKeyConstants;
-import com.yugao.domain.User;
-import com.yugao.domain.UserToken;
 import com.yugao.dto.UserRegisterDTO;
 import com.yugao.dto.UserForgetPasswordDTO;
 import com.yugao.dto.UserForgetPasswordResetDTO;
-import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
-import com.yugao.result.ResultResponse;
-import com.yugao.service.base.RedisService;
 import com.yugao.service.business.AuthService;
-import com.yugao.service.data.UserService;
-import com.yugao.service.data.UserTokenService;
-import com.yugao.util.captcha.VerificationUtil;
-import com.yugao.util.mail.MailClientUtil;
-import com.yugao.util.security.JwtUtil;
-import com.yugao.util.security.PasswordUtil;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
