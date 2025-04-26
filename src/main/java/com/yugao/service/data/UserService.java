@@ -3,10 +3,14 @@ package com.yugao.service.data;
 import com.yugao.domain.User;
 import com.yugao.dto.UserInfoUpdateDTO;
 
+import java.util.List;
+
 public interface UserService {
 
 
     User getUserById(Long Id);
+
+    List<User> getUsersByIds(List<Long> ids);
 
     User getUserByName(String username);
 

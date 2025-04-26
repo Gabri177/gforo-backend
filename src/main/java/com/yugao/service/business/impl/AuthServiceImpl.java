@@ -13,7 +13,7 @@ import com.yugao.service.data.UserService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;
-import com.yugao.service.token.TokenHandler;
+import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;

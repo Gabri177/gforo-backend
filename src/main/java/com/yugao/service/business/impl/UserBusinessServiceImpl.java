@@ -9,6 +9,8 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.UserBusinessService;
+import com.yugao.service.data.CommentService;
+import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.UserValidator;
@@ -39,6 +41,12 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Autowired
     private EmailBuilder emailBuilder;
 
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Long.parseLong(authentication.getPrincipal().toString());
@@ -50,6 +58,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = getCurrentUserId();
         User userDomain = userValidator.validateExistenceID(userId);
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
+        userInfoVO.setPostsCount(discussPostService.getDiscussPostRows(userId));
+        userInfoVO.setCommentsCount(commentService.getCommentCount(userId));
+//        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);
     }
 

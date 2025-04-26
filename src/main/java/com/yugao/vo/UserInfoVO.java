@@ -18,4 +18,8 @@ public class UserInfoVO {
     private Integer status;
 
     private String createdAt;
+
+    private Long postsCount;
+
+    private Long commentsCount;
 }

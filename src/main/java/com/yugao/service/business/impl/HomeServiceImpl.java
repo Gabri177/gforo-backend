@@ -1,19 +1,23 @@
 package com.yugao.service.business.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yugao.converter.UserConverter;
 import com.yugao.domain.DiscussPost;
 import com.yugao.domain.User;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.HomeService;
+import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
+import com.yugao.vo.CurrentPageItemVO;
+import com.yugao.vo.CurrentPageVO;
+import com.yugao.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +30,9 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     private DiscussPostService discussPostService;
 
+    @Autowired
+    private CommentService commentService;
+
     @Override
     public ResponseEntity<ResultFormat> getIndexPage(int index, int limit, int orderMode) {
         // orderMode 0: 按照时间排序 1: 按照热度排序
@@ -36,32 +43,36 @@ public class HomeServiceImpl implements HomeService {
         // userId = 0 表示查询所有用户的帖子
         IPage<DiscussPost> pages = discussPostService.getDiscussPosts(
                 0L, index, limit, orderMode);
-        List<DiscussPost> list = pages.getRecords();
-        if (list.isEmpty()) {
-        }
+        List<DiscussPost> postList = pages.getRecords();
+
+        List<CurrentPageItemVO> discussPostListVOList = new ArrayList<>();
+        CurrentPageVO currentPageVO = new CurrentPageVO();
+
         // 封装帖子+作者+点赞数
         List<Map<String, Object>> discussPosts = new ArrayList<>();
-        if (!list.isEmpty()) {
-            for (DiscussPost post : list) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("post", post);
+        if (!postList.isEmpty()) {
+            for (DiscussPost post : postList) {
+                CurrentPageItemVO currentPageItemVO = new CurrentPageItemVO();
+                currentPageItemVO.setDiscussPosts(post);
 
                 User user = userService.getUserById(post.getUserId());
-                map.put("user", user);
+                UserInfoVO userInfoVO = UserConverter.toVO(user);
+                userInfoVO.setPostsCount(discussPostService.getDiscussPostRows(user.getId()));
+                userInfoVO.setCommentsCount(commentService.getCommentCount(user.getId()));
+                currentPageItemVO.setUser(userInfoVO);
 
 //                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
 //                map.put("likeCount", likeCount);
-
-                discussPosts.add(map);
+                discussPostListVOList.add(currentPageItemVO);
             }
         }
         // 封装分页信息和数据
-        Map<String, Object> result = new HashMap<>();
-        result.put("totalRows", totalRows);
-        result.put("current", pages.getCurrent());
-        result.put("limit", limit);
-        result.put("discussPosts", discussPosts);
+        currentPageVO.setTotalRows(totalRows);
+        currentPageVO.setCurrentPage(pages.getCurrent());
+        currentPageVO.setLimit(limit);
+        currentPageVO.setDiscussPosts(discussPostListVOList);
 
-        return ResultResponse.success(result);
+
+        return ResultResponse.success(currentPageVO);
     }
 }

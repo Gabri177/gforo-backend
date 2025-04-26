@@ -18,17 +18,17 @@ public class DiscussPost {
     //`comment_count` int(11) DEFAULT NULL,
     //`score` DOUBLE DEFAULT NULL,
 
-    private Long id;
+    private Long id; // 帖子Id
 
-    private Long userId;
+    private Long userId; // 发帖人Id
 
     private String title;
 
     private String content;
 
-    private Integer type;
+    private Integer type; // 帖子类型，0-普通，1-置顶
 
-    private Integer status;
+    private Integer status; // 帖子状态，0-正常，1-精华，2-拉黑
 
     private Date createTime;
 

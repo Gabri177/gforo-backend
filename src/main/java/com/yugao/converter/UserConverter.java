@@ -4,6 +4,7 @@ import com.yugao.domain.User;
 import com.yugao.dto.UserRegisterDTO;
 import com.yugao.util.common.EncryptedUtil;
 import com.yugao.util.security.PasswordUtil;
+import com.yugao.vo.SimpleUserVO;
 import com.yugao.vo.UserInfoVO;
 
 import java.util.Date;
@@ -32,6 +33,14 @@ public class UserConverter {
         vo.setBio(domain.getBio());
         vo.setCreatedAt(domain.getCreateTime().toString());
         vo.setStatus(domain.getStatus());
+        return vo;
+    }
+
+    public static SimpleUserVO toSimpleVO(User domain) {
+        SimpleUserVO vo = new SimpleUserVO();
+        vo.setId(domain.getId());
+        vo.setName(domain.getUsername());
+        vo.setAvatar(domain.getHeaderUrl());
         return vo;
     }
 }
