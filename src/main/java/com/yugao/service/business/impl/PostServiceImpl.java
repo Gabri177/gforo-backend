@@ -1,11 +1,9 @@
 package com.yugao.service.business.impl;
 
-import com.yugao.domain.DiscussPost;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.PostService;
 import com.yugao.service.data.CommentService;
-import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.handler.PostHandler;
 import com.yugao.vo.PostPageVO;
 import org.springframework.beans.factory.annotation.Autowired;

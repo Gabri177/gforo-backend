@@ -5,7 +5,6 @@ public final class SecurityWhiteListConstants {
             "/api/auth/**",
             "/api/register/**",
             "/api/captcha/**",
-            "/api/home/**",
-            "/api/discuss/**",
+            "/api/home/**"
     };
 }
