@@ -36,11 +36,22 @@ public class UserConverter {
         return vo;
     }
 
+    /**
+     * !!!!!!!!!!! 对于未知用户的处理 可能要修改
+     * @param domain
+     * @return
+     */
     public static SimpleUserVO toSimpleVO(User domain) {
         SimpleUserVO vo = new SimpleUserVO();
-        vo.setId(domain.getId());
-        vo.setName(domain.getUsername());
-        vo.setAvatar(domain.getHeaderUrl());
+        if (domain == null) {
+            vo.setId(-1L);
+            vo.setName("Unknown");
+            vo.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
+        } else {
+            vo.setId(domain.getId());
+            vo.setName(domain.getUsername());
+            vo.setAvatar(domain.getHeaderUrl());
+        }
         return vo;
     }
 }

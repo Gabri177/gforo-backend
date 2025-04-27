@@ -108,6 +108,7 @@ public class PostHandler {
     }
 
     public PostDetailVO getOriginalPostDetail(Long postId) {
+        System.out.println("getOriginalPostDetail: " + postId);
         DiscussPost originalPost = discussPostService.getDiscussPostById(postId);
         if (originalPost == null)
             throw new BusinessException(ResultCode.POST_NOT_FOUND);

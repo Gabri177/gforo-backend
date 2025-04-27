@@ -8,12 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class CommentServiceTest {
 
     @Autowired
-    private CommentService commentService;
+    CommentService commentService;
 
     @Test
-    public void testGetCommentCount() {
-        Long postId = 1L; // Replace with a valid postId
-        Long count = commentService.getCommentCount(postId);
-        System.out.println("Comment count for postId " + postId + ": " + count);
+    public void searchPostByIdTest(){
+        Long postId = 1L;
+        //System.out.println(commentService.findCommentById());
     }
 }

@@ -31,6 +31,10 @@ public enum ResultCode {
     SQL_USERNAME_EXIST(40022, "Username already exists"),
     SQL_EMAIL_EXIST(40023, "Email already exists"),
     POST_NOT_FOUND(40024, "Post not found"),
+    COMMENT_ENTITY_NOT_FOUND(40025, "Comment entity not found"),
+    COMMENT_TARGET_NOT_FOUND(40026, "Comment target not found"),
+    COMMENT_TYPE_UNKNOWN(40027, "Comment type unknown"),
+    USER_NOT_LOGIN(40028, "User not logged in"),
 
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),

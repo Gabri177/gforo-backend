@@ -73,6 +73,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultFormat> handleException(Exception e) {
         System.out.println("UnknownException: " + e.getMessage());
         System.out.println(e.getClass());
+        e.printStackTrace();
         return ResultResponse.error(ResultCode.UNKNOWN_EXCEPTION);
     }
 

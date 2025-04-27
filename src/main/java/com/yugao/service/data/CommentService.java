@@ -6,11 +6,19 @@ import java.util.List;
 
 public interface CommentService {
 
-    public Long getCommentCount(Long userId);
+    Long getCommentCount(Long userId);
 
-    public List<Comment> findCommentsToPostFloor(Long postId);
+    List<Comment> findCommentsToPostFloor(Long postId);
 
-    public List<Comment> findCommentsToPost(Long postId, Long current, Integer limit);
+    List<Comment> findCommentsToPost(Long postId, Long current, Integer limit);
 
-    public List<Comment> findCommentListOfComment(Long EntityId);
+    List<Comment> findCommentListOfComment(Long EntityId);
+
+    Boolean addComment(Comment comment);
+
+    Boolean deleteComment(Long commentId);
+
+    List<Comment> findCommentListOfUser(Long userId, Long current, Integer limit);
+
+    Comment findCommentById(Long commentId);
 }

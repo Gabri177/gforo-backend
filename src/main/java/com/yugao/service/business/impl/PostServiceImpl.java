@@ -1,10 +1,17 @@
 package com.yugao.service.business.impl;
 
+import com.yugao.converter.DiscussPostConverter;
+import com.yugao.domain.DiscussPost;
+import com.yugao.dto.NewDiscussPostDTO;
+import com.yugao.exception.BusinessException;
+import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.PostService;
 import com.yugao.service.data.CommentService;
+import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.handler.PostHandler;
+import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.PostPageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +26,31 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private DiscussPostService discussPostService;
+
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage) {
 
+        System.out.println("getPostDetail: " + postId + " " + currentPage);
         PostPageVO postPageVO = new PostPageVO();
-        if (currentPage == 1)
-            postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
-        else
-            postPageVO.setOriginalPost(null);
+        postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
         postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage));
         postPageVO.setCurrentPage(currentPage);
         postPageVO.setTotalRows(commentService.getCommentCount(postId));
         postPageVO.setLimit(10); // 暂时没用 以防万一
 
         return ResultResponse.success(postPageVO);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> publishPost(NewDiscussPostDTO newDiscussPostDTO) {
+
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId == null)
+            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        DiscussPost newDiscussPost = DiscussPostConverter.newDiscussPostDTOtoDiscussPost(newDiscussPostDTO, userId);
+        discussPostService.addDiscussPost(newDiscussPost);
+        return ResultResponse.success(null);
     }
 }

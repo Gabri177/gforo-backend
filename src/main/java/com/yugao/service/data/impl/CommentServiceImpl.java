@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
         queryWrapper.ne(Comment::getStatus, 1);
         queryWrapper.eq(Comment::getEntityType, 1);
         queryWrapper.eq(Comment::getEntityId, postId);
-        queryWrapper.orderByDesc(Comment::getCreateTime);
+        queryWrapper.orderByAsc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper);
     }
 
@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
         queryWrapper.ne(Comment::getStatus, 1);
         queryWrapper.eq(Comment::getEntityType, 0);
         queryWrapper.eq(Comment::getEntityId, postId);
-        queryWrapper.orderByDesc(Comment::getCreateTime);
+        queryWrapper.orderByAsc(Comment::getCreateTime);
 
         Page<Comment> page = new Page<>(current, limit);
         return commentMapper.selectPage(page, queryWrapper).getRecords();
@@ -72,10 +72,37 @@ public class CommentServiceImpl implements CommentService {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ne(Comment::getStatus, 1);
-        queryWrapper.eq(Comment::getEntityType, 1);
+        queryWrapper.eq(Comment::getEntityType, 2);
         queryWrapper.eq(Comment::getEntityId, EntityId);
-        queryWrapper.orderByDesc(Comment::getCreateTime);
+        queryWrapper.orderByAsc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Boolean addComment(Comment comment) {
+        return commentMapper.insert(comment) > 0;
+    }
+
+    @Override
+    public Boolean deleteComment(Long commentId) {
+        return commentMapper.deleteById(commentId) > 0;
+    }
+
+    @Override
+    public List<Comment> findCommentListOfUser(Long userId, Long current, Integer limit) {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, 1);
+        queryWrapper.eq(Comment::getUserId, userId);
+        queryWrapper.orderByAsc(Comment::getCreateTime);
+
+        Page<Comment> page = new Page<>(current, limit);
+        return commentMapper.selectPage(page, queryWrapper).getRecords();
+    }
+
+    @Override
+    public Comment findCommentById(Long commentId) {
+        return commentMapper.selectById(commentId);
     }
 
 

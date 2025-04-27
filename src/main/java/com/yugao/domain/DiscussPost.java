@@ -1,5 +1,7 @@
 package com.yugao.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -18,6 +20,7 @@ public class DiscussPost {
     //`comment_count` int(11) DEFAULT NULL,
     //`score` DOUBLE DEFAULT NULL,
 
+    @TableId(type = IdType.AUTO)
     private Long id; // 帖子Id
 
     private Long userId; // 发帖人Id
