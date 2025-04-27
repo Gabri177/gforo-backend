@@ -10,4 +10,6 @@ public interface PostService {
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage);
 
     public ResponseEntity<ResultFormat> publishPost(NewDiscussPostDTO newDiscussPostDTO);
+
+    public ResponseEntity<ResultFormat> deletePost(Long postId);
 }

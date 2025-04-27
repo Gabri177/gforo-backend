@@ -11,5 +11,7 @@ public interface CommentBusinessService {
 
     public ResponseEntity<ResultFormat> addCommentToComment(CommentToCommentDTO commentToCommentDTO);
 
+    public ResponseEntity<ResultFormat> deleteComment(Long commentId);
+
 
 }

@@ -6,6 +6,6 @@ public final class SecurityWhiteListConstants {
             "/api/register/**",
             "/api/captcha/**",
             "/api/home/**",
-            "/api/post/*/*"
+            "/api/post/*/*" // 未登录状态下放行帖子查看的接口
     };
 }

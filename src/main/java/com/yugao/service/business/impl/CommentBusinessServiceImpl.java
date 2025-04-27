@@ -4,6 +4,8 @@ import com.yugao.converter.CommentConverter;
 import com.yugao.domain.Comment;
 import com.yugao.dto.CommentToCommentDTO;
 import com.yugao.dto.CommentToPostDTO;
+import com.yugao.exception.BusinessException;
+import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.CommentBusinessService;
@@ -48,6 +50,19 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         commentValidator.check(newComment);
         System.out.println("addCommentToComment: " + newComment);
         commentService.addComment(newComment);
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> deleteComment(Long commentId) {
+
+        Long currentUserId = getCurrentUserId();
+        Comment comment = commentService.findCommentById(commentId);
+        if (comment == null)
+            throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
+        if (!comment.getUserId().equals(currentUserId))
+            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+        commentService.deleteComment(commentId);
         return ResultResponse.success(null);
     }
 }

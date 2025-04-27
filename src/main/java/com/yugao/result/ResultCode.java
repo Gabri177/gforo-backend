@@ -35,7 +35,8 @@ public enum ResultCode {
     COMMENT_TARGET_NOT_FOUND(40026, "Comment target not found"),
     COMMENT_TYPE_UNKNOWN(40027, "Comment type unknown"),
     USER_NOT_LOGIN(40028, "User not logged in"),
-
+    USER_NOT_AUTHORIZED(40029, "User not authorized"),
+    COMMENT_NOT_FOUND(40030, "Comment not found"),
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),
 

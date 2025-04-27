@@ -1,6 +1,7 @@
 package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.domain.Comment;
 import com.yugao.mapper.CommentMapper;
@@ -85,7 +86,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Boolean deleteComment(Long commentId) {
-        return commentMapper.deleteById(commentId) > 0;
+        LambdaUpdateWrapper<Comment> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Comment::getId, commentId);
+        updateWrapper.set(Comment::getStatus, 1); // 设置为删除状态
+        return commentMapper.update(null, updateWrapper) > 0;
     }
 
     @Override

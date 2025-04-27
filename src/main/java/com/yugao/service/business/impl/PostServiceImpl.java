@@ -53,4 +53,19 @@ public class PostServiceImpl implements PostService {
         discussPostService.addDiscussPost(newDiscussPost);
         return ResultResponse.success(null);
     }
+
+    @Override
+    public ResponseEntity<ResultFormat> deletePost(Long postId) {
+
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId == null)
+            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        DiscussPost post = discussPostService.getDiscussPostById(postId);
+        if (post == null)
+            throw new BusinessException(ResultCode.POST_NOT_FOUND);
+        if (!userId.equals(post.getUserId()))
+            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+        discussPostService.deleteDiscussPost(postId);
+        return ResultResponse.success(null);
+    }
 }

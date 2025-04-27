@@ -43,7 +43,7 @@ public class Comment {
     // 评论内容
     private String content;
 
-    // 评论状态，0-正常，1-拉黑
+    // 评论状态，0-正常，1-删除
     private Integer status;
 
     private Date createTime;

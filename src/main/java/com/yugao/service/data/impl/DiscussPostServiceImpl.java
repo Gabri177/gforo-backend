@@ -76,4 +76,13 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getScore, score);
         return discussPostMapper.update(null, wrapper);
     }
+
+    @Override
+    public Boolean deleteDiscussPost(Long id) {
+        LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(DiscussPost::getId, id)
+                .set(DiscussPost::getStatus, 2); // 标记为删除
+        return discussPostMapper.update(null, wrapper) > 0;
+    }
+
 }
