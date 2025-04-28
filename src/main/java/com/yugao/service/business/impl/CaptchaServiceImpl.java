@@ -62,7 +62,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 
 
         System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(scene, username));
-        return ResultResponse.success("Captcha correct");
+        return ResultResponse.success(null);
     }
 
     @Override
@@ -71,6 +71,6 @@ public class CaptchaServiceImpl implements CaptchaService {
         // "captcha:" + captchaId
         redisService.deleteCaptcha(captchaId);
 
-        return ResultResponse.success("删除成功");
+        return ResultResponse.success(null);
     }
 }

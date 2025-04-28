@@ -21,4 +21,9 @@ public interface CommentService {
     List<Comment> findCommentListOfUser(Long userId, Long current, Integer limit);
 
     Comment findCommentById(Long commentId);
+
+    Boolean updateContent(Long id, String content);
+
+    Boolean updateComment(Comment comment);
 }
+

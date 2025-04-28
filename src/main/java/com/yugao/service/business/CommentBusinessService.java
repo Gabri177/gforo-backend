@@ -2,6 +2,7 @@ package com.yugao.service.business;
 
 import com.yugao.dto.CommentToCommentDTO;
 import com.yugao.dto.CommentToPostDTO;
+import com.yugao.dto.CommonContentDTO;
 import com.yugao.result.ResultFormat;
 import org.springframework.http.ResponseEntity;
 
@@ -12,6 +13,8 @@ public interface CommentBusinessService {
     public ResponseEntity<ResultFormat> addCommentToComment(CommentToCommentDTO commentToCommentDTO);
 
     public ResponseEntity<ResultFormat> deleteComment(Long commentId);
+
+    public ResponseEntity<ResultFormat> updateComment(CommonContentDTO commonContentDTO);
 
 
 }

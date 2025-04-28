@@ -82,7 +82,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = getCurrentUserId();
         User userDomain = userValidator.validateExistenceID(userId);
         userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO);
-        return ResultResponse.success("userinfo update success");
+        return ResultResponse.success(null);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         String link = emailBuilder.buildActivationLink(user);
         String html = emailBuilder.buildEmailVerifyHtml(user.getUsername(), link);
         mailClient.sendHtmlMail(user.getEmail(), user.getUsername() + ", Please verify your email address", html);
-        return ResultResponse.success("Email sent");
+        return ResultResponse.success(null);
     }
 
     @Override
@@ -103,6 +103,6 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long currentUserId = getCurrentUserId();
         User user = userValidator.validateUserForTokenActivation(currentUserId, userId, token);
         userService.updateStatus(user.getId(), 1);
-        return ResultResponse.success("Email verified");
+        return ResultResponse.success(null);
     }
 }

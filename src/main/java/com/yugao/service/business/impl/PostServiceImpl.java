@@ -2,6 +2,7 @@ package com.yugao.service.business.impl;
 
 import com.yugao.converter.DiscussPostConverter;
 import com.yugao.domain.DiscussPost;
+import com.yugao.dto.CommonContentDTO;
 import com.yugao.dto.NewDiscussPostDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
@@ -66,6 +67,23 @@ public class PostServiceImpl implements PostService {
         if (!userId.equals(post.getUserId()))
             throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
         discussPostService.deleteDiscussPost(postId);
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> updatePost(CommonContentDTO commonContentDTO) {
+
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId == null)
+            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        DiscussPost post = discussPostService.getDiscussPostById(commonContentDTO.getId());
+        if (post == null)
+            throw new BusinessException(ResultCode.POST_NOT_FOUND);
+        if (!userId.equals(post.getUserId()))
+            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+        post.setTitle(commonContentDTO.getTitle());
+        post.setContent(commonContentDTO.getContent());
+        discussPostService.updateDiscussPost(post);
         return ResultResponse.success(null);
     }
 }

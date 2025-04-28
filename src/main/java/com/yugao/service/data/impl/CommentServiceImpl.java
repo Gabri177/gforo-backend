@@ -109,5 +109,18 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.selectById(commentId);
     }
 
+    @Override
+    public Boolean updateContent(Long id, String content) {
+        LambdaUpdateWrapper<Comment> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Comment::getId, id);
+        updateWrapper.set(Comment::getContent, content);
+        return commentMapper.update(null, updateWrapper) > 0;
+    }
+
+    @Override
+    public Boolean updateComment(Comment comment) {
+        return commentMapper.updateById(comment) > 0;
+    }
+
 
 }

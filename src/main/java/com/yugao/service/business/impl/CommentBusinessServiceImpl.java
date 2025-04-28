@@ -4,6 +4,7 @@ import com.yugao.converter.CommentConverter;
 import com.yugao.domain.Comment;
 import com.yugao.dto.CommentToCommentDTO;
 import com.yugao.dto.CommentToPostDTO;
+import com.yugao.dto.CommonContentDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
@@ -63,6 +64,20 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         if (!comment.getUserId().equals(currentUserId))
             throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
         commentService.deleteComment(commentId);
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> updateComment(CommonContentDTO commonContentDTO) {
+
+        Long currentUserId = getCurrentUserId();
+        Comment comment = commentService.findCommentById(commonContentDTO.getId());
+        if (comment == null)
+            throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
+        if (!comment.getUserId().equals(currentUserId))
+            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+        comment.setContent(commonContentDTO.getContent());
+        commentService.updateComment(comment);
         return ResultResponse.success(null);
     }
 }

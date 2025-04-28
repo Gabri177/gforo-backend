@@ -8,4 +8,8 @@ public interface ValidationGroups {
     interface Login extends DefaultGroup {}
 
     interface Register extends DefaultGroup {}
+
+    interface Comment extends DefaultGroup {}
+
+    interface Post extends DefaultGroup {}
 }

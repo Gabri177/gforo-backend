@@ -31,9 +31,9 @@ public class User {
 
     private String email;
 
-    private Integer type;
+    private Integer type; // 这个变量还没有用到 0 1 2
 
-    private Integer status;
+    private Integer status; // 这个变量也没有用到 0 1
 
     private String activationCode;
 

@@ -34,6 +34,6 @@ public class RegisterServiceImpl implements RegisterService {
         // 直接加入数据库 但是账户是没有验证的状态
         User userDomain = UserConverter.toDomain(userRegisterDTO);
         userService.addUser(userDomain);
-        return ResultResponse.success("Register success");
+        return ResultResponse.success(null);
     }
 }

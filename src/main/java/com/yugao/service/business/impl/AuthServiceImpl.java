@@ -80,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
         userValidator.verifySixDigitCode(userForgetPasswordDTO.getUsername(), code);
-        return ResultResponse.success("Verification code correct");
+        return ResultResponse.success(null);
     }
 
     @Override
@@ -94,6 +94,6 @@ public class AuthServiceImpl implements AuthService {
             return ResultResponse.error(ResultCode.SQL_UPDATING_ERROR);
         }
 
-        return ResultResponse.success("Password reset successfully");
+        return ResultResponse.success(null);
     }
 }

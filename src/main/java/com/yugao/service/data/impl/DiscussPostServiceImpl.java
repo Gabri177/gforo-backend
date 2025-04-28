@@ -85,4 +85,9 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         return discussPostMapper.update(null, wrapper) > 0;
     }
 
+    @Override
+    public Boolean updateDiscussPost(DiscussPost discussPost) {
+        return discussPostMapper.updateById(discussPost) > 0;
+    }
+
 }

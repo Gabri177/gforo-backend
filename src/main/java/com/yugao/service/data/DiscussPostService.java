@@ -23,4 +23,6 @@ public interface DiscussPostService {
     int updateScore(Long id, double score);
 
     Boolean deleteDiscussPost(Long id);
+
+    Boolean updateDiscussPost(DiscussPost discussPost);
 }
