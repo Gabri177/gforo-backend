@@ -50,13 +50,6 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     }
 
     @Override
-    public int updateCommentCount(Long id, int commentCount) {
-        LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getCommentCount, commentCount);
-        return discussPostMapper.update(null, wrapper);
-    }
-
-    @Override
     public int updateType(Long id, int type) {
         LambdaUpdateWrapper<DiscussPost> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(DiscussPost::getId, id).set(DiscussPost::getType, type);

@@ -16,7 +16,6 @@ public class DiscussPostConverter {
         discussPost.setStatus(0);
         discussPost.setType(0);
         discussPost.setCreateTime(new Date());
-        discussPost.setCommentCount(0);
         discussPost.setScore(0.0);
         return discussPost;
     }

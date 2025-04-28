@@ -12,8 +12,10 @@ import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
+import com.yugao.vo.post.SimpleDiscussPostVO;
 import com.yugao.vo.user.SimpleUserVO;
 import com.yugao.vo.user.UserInfoVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,9 @@ public class HomeServiceImpl implements HomeService {
         if (!postList.isEmpty()) {
             for (DiscussPost post : postList) {
                 CurrentPageItemVO currentPageItemVO = new CurrentPageItemVO();
-                currentPageItemVO.setDiscussPosts(post);
+                SimpleDiscussPostVO simpleDiscussPostVO = new SimpleDiscussPostVO();
+                BeanUtils.copyProperties(post, simpleDiscussPostVO);
+                currentPageItemVO.setDiscussPosts(simpleDiscussPostVO);
 
                 User user = userService.getUserById(post.getUserId());
                 SimpleUserVO userInfoVO = UserConverter.toSimpleVO(user);
@@ -64,6 +68,8 @@ public class HomeServiceImpl implements HomeService {
 
 //                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
 //                map.put("likeCount", likeCount);
+                // 还没有封装点赞数量
+
                 discussPostListVOList.add(currentPageItemVO);
             }
         }
