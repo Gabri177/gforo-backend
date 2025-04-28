@@ -8,6 +8,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.vo.captcha.CaptchaGraphVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,11 @@ public class CaptchaServiceImpl implements CaptchaService {
         redisService.setCaptchaByMinutes(captchaId, captchaText);
 
         // 返回验证码图片 + captchaId
-        Map<String, String> result = new HashMap<>();
-        result.put("captchaId", captchaId);
-        result.put("captchaBase64", specCaptcha.toBase64());
+        CaptchaGraphVO captchaGraphVO = new CaptchaGraphVO();
+        captchaGraphVO.setCaptchaId(captchaId);
+        captchaGraphVO.setCaptchaBase64(specCaptcha.toBase64());
 
-        return ResultResponse.success(result);
+        return ResultResponse.success(captchaGraphVO);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.business.post.CommentBusinessService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.validator.CommentValidator;
+import com.yugao.util.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,15 +28,10 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     @Autowired
     CommentValidator commentValidator;
 
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return Long.parseLong(authentication.getPrincipal().toString());
-    }
-
     @Override
     public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO) {
 
-        Long currentUserId = getCurrentUserId();
+        Long currentUserId = SecurityUtils.getCurrentUserId();
         Comment newComment = CommentConverter.toPostDTOtoComment(commentToPostDTO, currentUserId);
         commentValidator.check(newComment);
         System.out.println("addCommentToPost: " + newComment);
@@ -46,7 +42,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     @Override
     public ResponseEntity<ResultFormat> addCommentToComment(CommentToCommentDTO commentToCommentDTO) {
 
-        Long currentUserId = getCurrentUserId();
+        Long currentUserId = SecurityUtils.getCurrentUserId();
         Comment newComment = CommentConverter.toCommentDTOtoComment(commentToCommentDTO, currentUserId);
         commentValidator.check(newComment);
         System.out.println("addCommentToComment: " + newComment);
@@ -57,7 +53,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     @Override
     public ResponseEntity<ResultFormat> deleteComment(Long commentId) {
 
-        Long currentUserId = getCurrentUserId();
+        Long currentUserId = SecurityUtils.getCurrentUserId();
         Comment comment = commentService.findCommentById(commentId);
         if (comment == null)
             throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
@@ -70,7 +66,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     @Override
     public ResponseEntity<ResultFormat> updateComment(CommonContentDTO commonContentDTO) {
 
-        Long currentUserId = getCurrentUserId();
+        Long currentUserId = SecurityUtils.getCurrentUserId();
         Comment comment = commentService.findCommentById(commonContentDTO.getId());
         if (comment == null)
             throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
