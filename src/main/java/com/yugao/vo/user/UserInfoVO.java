@@ -19,7 +19,7 @@ public class UserInfoVO {
 
     private String createdAt;
 
-    private Long postsCount;
+    private Long postCount;
 
-    private Long commentsCount;
+    private Long commentCount;
 }

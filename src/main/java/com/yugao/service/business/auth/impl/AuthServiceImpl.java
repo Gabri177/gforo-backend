@@ -50,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
         captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
         User loginUser = userValidator.validateUserLogin(userRegisterDTO);
+        userValidator.validateIfIsBlocked(loginUser);
         tokenHandler.invalidateExistingToken(loginUser.getId());
         TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser.getId(), loginUser);
         return ResultResponse.success(tokenInfoVO);

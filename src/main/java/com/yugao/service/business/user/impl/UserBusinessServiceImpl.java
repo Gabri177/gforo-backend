@@ -20,8 +20,6 @@ import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,8 +52,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = SecurityUtils.getCurrentUserId();
         User userDomain = userValidator.validateExistenceID(userId);
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
-        userInfoVO.setPostsCount(discussPostService.getDiscussPostRows(userId));
-        userInfoVO.setCommentsCount(commentService.getCommentCount(userId));
+        userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId));
+        userInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
 //        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);
     }

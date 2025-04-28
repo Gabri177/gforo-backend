@@ -6,7 +6,7 @@ import lombok.Data;
 public class SimpleUserVO {
 
     private Long id;
-    private String name;
-    private String avatar;
+    private String username;
+    private String headerUrl;
 }
 

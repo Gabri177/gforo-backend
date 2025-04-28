@@ -18,8 +18,19 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
 
     @Override
-    public Long getCommentCount(Long postId) {
+    public Long getCommentCountByUserId(Long userId) {
 
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, 1);
+        queryWrapper.eq(Comment::getUserId, userId);
+        if (userId != 0L) {
+            queryWrapper.eq(Comment::getUserId, userId);
+        }
+        return commentMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public Long getCommentCountByPostId(Long postId) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ne(Comment::getStatus, 1);
         queryWrapper.eq(Comment::getEntityType, 0);

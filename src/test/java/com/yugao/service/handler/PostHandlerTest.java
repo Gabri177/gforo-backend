@@ -16,7 +16,7 @@ public class PostHandlerTest {
     @Test
     public void testGetCommentCount() {
         Long postId = 109L; // Replace with a valid post ID
-        Long count = commentService.getCommentCount(postId);
+        Long count = commentService.getCommentCountByUserId(postId);
         System.out.println("Comment count for postId " + postId + ": " + count);
     }
 }

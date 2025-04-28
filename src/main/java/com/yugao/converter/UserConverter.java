@@ -45,12 +45,12 @@ public class UserConverter {
         SimpleUserVO vo = new SimpleUserVO();
         if (domain == null) {
             vo.setId(-1L);
-            vo.setName("Unknown");
-            vo.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
+            vo.setUsername("Unknown");
+            vo.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
         } else {
             vo.setId(domain.getId());
-            vo.setName(domain.getUsername());
-            vo.setAvatar(domain.getHeaderUrl());
+            vo.setUsername(domain.getUsername());
+            vo.setHeaderUrl(domain.getHeaderUrl());
         }
         return vo;
     }

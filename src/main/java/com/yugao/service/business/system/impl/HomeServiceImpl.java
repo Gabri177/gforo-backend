@@ -12,6 +12,7 @@ import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
+import com.yugao.vo.user.SimpleUserVO;
 import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class HomeServiceImpl implements HomeService {
@@ -49,17 +49,18 @@ public class HomeServiceImpl implements HomeService {
         CurrentPageVO currentPageVO = new CurrentPageVO();
 
         // 封装帖子+作者+点赞数
-        List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (!postList.isEmpty()) {
             for (DiscussPost post : postList) {
                 CurrentPageItemVO currentPageItemVO = new CurrentPageItemVO();
                 currentPageItemVO.setDiscussPosts(post);
 
                 User user = userService.getUserById(post.getUserId());
-                UserInfoVO userInfoVO = UserConverter.toVO(user);
-                userInfoVO.setPostsCount(discussPostService.getDiscussPostRows(user.getId()));
-                userInfoVO.setCommentsCount(commentService.getCommentCount(user.getId()));
+                SimpleUserVO userInfoVO = UserConverter.toSimpleVO(user);
                 currentPageItemVO.setUser(userInfoVO);
+
+                Long postCommentCount = commentService.getCommentCountByPostId(post.getId());
+                System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
+                currentPageItemVO.setCommentCount(postCommentCount);
 
 //                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
 //                map.put("likeCount", likeCount);

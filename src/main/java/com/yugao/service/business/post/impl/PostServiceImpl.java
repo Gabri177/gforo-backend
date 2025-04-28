@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
         postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
         postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage));
         postPageVO.setCurrentPage(currentPage);
-        postPageVO.setTotalRows(commentService.getCommentCount(postId));
+        postPageVO.setTotalRows(commentService.getCommentCountByPostId(postId));
         postPageVO.setLimit(10); // 暂时没用 以防万一
 
         return ResultResponse.success(postPageVO);

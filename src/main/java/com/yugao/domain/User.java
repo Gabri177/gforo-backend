@@ -33,7 +33,7 @@ public class User {
 
     private Integer type; // 这个变量还没有用到 0 1 2
 
-    private Integer status; // 这个变量也没有用到 0 1
+    private Integer status; // 这个变量也没有用到 1-启动 0-禁用
 
     private String activationCode;
 

@@ -7,12 +7,16 @@ public enum ResultCode {
 
     // 业务异常 40000~49999
     BUSINESS_EXCEPTION(40000, "Business Error Unknown"),
+
+    // // auth error
     LOGOUT_WITHOUT_LOGIN(40001, "Logout without login"),
     LOGIN_WITHOUT_CAPTCHA(40002, "Login without passing captcha"),
     USER_NOT_FOUND(40003, "User not found"),
     EMAIL_NOT_MATCH(40004, "Email not match"),
     SIX_DIGIT_CODE_NOT_MATCH(40005, "Six-digit code does not match"),
     SIX_DIGIT_CODE_EXPIRED(40006, "Six-digit code expired"),
+
+    // // sql error
     SQL_EXCEPTION(40007, "SQL error"),
     SQL_UPDATING_ERROR(40008, "SQL updating error"),
     USER_ALREADY_VERIFIED(40009, "User already verified"),
@@ -37,6 +41,8 @@ public enum ResultCode {
     USER_NOT_LOGIN(40028, "User not logged in"),
     USER_NOT_AUTHORIZED(40029, "User not authorized"),
     COMMENT_NOT_FOUND(40030, "Comment not found"),
+    USER_BLOCKED (40031, "User has been blocked, Please contact the Admin"),
+
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),
 

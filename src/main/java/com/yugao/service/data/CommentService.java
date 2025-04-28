@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    Long getCommentCount(Long userId);
+    Long getCommentCountByUserId(Long userId);
+
+    Long getCommentCountByPostId(Long postId);
 
     List<Comment> findCommentsToPostFloor(Long postId);
 

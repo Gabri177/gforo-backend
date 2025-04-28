@@ -166,5 +166,10 @@ public class UserValidator {
         redisService.deleteVerifiedSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, username);
     }
 
+    public void validateIfIsBlocked(User user){
+        if (user.getStatus()== 0)
+            throw new BusinessException(ResultCode.USER_BLOCKED);
+    }
+
 
 }

@@ -35,6 +35,9 @@ public class DiscussPost {
 
     private Date createTime;
 
+    /**
+     * 删除这个条目  不需要了
+     */
     private Integer commentCount;
 
     private Double score;
