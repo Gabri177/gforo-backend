@@ -10,9 +10,9 @@ import com.yugao.result.ResultCode;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
-import com.yugao.vo.CommentVO;
-import com.yugao.vo.PostDetailVO;
-import com.yugao.vo.SimpleUserVO;
+import com.yugao.vo.comment.CommentVO;
+import com.yugao.vo.post.PostDetailVO;
+import com.yugao.vo.user.SimpleUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

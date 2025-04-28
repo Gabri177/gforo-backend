@@ -1,11 +1,9 @@
 package com.yugao.converter;
 
-import com.yugao.domain.Comment;
 import com.yugao.domain.DiscussPost;
-import com.yugao.domain.User;
-import com.yugao.vo.CommentVO;
-import com.yugao.vo.PostDetailVO;
-import com.yugao.vo.SimpleUserVO;
+import com.yugao.vo.comment.CommentVO;
+import com.yugao.vo.post.PostDetailVO;
+import com.yugao.vo.user.SimpleUserVO;
 
 import java.util.List;
 

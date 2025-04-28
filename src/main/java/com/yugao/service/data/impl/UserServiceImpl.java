@@ -4,7 +4,7 @@ package com.yugao.service.data.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.yugao.domain.User;
-import com.yugao.dto.UserInfoUpdateDTO;
+import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
 import com.yugao.result.ResultCode;

@@ -2,12 +2,11 @@ package com.yugao.service.validator;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
-import com.yugao.dto.UserChangePasswordDTO;
-import com.yugao.dto.UserRegisterDTO;
-import com.yugao.dto.UserVerifyEmailDTO;
+import com.yugao.dto.user.UserChangePasswordDTO;
+import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
-import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.data.UserTokenService;

@@ -1,8 +1,8 @@
 package com.yugao.converter;
 
 import com.yugao.domain.Comment;
-import com.yugao.dto.CommentToCommentDTO;
-import com.yugao.dto.CommentToPostDTO;
+import com.yugao.dto.comment.CommentToCommentDTO;
+import com.yugao.dto.comment.CommentToPostDTO;
 
 import java.util.Date;
 

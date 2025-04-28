@@ -1,10 +1,10 @@
 package com.yugao.controller.user;
 
-import com.yugao.dto.UserChangePasswordDTO;
-import com.yugao.dto.UserInfoUpdateDTO;
-import com.yugao.dto.UserVerifyEmailDTO;
+import com.yugao.dto.user.UserChangePasswordDTO;
+import com.yugao.dto.user.UserInfoUpdateDTO;
+import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.UserBusinessService;
+import com.yugao.service.business.user.UserBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

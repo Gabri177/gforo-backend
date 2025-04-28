@@ -2,7 +2,7 @@ package com.yugao.converter;
 
 
 import com.yugao.domain.DiscussPost;
-import com.yugao.dto.NewDiscussPostDTO;
+import com.yugao.dto.post.NewDiscussPostDTO;
 
 import java.util.Date;
 

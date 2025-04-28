@@ -1,7 +1,7 @@
 package com.yugao.controller.captcha;
 
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.CaptchaService;
+import com.yugao.service.business.captcha.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

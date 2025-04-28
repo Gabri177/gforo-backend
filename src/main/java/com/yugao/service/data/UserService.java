@@ -1,7 +1,7 @@
 package com.yugao.service.data;
 
 import com.yugao.domain.User;
-import com.yugao.dto.UserInfoUpdateDTO;
+import com.yugao.dto.user.UserInfoUpdateDTO;
 
 import java.util.List;
 

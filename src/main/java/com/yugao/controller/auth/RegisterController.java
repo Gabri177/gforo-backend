@@ -1,8 +1,8 @@
 package com.yugao.controller.auth;
 
-import com.yugao.dto.UserRegisterDTO;
+import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.RegisterService;
+import com.yugao.service.business.auth.RegisterService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

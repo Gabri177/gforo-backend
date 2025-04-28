@@ -1,7 +1,7 @@
 package com.yugao.controller.system;
 
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.HomeService;
+import com.yugao.service.business.system.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

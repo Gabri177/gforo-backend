@@ -1,10 +1,10 @@
 package com.yugao.controller.post;
 
-import com.yugao.dto.CommentToCommentDTO;
-import com.yugao.dto.CommentToPostDTO;
-import com.yugao.dto.CommonContentDTO;
+import com.yugao.dto.comment.CommentToCommentDTO;
+import com.yugao.dto.comment.CommentToPostDTO;
+import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.CommentBusinessService;
+import com.yugao.service.business.post.CommentBusinessService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

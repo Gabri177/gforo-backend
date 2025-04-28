@@ -1,10 +1,10 @@
 package com.yugao.controller.auth;
 
-import com.yugao.dto.UserRegisterDTO;
-import com.yugao.dto.UserForgetPasswordDTO;
-import com.yugao.dto.UserForgetPasswordResetDTO;
+import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.dto.auth.UserForgetPasswordDTO;
+import com.yugao.dto.auth.UserForgetPasswordResetDTO;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.AuthService;
+import com.yugao.service.business.auth.AuthService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
