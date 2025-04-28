@@ -7,6 +7,8 @@ import com.yugao.result.ResultCode;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserTokenService;
 import com.yugao.util.security.JwtUtil;
+import com.yugao.vo.auth.NewAccessTokenVO;
+import com.yugao.vo.auth.TokenInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -64,7 +66,7 @@ public class TokenHandler {
         }
     }
 
-    public Map<String, String> refreshAccessToken(String refreshToken){
+    public NewAccessTokenVO refreshAccessToken(String refreshToken){
 
 //        System.out.println("refresh token: " + refreshToken);
         if (refreshToken == null || !refreshToken.startsWith("Bearer ")){
@@ -96,13 +98,17 @@ public class TokenHandler {
         String newAccessToken = jwtUtil.generateAccessToken(userId);
         redisService.setUserAccessToken(Long.parseLong(userId), newAccessToken);
         userTokenService.updateAccessToken(Long.parseLong(userId), newAccessToken);
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("newAccessToken", newAccessToken);
-        return resultMap;
+
+//        Map<String, String> resultMap = new HashMap<>();
+//        resultMap.put("newAccessToken", newAccessToken);
+//        return resultMap;
+        NewAccessTokenVO newAccessTokenVO = new NewAccessTokenVO();
+        newAccessTokenVO.setNewAccessToken(newAccessToken);
+        return newAccessTokenVO;
     }
 
 
-    public Map<String, String> generateAndStoreToken(Long userId, User loginUser) {
+    public TokenInfoVO generateAndStoreToken(Long userId, User loginUser) {
         // 生成token
         String accessToken = jwtUtil.generateAccessToken(loginUser.getId().toString());
         String refreshToken = jwtUtil.generateRefreshToken(loginUser.getId().toString());
@@ -127,9 +133,13 @@ public class TokenHandler {
         }
 
         // 返回token
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("access_token", accessToken);
-        resultMap.put("refresh_token", refreshToken);
-        return resultMap;
+        TokenInfoVO tokenInfoVO = new TokenInfoVO();
+        tokenInfoVO.setAccess_token(accessToken);
+        tokenInfoVO.setRefresh_token(refreshToken);
+//        Map<String, String> resultMap = new HashMap<>();
+//        resultMap.put("access_token", accessToken);
+//        resultMap.put("refresh_token", refreshToken);
+//        return resultMap;
+        return tokenInfoVO;
     }
 }

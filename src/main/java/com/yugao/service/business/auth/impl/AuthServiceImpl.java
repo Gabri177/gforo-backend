@@ -16,6 +16,8 @@ import com.yugao.util.security.PasswordUtil;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
+import com.yugao.vo.auth.NewAccessTokenVO;
+import com.yugao.vo.auth.TokenInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,8 +51,8 @@ public class AuthServiceImpl implements AuthService {
         captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
         User loginUser = userValidator.validateUserLogin(userRegisterDTO);
         tokenHandler.invalidateExistingToken(loginUser.getId());
-        Map<String, String> tokenMap = tokenHandler.generateAndStoreToken(loginUser.getId(), loginUser);
-        return ResultResponse.success(tokenMap);
+        TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser.getId(), loginUser);
+        return ResultResponse.success(tokenInfoVO);
     }
 
     @Override
@@ -61,8 +63,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<ResultFormat> refresh(String refreshToken) {
-        Map<String, String> resultMap = tokenHandler.refreshAccessToken(refreshToken);
-        return ResultResponse.success(resultMap);
+        NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshToken);
+        return ResultResponse.success(newAccessTokenVO);
     }
 
     @Override
