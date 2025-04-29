@@ -2,14 +2,15 @@ package com.yugao.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserVerifyEmailDTO {
+public class ActiveAccountDTO {
+
+    @NotBlank(message = "Captcha cannot be empty")
+    private String sixDigitCode;
 
     @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Email format is incorrect")
+    @Email(message = "Invalid email format")
     private String email;
 }

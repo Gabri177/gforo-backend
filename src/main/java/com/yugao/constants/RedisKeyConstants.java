@@ -8,6 +8,8 @@ public final class RedisKeyConstants {
     public static final String REGISTER = "register:";
     public static final String FORGET_PASSWORD = "forget_password:";
     public static final String RESET_PASSWORD = "reset_password:";
+    public static final String ACTIVATE_ACCOUNT = "activate_account:";
+    public static final String CHANGE_EMAIL = "change_email:";
 
     // 图片验证码相关
     private static final String CAPTCHA_VERIFIED = "captcha_verified:";
@@ -48,5 +50,7 @@ public final class RedisKeyConstants {
     public static String emailActivationInterval(String email) {
         return REQUEST_ACCOUNT_ACTIVATION_EMAIL + email;
     }
+
+    public static String registerEmail(String email) { return REGISTER + email; }
 
 }

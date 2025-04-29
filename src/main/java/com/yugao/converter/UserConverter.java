@@ -21,6 +21,7 @@ public class UserConverter {
         user.setStatus(0);
         user.setActivationCode(EncryptedUtil.generateUUID());
         user.setCreateTime(new Date());
+        user.setNickname(userRegisterDTO.getUsername());
         return user;
     }
 
@@ -33,6 +34,7 @@ public class UserConverter {
         vo.setBio(domain.getBio());
         vo.setCreatedAt(domain.getCreateTime().toString());
         vo.setStatus(domain.getStatus());
+        vo.setNickname(domain.getNickname());
         return vo;
     }
 
@@ -45,11 +47,13 @@ public class UserConverter {
         SimpleUserVO vo = new SimpleUserVO();
         if (domain == null) {
             vo.setId(-1L);
-            vo.setUsername("Unknown");
+            vo.setUsername("UnknownUser");
+            vo.setNickname("Unknown");
             vo.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
         } else {
             vo.setId(domain.getId());
             vo.setUsername(domain.getUsername());
+            vo.setNickname(domain.getNickname());
             vo.setHeaderUrl(domain.getHeaderUrl());
         }
         return vo;

@@ -1,6 +1,10 @@
 package com.yugao.service.base.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.domain.User;
+import com.yugao.exception.BusinessException;
+import com.yugao.result.ResultCode;
 import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +35,13 @@ public class RedisServiceImpl implements RedisService {
     private long verifiedSixDigVerifyCodeExpireTimeMinutes;
 
     @Value("${email.active-account.request-expire-time-minutes}")
-    private Long emailRequestTimeInterval;
+    private Long emailRequestExpireTimeMinutes;
+
+    @Value("${email.active-account.request-interval-time-minutes}")
+    private Long emailRequestIntervalTimeMinutes;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -117,14 +127,14 @@ public class RedisServiceImpl implements RedisService {
     /**
      * 数字验证码相关业务逻辑
      * @param scene 场景
-     * @param username 用户名
+     * @param symbol 用户名
      * @param sixDigitCode 六位数字验证码
      */
     // 设置数字验证码过期时间
     @Override
-    public void setSigDigitCodeByMinutes(String scene, String username, String sixDigitCode) {
+    public void setSigDigitCodeByMinutes(String scene, String symbol, String sixDigitCode) {
         setTemporarilyByMinutes(
-                RedisKeyConstants.sixDigitCode(scene, username),
+                RedisKeyConstants.sixDigitCode(scene, symbol),
                 sixDigitCode,
                 resetPasswordSixDigVerifyCodeExpireTimeMinutes);
     }
@@ -136,8 +146,8 @@ public class RedisServiceImpl implements RedisService {
     }
     // 删除数字验证码
     @Override
-    public void deleteSigDigitCode(String scene, String username) {
-        delete(RedisKeyConstants.sixDigitCode(scene, username));
+    public void deleteSigDigitCode(String scene, String symbol) {
+        delete(RedisKeyConstants.sixDigitCode(scene, symbol));
     }
     // 设置通过数字验证码验证的标志过期时间
     @Override
@@ -169,7 +179,7 @@ public class RedisServiceImpl implements RedisService {
         setTemporarilyByMinutes(
                 RedisKeyConstants.emailActivationInterval(email),
                 "true",
-                emailRequestTimeInterval);
+                emailRequestIntervalTimeMinutes);
     }
     // 判断请求激活的时间标志是否过期
     @Override
@@ -181,6 +191,45 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void deleteEmailActivationInterval(String email) {
         delete(RedisKeyConstants.emailActivationInterval(email));
+    }
+
+
+
+
+    @Override
+    public void saveTemporaryUser(User user) {
+        try {
+            String key = RedisKeyConstants.registerEmail(user.getEmail());
+            String value = objectMapper.writeValueAsString(user);
+            setTemporarilyByMinutes(key, value, emailRequestExpireTimeMinutes);
+        } catch (Exception e) {
+            throw new BusinessException(ResultCode.REDIS_SAVING_ERROR);
+        }
+    }
+
+    @Override
+    public boolean hasTemporaryUserByEmail(String email) {
+        String key = RedisKeyConstants.registerEmail(email);
+        return hasKey(key);
+    }
+
+    @Override
+    public User getTemporaryUserByEmail(String email) {
+        String key = RedisKeyConstants.registerEmail(email);
+        String json = get(key);
+        if (json == null)
+            throw new BusinessException(ResultCode.VERIFY_EXPIRED);
+        try {
+            return objectMapper.readValue(json, User.class);
+        } catch (Exception e) {
+            throw new BusinessException(ResultCode.JSON_PARSE_ERROR);
+        }
+    }
+
+    @Override
+    public void deleteTemporaryUserByEmail(String email) {
+        String key = RedisKeyConstants.registerEmail(email);
+        delete(key);
     }
 
 }

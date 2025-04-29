@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
 
         captchaValidator.validateAndClearCaptcha(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         User user = userValidator.validateUsernameAndEmail(userForgetPasswordDTO.getUsername(), userForgetPasswordDTO.getEmail());
-        String code = userValidator.generateAndCacheSixDigitCode(userForgetPasswordDTO.getUsername());
+        String code = userValidator.generateAndCacheSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
         mailClient.sendHtmlMail(user.getEmail(), "GForo: Reset Password", html);
         return ResultResponse.success(null);
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
-        userValidator.verifySixDigitCode(userForgetPasswordDTO.getUsername(), code);
+        userValidator.verifySixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername(), code);
         return ResultResponse.success(null);
     }
 

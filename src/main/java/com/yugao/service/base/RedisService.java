@@ -1,6 +1,8 @@
 package com.yugao.service.base;
 
 
+import com.yugao.domain.User;
+
 public interface RedisService {
 
     // 给验证码设置过期时间
@@ -31,7 +33,7 @@ public interface RedisService {
     boolean verifyUserAccessToken(Long userId, String accessToken);
 
     // 设置数字验证码过期时间
-    void setSigDigitCodeByMinutes(String scene, String username, String sixDigitCode);
+    void setSigDigitCodeByMinutes(String scene, String symbol, String sixDigitCode);
 
     // 检查是否通过数字验证码验证
     boolean verifySigDigitCode(String scene, String username, String sixDigitCode);
@@ -56,5 +58,10 @@ public interface RedisService {
 
     // 删除邮箱激活间隔时间
     void deleteEmailActivationInterval(String email);
+
+    void saveTemporaryUser(User user);
+    boolean hasTemporaryUserByEmail(String email);
+    User getTemporaryUserByEmail(String email);
+    void deleteTemporaryUserByEmail(String email);
 }
 

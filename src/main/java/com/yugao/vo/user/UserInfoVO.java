@@ -22,4 +22,6 @@ public class UserInfoVO {
     private Long postCount;
 
     private Long commentCount;
+
+    private String nickname;
 }

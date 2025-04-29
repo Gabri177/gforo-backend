@@ -52,7 +52,8 @@ resetPassword:
 
 email:
   active-account:
-    request-expire-time-minutes: 1
+    request-expire-time-minutes: 3
+    request-interval-time-minutes: 1
 
 # logback
 

@@ -13,8 +13,13 @@ public class EmailBuilder {
     @Value("${resetPassword.sixDigVerifyCodeExpireTimeMinutes}")
     private long resetPasswordSixDigVerifyCodeExpireTimeMinutes;
 
-    public String buildActivationLink(User user) {
+    public String buildActivationLink_NO_USE(User user) {
         return frontendUrl + "/register/" + user.getId() + "/" + user.getActivationCode();
+    }
+
+
+    public String buildActivationLink(String email, String code) {
+        return frontendUrl + "/register/" + email + "/" + code;
     }
 
     public String buildEmailVerifyHtml(String username, String link) {
@@ -35,6 +40,25 @@ public class EmailBuilder {
                 "<span style='color:orange; font-weight:bold'>" +
                 resetPasswordSixDigVerifyCodeExpireTimeMinutes +
                 "</span> minutes.</p>";
+        return htmlContent;
+    }
+
+    public String buildSixCodeVerifyHtml(String sixDigVerifyCode, String link) {
+
+        String htmlContent = "<p>Your six-digit verification code is: " +
+                "<span style='color:red; font-size:20px; font-weight:bold'>" +
+                sixDigVerifyCode +
+                "</span>.</p>" +
+                "<p>This code will expire in " +
+                "<span style='color:orange; font-weight:bold'>" +
+                resetPasswordSixDigVerifyCodeExpireTimeMinutes +
+                "</span> minutes.</p>";
+        if (link != null) {
+            htmlContent += "<p>You can also click the link to re-fill your verification code:</p>" +
+                    "<p><a href='" + link + "' style='color: #4A90E2;'>Activate Account</a></p>" +
+                    "<p>If the button doesn't work, copy this link into your browser:</p>" +
+                    "<p>" + link + "</p>";
+        }
         return htmlContent;
     }
 }

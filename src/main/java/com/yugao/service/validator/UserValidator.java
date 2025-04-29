@@ -64,45 +64,6 @@ public class UserValidator {
         }
     }
 
-    public User validateUserForEmailVerification(Long currentUserId, UserVerifyEmailDTO dto) {
-        if (!currentUserId.equals(dto.getId())) {
-            throw new BusinessException(ResultCode.USER_INFO_INVALID);
-        }
-
-        User user = validateExistenceID(dto.getId());
-        if (!user.getUsername().equals(dto.getUsername()) ||
-                !user.getEmail().equals(dto.getEmail())) {
-            throw new BusinessException(ResultCode.USER_INFO_INVALID);
-        }
-
-        if (user.getStatus() == 1) {
-            throw new BusinessException(ResultCode.USER_ALREADY_VERIFIED);
-        }
-
-        return user;
-    }
-
-    public User validateUserForTokenActivation(Long currentUserId, String userId, String token){
-
-        if (token == null || userId == null)
-            throw new BusinessException(ResultCode.TOKEN_INVALID);
-        if (!userId.equals(currentUserId.toString()))
-            throw new BusinessException(ResultCode.TOKEN_INVALID);
-        User user = userService.getUserById(Long.parseLong(userId));
-        if (user == null)
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
-        if (user.getStatus() == 1)
-            throw new BusinessException(ResultCode.USER_ALREADY_VERIFIED);
-
-        System.out.println("Verifying email with token: " + token);
-        System.out.println("User id: " + userId);
-        if (!token.equals(user.getActivationCode())){
-            System.out.println("Invalid token");
-            throw new BusinessException(ResultCode.TOKEN_INVALID);
-        }
-        return user;
-    }
-
     public User validateUserLogin(UserRegisterDTO dto) {
         User user = userService.getUserByName(dto.getUsername());
         if (user == null) throw new BusinessException(ResultCode.USER_NOT_FOUND);
@@ -123,24 +84,24 @@ public class UserValidator {
         return existUser;
     }
 
-    public String generateAndCacheSixDigitCode(String username){
+    public String generateAndCacheSixDigitCode(String scene, String symbol){
         // 生成六位数验证码
         String sixDigVerifyCode = VerificationUtil.generateSixNumVerifCode();
 
         // 存储到redis中
         redisService.setSigDigitCodeByMinutes(
-                RedisKeyConstants.FORGET_PASSWORD,
-                username,
+                scene,
+                symbol,
                 sixDigVerifyCode
         );
 
         return sixDigVerifyCode;
     }
 
-    public void verifySixDigitCode(String username, String code) {
+    public void verifySixDigitCode(String scene, String symbol, String code) {
         boolean res = redisService.verifySigDigitCode(
-                RedisKeyConstants.FORGET_PASSWORD,
-                username,
+                scene,
+                symbol,
                 code
         );
         if (!res) {
@@ -148,9 +109,10 @@ public class UserValidator {
         }
 
         // 删除redis中存储的验证码
-        redisService.deleteSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, code);
+        redisService.deleteSigDigitCode(scene, code);
         // 设置一个标志位 用来表示用户已经验证过验证码
-        redisService.setVerifiedSigDigitCodeByMinutes(RedisKeyConstants.FORGET_PASSWORD, username);
+        // 后续应该可以删除
+        redisService.setVerifiedSigDigitCodeByMinutes(scene, symbol);
     }
 
     public void validateVerifiedCodeFlag(String username){
@@ -167,7 +129,7 @@ public class UserValidator {
     }
 
     public void validateIfIsBlocked(User user){
-        if (user.getStatus()== 0)
+        if (user.getStatus() == 2)
             throw new BusinessException(ResultCode.USER_BLOCKED);
     }
 

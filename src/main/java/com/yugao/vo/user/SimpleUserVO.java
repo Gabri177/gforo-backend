@@ -8,5 +8,6 @@ public class SimpleUserVO {
     private Long id;
     private String username;
     private String headerUrl;
+    private String nickname;
 }
 

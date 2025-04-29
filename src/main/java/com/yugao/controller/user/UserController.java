@@ -1,5 +1,6 @@
 package com.yugao.controller.user;
 
+import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
@@ -38,27 +39,28 @@ public class UserController {
 
 
     /**
-     * 发送验证邮件
+     * 发送邮件验证码
      * @param userVerifyEmailDTO
      * @return
      */
     @PostMapping("/send-verify-email")
-    public ResponseEntity<ResultFormat> verifyEmail(
+    public ResponseEntity<ResultFormat> sendChangeEmailVerify(
             @Validated @RequestBody UserVerifyEmailDTO userVerifyEmailDTO) {
 
         return userBusinessService.sendVerifyEmail(userVerifyEmailDTO);
     }
 
     /**
-     * 当前端打开验证链接 前端会将token作为参数传递给后端 验证token是否正确
-     * @param userId
-     * @param token
+     * 验证邮件验证码
+     * @param activeAccountDTO
      * @return
      */
-    @GetMapping("/verify-email/{userId}/{token}")
-    public ResponseEntity<ResultFormat> verifyEmail(@PathVariable String userId, @PathVariable String token) {
+    @PostMapping("/verify-email")
+    public ResponseEntity<ResultFormat> verifyChangeEmailCode(
+            @Validated @RequestBody ActiveAccountDTO activeAccountDTO
+            ) {
 
-        return userBusinessService.verifyEmail(userId, token);
+        return userBusinessService.verifyEmail(activeAccountDTO);
     }
 
 }

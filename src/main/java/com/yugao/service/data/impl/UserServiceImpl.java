@@ -93,6 +93,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.update(null, wrapper) > 0;
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return getUserByEmail(email) != null;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return getUserByName(username) != null;
+    }
+
     @Transactional
     @Override
     public void updateUserProfile(Long id, UserInfoUpdateDTO userInfoUpdateDTO) {

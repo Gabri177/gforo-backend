@@ -42,6 +42,12 @@ public enum ResultCode {
     USER_NOT_AUTHORIZED(40029, "User not authorized"),
     COMMENT_NOT_FOUND(40030, "Comment not found"),
     USER_BLOCKED (40031, "User has been blocked, Please contact the Admin"),
+    REDIS_SAVING_ERROR(40032, "Redis saving error"),
+    JSON_PARSE_ERROR(40033, "JSON parse error"),
+    VERIFY_EXPIRED(40034, "Verification expired, Please re-register"),
+    ACCOUNT_IS_REGISTERING(40035, "Count is already registering, Please check your email"),
+    EMAIL_ALERADY_REGISTERED(40036, "Email is already registered"),
+    USERNAME_ALREADY_REGISTERED(40037, "Username is already registered"),
 
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),

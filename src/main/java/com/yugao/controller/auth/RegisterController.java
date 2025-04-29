@@ -1,5 +1,6 @@
 package com.yugao.controller.auth;
 
+import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.auth.RegisterService;
@@ -27,5 +28,13 @@ public class RegisterController {
             @Validated({ValidationGroups.Register.class}) @RequestBody UserRegisterDTO userRegisterDTO) {
         return registerService.registerAccount(userRegisterDTO);
     }
+
+    @PostMapping("/activate")
+    public ResponseEntity<ResultFormat> activateAccount(
+            @Validated @RequestBody ActiveAccountDTO activeAccountDTO
+    ) {
+        return registerService.activateAccount(activeAccountDTO);
+    }
+
 
 }

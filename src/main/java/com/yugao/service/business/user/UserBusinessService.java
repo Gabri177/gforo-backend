@@ -1,5 +1,6 @@
 package com.yugao.service.business.user;
 
+import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
@@ -16,5 +17,5 @@ public interface UserBusinessService {
 
     ResponseEntity<ResultFormat> sendVerifyEmail(UserVerifyEmailDTO userVerifyEmailDTO);
 
-    ResponseEntity<ResultFormat> verifyEmail(String userId, String token);
+    ResponseEntity<ResultFormat> verifyEmail(ActiveAccountDTO activeAccountDTO);
 }

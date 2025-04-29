@@ -28,6 +28,10 @@ public interface UserService {
 
     boolean  updateEmail(Long id, String email);
 
+    boolean  existsByEmail(String email);
+
+    boolean  existsByUsername(String username);
+
     void updateUserProfile(Long id, UserInfoUpdateDTO userInfoUpdateDTO);
 
 

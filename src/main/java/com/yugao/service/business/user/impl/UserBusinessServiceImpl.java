@@ -1,7 +1,9 @@
 package com.yugao.service.business.user.impl;
 
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
+import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
@@ -82,21 +84,29 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> sendVerifyEmail(UserVerifyEmailDTO userVerifyEmailDTO) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userValidator.validateUserForEmailVerification(userId, userVerifyEmailDTO);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
-        String link = emailBuilder.buildActivationLink(user);
-        String html = emailBuilder.buildEmailVerifyHtml(user.getUsername(), link);
-        mailClient.sendHtmlMail(user.getEmail(), user.getUsername() + ", Please verify your email address", html);
+        String code = userValidator.generateAndCacheSixDigitCode(
+                RedisKeyConstants.CHANGE_EMAIL,
+                userVerifyEmailDTO.getEmail());
+        String html = emailBuilder.buildSixCodeVerifyHtml(code);
+        mailClient.sendHtmlMail(
+                userVerifyEmailDTO.getEmail(),
+                "GForo: Change Email",
+                html
+        );
         return ResultResponse.success(null);
     }
 
     @Override
-    public ResponseEntity<ResultFormat> verifyEmail(String userId, String token) {
+    public ResponseEntity<ResultFormat> verifyEmail(ActiveAccountDTO activeAccountDTO) {
 
         Long currentUserId = SecurityUtils.getCurrentUserId();
-        User user = userValidator.validateUserForTokenActivation(currentUserId, userId, token);
-        userService.updateStatus(user.getId(), 1);
+        userValidator.verifySixDigitCode(
+                RedisKeyConstants.CHANGE_EMAIL,
+                activeAccountDTO.getEmail(),
+                activeAccountDTO.getSixDigitCode());
+        userValidator.validateExistenceID(currentUserId);
+        userService.updateEmail(currentUserId, activeAccountDTO.getEmail());
         return ResultResponse.success(null);
     }
 }
