@@ -45,16 +45,13 @@ public class UserConverter {
     public static SimpleUserVO toSimpleVO(User domain) {
         SimpleUserVO vo = new SimpleUserVO();
         if (domain == null) {
-            vo.setId(-1L);
-            vo.setUsername("UnknownUser");
-            vo.setNickname("Unknown");
-            vo.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
-        } else {
-            vo.setId(domain.getId());
-            vo.setUsername(domain.getUsername());
-            vo.setNickname(domain.getNickname());
-            vo.setHeaderUrl(domain.getHeaderUrl());
+          domain = User.createUnknownUser();
         }
+        vo.setId(domain.getId());
+        vo.setUsername(domain.getUsername());
+        vo.setNickname(domain.getNickname());
+        vo.setHeaderUrl(domain.getHeaderUrl());
+
         return vo;
     }
 }

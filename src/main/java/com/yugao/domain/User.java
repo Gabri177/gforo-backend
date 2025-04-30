@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Data
 @TableName("user")
@@ -49,4 +50,20 @@ public class User {
     private Date lastUsernameUpdateTime;
 
     private Date lastEmailUpdateTime;
+
+    public static User createUnknownUser() {
+        User user = new User();
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 999);
+        String randomStr = String.valueOf(randomNum);
+        user.setId(-1L);
+        user.setUsername("unknownUser" + randomStr);
+        user.setEmail("unknownEmail" + randomStr + "@example.com");
+        user.setType(0);
+        user.setStatus(0);
+        user.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
+        user.setCreateTime(new Date());
+        user.setBio("this is unknown user");
+        user.setNickname("unknown" + randomStr);
+        return user;
+    }
 }

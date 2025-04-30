@@ -32,11 +32,9 @@ public class PostHandler {
     @Autowired
     private UserService userService;
 
-    private SimpleUserVO existUserById(Long userId) {
-        // 这里可以尝试返回一个默认位置用户的对象
+    private SimpleUserVO getAuthorInfo(Long userId) {
+
         User user = userService.getUserById(userId);
-        if (user == null)
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         return UserConverter.toSimpleVO(user);
     }
 
@@ -113,7 +111,7 @@ public class PostHandler {
         if (originalPost == null)
             throw new BusinessException(ResultCode.POST_NOT_FOUND);
 
-        SimpleUserVO author = existUserById(originalPost.getUserId());
+        SimpleUserVO author = getAuthorInfo(originalPost.getUserId());
         List<CommentVO> replies = buildComments(postId);
 
         return PostConverter.toPostDetailVO(originalPost, author, replies, false);
