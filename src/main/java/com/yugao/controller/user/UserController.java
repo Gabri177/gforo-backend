@@ -2,6 +2,7 @@ package com.yugao.controller.user;
 
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
+import com.yugao.dto.user.UserChangeUsernameDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.result.ResultFormat;
@@ -31,7 +32,14 @@ public class UserController {
         return userBusinessService.changePassword(userChangePasswordDTO);
     }
 
-    @PutMapping("/info")
+    @PutMapping("/change-username")
+    public ResponseEntity<ResultFormat> changeUsername(
+            @Validated @RequestBody UserChangeUsernameDTO userChangeUsernameDTO) {
+
+        return userBusinessService.changeUsername(userChangeUsernameDTO);
+    }
+
+    @PutMapping("/info") //需要修改
     public ResponseEntity<ResultFormat> updateUserInfo(
             @Validated @RequestBody UserInfoUpdateDTO userInfoUpdateDTO) {
         return userBusinessService.updateUserInfo(userInfoUpdateDTO);

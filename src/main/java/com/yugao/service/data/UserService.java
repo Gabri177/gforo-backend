@@ -3,6 +3,7 @@ package com.yugao.service.data;
 import com.yugao.domain.User;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserService {
@@ -24,6 +25,8 @@ public interface UserService {
 
     boolean  updateHeader(Long id, String headerUrl);
 
+    boolean  updateUsername(Long id, String username);
+
     boolean  updatePassword(Long id, String password);
 
     boolean  updateEmail(Long id, String email);
@@ -32,7 +35,11 @@ public interface UserService {
 
     boolean  existsByUsername(String username);
 
-    void updateUserProfile(Long id, UserInfoUpdateDTO userInfoUpdateDTO);
+    boolean updateUserProfile(Long id, UserInfoUpdateDTO userInfoUpdateDTO);
+
+    Date getLastUsernameUpdateTime(Long id);
+
+    Date getLastEmailUpdateTime(Long id);
 
 
 }

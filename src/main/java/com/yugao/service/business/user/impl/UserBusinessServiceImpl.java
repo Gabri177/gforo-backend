@@ -5,8 +5,11 @@ import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
+import com.yugao.dto.user.UserChangeUsernameDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
+import com.yugao.exception.BusinessException;
+import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
@@ -68,7 +71,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         User userDomain = userValidator.validateExistenceID(userId);
         userValidator.validatePasswordChange(userDomain, userChangePasswordDTO);
         String newRawPassword = userChangePasswordDTO.getNewPassword();
-        userService.updatePassword(userId, PasswordUtil.encode(newRawPassword));
+        if (!userService.updatePassword(userId, PasswordUtil.encode(newRawPassword)))
+            throw new BusinessException(ResultCode.USER_PASSWORD_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 
@@ -77,17 +81,22 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
         Long userId = SecurityUtils.getCurrentUserId();
         User userDomain = userValidator.validateExistenceID(userId);
-        userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO);
+        if(!userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO))
+            throw new BusinessException(ResultCode.USER_PROFILE_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 
     @Override
     public ResponseEntity<ResultFormat> sendVerifyEmail(UserVerifyEmailDTO userVerifyEmailDTO) {
 
+//        System.out.println("userVerifyEmailDTO = " + userVerifyEmailDTO);
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        userValidator.hasPermissionToChangeEmail(currentUserId);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
         String code = userValidator.generateAndCacheSixDigitCode(
                 RedisKeyConstants.CHANGE_EMAIL,
                 userVerifyEmailDTO.getEmail());
+        System.out.println("code = " + code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
         mailClient.sendHtmlMail(
                 userVerifyEmailDTO.getEmail(),
@@ -100,13 +109,25 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> verifyEmail(ActiveAccountDTO activeAccountDTO) {
 
+        System.out.println("activeAccountDTO = " + activeAccountDTO);
         Long currentUserId = SecurityUtils.getCurrentUserId();
         userValidator.verifySixDigitCode(
                 RedisKeyConstants.CHANGE_EMAIL,
                 activeAccountDTO.getEmail(),
                 activeAccountDTO.getSixDigitCode());
         userValidator.validateExistenceID(currentUserId);
-        userService.updateEmail(currentUserId, activeAccountDTO.getEmail());
+        if (!userService.updateEmail(currentUserId, activeAccountDTO.getEmail()))
+            throw new BusinessException(ResultCode.USER_EMAIL_UPDATE_ERROR);
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> changeUsername(UserChangeUsernameDTO userChangeUsernameDTO) {
+
+        Long userId = SecurityUtils.getCurrentUserId();
+        userValidator.hasPermissionToChangeUsername(userId);
+        if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
+            throw new BusinessException(ResultCode.USER_USERNAME_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 }

@@ -19,8 +19,10 @@ public enum ResultCode {
     // // sql error
     SQL_EXCEPTION(40007, "SQL error"),
     SQL_UPDATING_ERROR(40008, "SQL updating error"),
+
+    // // user error
     USER_ALREADY_VERIFIED(40009, "User already verified"),
-    USER_INFO_INVALID(400010, "User info invalid"),
+    USER_INFO_INVALID(40010, "User info invalid"),
     EMAIL_ALREADY_VERIFIED(40011, "Email already verified"),
     NEW_PASSWORD_SAME(40012, "New password cannot be same as old"),
     OLD_PASSWORD_INCORRECT(40013, "Old password incorrect"),
@@ -48,6 +50,13 @@ public enum ResultCode {
     ACCOUNT_IS_REGISTERING(40035, "Count is already registering, Please check your email"),
     EMAIL_ALERADY_REGISTERED(40036, "Email is already registered"),
     USERNAME_ALREADY_REGISTERED(40037, "Username is already registered"),
+    USERNAME_CHANGE_INTERVAL_TOO_SHORT(40038, "Username change interval is too short"),
+    EMAIL_CHANGE_INTERVAL_TOO_SHORT(40039, "Email change interval is too short"),
+    USER_PROFILE_UPDATE_ERROR(40040, "User profile update error"),
+    USER_PASSWORD_UPDATE_ERROR(40041, "User password update error"),
+    USER_EMAIL_UPDATE_ERROR(40042, "User email update error"),
+    USER_USERNAME_UPDATE_ERROR(40043, "User username update error"),
+
 
     // 系统异常
     SYSTEM_EXCEPTION(50000, "System Exception"),

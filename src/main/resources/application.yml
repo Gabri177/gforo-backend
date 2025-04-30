@@ -55,6 +55,11 @@ email:
     request-expire-time-minutes: 3
     request-interval-time-minutes: 1
 
+change:
+  email-change-interval-limit-days: 30
+  username-change-interval-limit-days: 30
+
+
 # logback
 
 #logging:

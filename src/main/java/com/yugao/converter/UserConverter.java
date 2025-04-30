@@ -18,8 +18,7 @@ public class UserConverter {
         user.setEmail(userRegisterDTO.getEmail());
         user.setHeaderUrl(userRegisterDTO.getHeaderUrl());
         user.setType(0);
-        user.setStatus(0);
-        user.setActivationCode(EncryptedUtil.generateUUID());
+        user.setStatus(0); // 0-用户状态正常 1-用户状态被封禁
         user.setCreateTime(new Date());
         user.setNickname(userRegisterDTO.getUsername());
         return user;

@@ -13,7 +13,11 @@ import com.yugao.service.data.UserTokenService;
 import com.yugao.util.captcha.VerificationUtil;
 import com.yugao.util.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Component
 public class UserValidator {
@@ -26,6 +30,12 @@ public class UserValidator {
 
     @Autowired
     private UserTokenService userTokenService;
+
+    @Value("${change.email-change-interval-limit-days}")
+    private Long emailChangeIntervalLimitDays;
+
+    @Value("${change.username-change-interval-limit-days}")
+    private Long usernameChangeIntervalLimitDays;
 
     public User validateExistenceID(Long userId) {
         User userDomain = userService.getUserById(userId);
@@ -112,10 +122,10 @@ public class UserValidator {
         redisService.deleteSigDigitCode(scene, code);
         // 设置一个标志位 用来表示用户已经验证过验证码
         // 后续应该可以删除
-        redisService.setVerifiedSigDigitCodeByMinutes(scene, symbol);
+        redisService.setVerifiedSigDigitCodeByMinutes(scene, symbol);  //////////这个应该自立门户///////////
     }
 
-    public void validateVerifiedCodeFlag(String username){
+    public void validateVerifiedCodeFlag(String username){ // 这个函数有问题 到时候看看reset passwd 如何修改
         boolean res = redisService.verifyVerifiedSigDigitCode(
                 RedisKeyConstants.FORGET_PASSWORD,
                 username
@@ -129,8 +139,30 @@ public class UserValidator {
     }
 
     public void validateIfIsBlocked(User user){
-        if (user.getStatus() == 2)
-            throw new BusinessException(ResultCode.USER_BLOCKED);
+        if (user.getStatus() == 1)
+            throw new BusinessException(ResultCode.USER_BLOCKED); ////////////status 值考虑////////////////////
+    }
+
+    public void hasPermissionToChangeEmail(Long userId){
+        Date lastEmailUpdateTime = userService.getLastEmailUpdateTime(userId);
+        if (lastEmailUpdateTime == null)
+            return ;
+        long diff = ChronoUnit.DAYS.between(
+                lastEmailUpdateTime.toInstant(),
+                new Date().toInstant());
+        if (diff < emailChangeIntervalLimitDays)
+            throw new BusinessException(ResultCode.EMAIL_CHANGE_INTERVAL_TOO_SHORT);
+    }
+
+    public void hasPermissionToChangeUsername(Long userId){
+        Date lastUsernameUpdateTime = userService.getLastUsernameUpdateTime(userId);
+        if (lastUsernameUpdateTime == null)
+            return ;
+        long diff = ChronoUnit.DAYS.between(
+                lastUsernameUpdateTime.toInstant(),
+                new Date().toInstant());
+        if (diff < usernameChangeIntervalLimitDays)
+            throw new BusinessException(ResultCode.USERNAME_CHANGE_INTERVAL_TOO_SHORT);
     }
 
 

@@ -13,11 +13,6 @@ public class EmailBuilder {
     @Value("${resetPassword.sixDigVerifyCodeExpireTimeMinutes}")
     private long resetPasswordSixDigVerifyCodeExpireTimeMinutes;
 
-    public String buildActivationLink_NO_USE(User user) {
-        return frontendUrl + "/register/" + user.getId() + "/" + user.getActivationCode();
-    }
-
-
     public String buildActivationLink(String email, String code) {
         return frontendUrl + "/register/" + email + "/" + code;
     }
