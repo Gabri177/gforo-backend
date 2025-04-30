@@ -14,6 +14,7 @@ import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.auth.RegisterService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.limiter.EmailRateLimiter;
+import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
     private EmailRateLimiter emailRateLimiter;
+    @Autowired
+    private CaptchaValidator captchaValidator;
 
     @Override
     public ResponseEntity<ResultFormat> registerAccount(UserRegisterDTO userRegisterDTO) {
@@ -65,7 +68,7 @@ public class RegisterServiceImpl implements RegisterService {
         emailRateLimiter.check(userDomain.getEmail());
         // 先保存到redis
         redisService.saveTemporaryUser(userDomain);
-        String code = userValidator.generateAndCacheSixDigitCode(
+        String code = captchaValidator.generateAndCacheSixDigitCode(
                 RedisKeyConstants.ACTIVATE_ACCOUNT ,
                 userDomain.getEmail());
         String link = emailBuilder.buildActivationLink(userDomain.getEmail(), code);
@@ -79,7 +82,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         if (!redisService.hasTemporaryUserByEmail(activeAccountDTO.getEmail()))
             throw new BusinessException(ResultCode.VERIFY_EXPIRED);
-        userValidator.verifySixDigitCode(
+        captchaValidator.verifySixDigitCode(
                 RedisKeyConstants.ACTIVATE_ACCOUNT,
                 activeAccountDTO.getEmail(),
                 activeAccountDTO.getSixDigitCode());

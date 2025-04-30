@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
 
         captchaValidator.validateAndClearCaptcha(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         User user = userValidator.validateUsernameAndEmail(userForgetPasswordDTO.getUsername(), userForgetPasswordDTO.getEmail());
-        String code = userValidator.generateAndCacheSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
+        String code = captchaValidator.generateAndCacheSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
         mailClient.sendHtmlMail(user.getEmail(), "GForo: Reset Password", html);
         return ResultResponse.success(null);
@@ -82,14 +82,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
-        userValidator.verifySixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername(), code);
+        captchaValidator.verifySixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername(), code);
         return ResultResponse.success(null);
     }
 
     @Override
     public ResponseEntity<ResultFormat> resetPassword(UserForgetPasswordResetDTO userForgetPasswordResetDTO) {
 
-        userValidator.validateVerifiedCodeFlag(userForgetPasswordResetDTO.getUsername());
+        captchaValidator.validateVerifiedCodeFlag(userForgetPasswordResetDTO.getUsername());
         User existUser = userValidator.validateExistenceName(userForgetPasswordResetDTO.getUsername());
         String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean res = userService.updatePassword(existUser.getId(), newPassword);
