@@ -34,14 +34,14 @@ public class UserValidator {
     @Value("${change.username-change-interval-limit-days}")
     private Long usernameChangeIntervalLimitDays;
 
-    public User validateExistenceID(Long userId) {
+    public User validateUserIdExists(Long userId) {
         User userDomain = userService.getUserById(userId);
         if (userDomain == null)
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
         return userDomain;
     }
 
-    public User validateExistenceEmail(String email) {
+    public User validateEmailExists(String email) {
         User existUser = userService.getUserByEmail(email);
         if (existUser == null) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
@@ -71,7 +71,7 @@ public class UserValidator {
         }
     }
 
-    public User validateUserLogin(UserRegisterDTO dto) {
+    public User validateLoginCredentials(UserRegisterDTO dto) {
         User user = userService.getUserByName(dto.getUsername());
         if (user == null) throw new BusinessException(ResultCode.USER_NOT_FOUND);
         if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
@@ -85,7 +85,7 @@ public class UserValidator {
             throw new BusinessException(ResultCode.USER_BLOCKED); ////////////status 值考虑////////////////////
     }
 
-    public void hasPermissionToChangeEmail(Long userId){
+    public void validateEmailChangeInterval(Long userId){
         Date lastEmailUpdateTime = userService.getLastEmailUpdateTime(userId);
         if (lastEmailUpdateTime == null)
             return ;
@@ -96,7 +96,7 @@ public class UserValidator {
             throw new BusinessException(ResultCode.EMAIL_CHANGE_INTERVAL_TOO_SHORT);
     }
 
-    public void hasPermissionToChangeUsername(Long userId){
+    public void validateUsernameChangeInterval(Long userId){
         Date lastUsernameUpdateTime = userService.getLastUsernameUpdateTime(userId);
         if (lastUsernameUpdateTime == null)
             return ;

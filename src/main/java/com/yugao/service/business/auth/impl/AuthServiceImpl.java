@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
         // symbol 这里让前端运行的时候生成固定的uuid 然后存到localstorage中 用来做设备标识符
         System.out.println("login =================== " + userRegisterDTO);
         captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
-        User loginUser = userValidator.validateUserLogin(userRegisterDTO);
+        User loginUser = userValidator.validateLoginCredentials(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
         tokenHandler.invalidateExistingToken(loginUser.getId());
         TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser.getId(), loginUser);
@@ -110,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
         captchaValidator.validateVerifiedCodeFlag(
                 RedisKeyConstants.FORGET_PASSWORD ,
                 userForgetPasswordResetDTO.getEmail());
-        User existUser = userValidator.validateExistenceEmail(userForgetPasswordResetDTO.getEmail());
+        User existUser = userValidator.validateEmailExists(userForgetPasswordResetDTO.getEmail());
         String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean res = userService.updatePassword(existUser.getId(), newPassword);
         if (!res) {
