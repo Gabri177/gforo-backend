@@ -30,21 +30,22 @@ public final class RedisKeyConstants {
         return CAPTCHA + captchaId;
     }
 
-    // 图形验证码验证通过: captcha_verified: + scene + username
-    public static String captchaVerified(String scene, String username) {
-        return CAPTCHA_VERIFIED + scene + username;
+    // 图形验证码验证通过: captcha_verified: + scene + symbol
+    public static String captchaVerified(String scene, String symbol) {
+        return CAPTCHA_VERIFIED + scene + symbol;
     }
 
     public static String userIdAccessToken(Long userId) {
         return ACCESS_TOKEN + userId;
     }
 
-    public static String sixDigitCode(String scene, String username) {
-        return SIX_DIGIT_CODE + scene + username;
+    public static String sixDigitCode(String scene, String symbol) {
+
+        return SIX_DIGIT_CODE + scene + symbol;
     }
 
-    public static String sixDigitCodeVerified(String scene, String username) {
-        return SIX_DIGIT_CODE_VERIFIED + scene + username;
+    public static String sixDigitCodeVerified(String scene, String symbol) {
+        return SIX_DIGIT_CODE_VERIFIED + scene + symbol;
     }
 
     public static String emailActivationInterval(String email) {

@@ -1,8 +1,5 @@
 package com.yugao.service.base;
 
-
-import com.yugao.domain.User;
-
 import java.util.concurrent.TimeUnit;
 
 public interface RedisService {
@@ -22,6 +19,5 @@ public interface RedisService {
     void setObjectTemmporarilyByMinutes(String key, Object value, long timeoutByMinutes);
 
     <T> T getObject(String key, Class<T> clazz);
-
 }
 

@@ -5,6 +5,7 @@ import com.yugao.domain.User;
 import com.yugao.dto.auth.UserForgetPasswordDTO;
 import com.yugao.dto.auth.UserForgetPasswordResetDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
@@ -21,7 +22,6 @@ import com.yugao.vo.auth.TokenInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -48,7 +48,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> login(UserRegisterDTO userRegisterDTO) {
 
-        captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getUsername());
+        // symbol 这里让前端运行的时候生成固定的uuid 然后存到localstorage中 用来做设备标识符
+        System.out.println("login =================== " + userRegisterDTO);
+        captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
         User loginUser = userValidator.validateUserLogin(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
         tokenHandler.invalidateExistingToken(loginUser.getId());
@@ -64,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<ResultFormat> refresh(String refreshToken) {
+        System.out.println("refreshToken =================== " + refreshToken);
         NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshToken);
         return ResultResponse.success(newAccessTokenVO);
     }
@@ -71,9 +74,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> sendForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO) {
 
-        captchaValidator.validateAndClearCaptcha(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
-        User user = userValidator.validateUsernameAndEmail(userForgetPasswordDTO.getUsername(), userForgetPasswordDTO.getEmail());
-        String code = captchaValidator.generateAndCacheSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
+        captchaValidator.validateAndClearCaptcha(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getSymbol());
+        User user = userService.getUserByEmail(userForgetPasswordDTO.getEmail());
+        if (user == null)
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        String code = captchaValidator.generateAndCacheSixDigitCode(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getEmail());
+        System.out.println("reset password code =================== " + code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
         mailClient.sendHtmlMail(user.getEmail(), "GForo: Reset Password", html);
         return ResultResponse.success(null);
@@ -82,16 +92,25 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
-        captchaValidator.verifySixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername(), code);
-        captchaValidator.setVerifiedSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
+        System.out.println("verifyForgetPasswordCode =================== " + userForgetPasswordDTO);
+        System.out.println("verified reset password code =================== " + code);
+        captchaValidator.verifySixDigitCode(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getEmail(),
+                code);
+        captchaValidator.setVerifiedSixDigitCode(
+                RedisKeyConstants.FORGET_PASSWORD,
+                userForgetPasswordDTO.getEmail());
         return ResultResponse.success(null);
     }
 
     @Override
     public ResponseEntity<ResultFormat> resetPassword(UserForgetPasswordResetDTO userForgetPasswordResetDTO) {
 
-        captchaValidator.validateVerifiedCodeFlag(RedisKeyConstants.FORGET_PASSWORD ,userForgetPasswordResetDTO.getUsername());
-        User existUser = userValidator.validateExistenceName(userForgetPasswordResetDTO.getUsername());
+        captchaValidator.validateVerifiedCodeFlag(
+                RedisKeyConstants.FORGET_PASSWORD ,
+                userForgetPasswordResetDTO.getEmail());
+        User existUser = userValidator.validateExistenceEmail(userForgetPasswordResetDTO.getEmail());
         String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean res = userService.updatePassword(existUser.getId(), newPassword);
         if (!res) {

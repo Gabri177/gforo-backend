@@ -29,7 +29,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public String get(String key) {
-
         return redisTemplate.opsForValue().get(key);
     }
 
@@ -45,7 +44,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void delete(String key) {
-
         redisTemplate.delete(key);
     }
 

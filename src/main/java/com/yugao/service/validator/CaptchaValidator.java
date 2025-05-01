@@ -25,44 +25,25 @@ public class CaptchaValidator {
     @Autowired
     private CaptchaService captchaService;
 
-    private void setSigDigitCodeByMinutes(String scene, String symbol, String sixDigitCode) {
-        redisService.setTemporarilyByMinutes(
-                RedisKeyConstants.sixDigitCode(scene, symbol),
-                sixDigitCode,
-                sixDigVerifyCodeExpireTimeMinutes);
-    }
 
-    private boolean verifySigDigitCode(String scene, String username, String sixDigitCode) {
-        String redisSixDigitCode = redisService.get(RedisKeyConstants.sixDigitCode(scene, username));
-        return sixDigitCode != null && sixDigitCode.equals(redisSixDigitCode);
-    }
-
-    public void deleteSigDigitCode(String scene, String symbol) {
-        redisService.delete(RedisKeyConstants.sixDigitCode(scene, symbol));
-    }
-
-    public void setVerifiedSigDigitCodeByMinutes(String scene, String username) {
-        redisService.setTemporarilyByMinutes(
-                RedisKeyConstants.sixDigitCodeVerified(scene, username),
-                "true",
-                verifiedSixDigVerifyCodeExpireTimeMinutes
-        );
-    }
     // 判断是否已经通过数字验证码验证
-    private boolean verifyVerifiedSigDigitCode(String scene, String username) {
-        return redisService.hasKey(RedisKeyConstants.sixDigitCodeVerified(scene, username)) &&
-                "true".equals(redisService.get(RedisKeyConstants.sixDigitCodeVerified(scene, username)));
+    private boolean verifyVerifiedSigDigitCode(String scene, String symbol) {
+        return redisService.hasKey(RedisKeyConstants.sixDigitCodeVerified(scene, symbol)) &&
+                "true".equals(redisService.get(RedisKeyConstants.sixDigitCodeVerified(scene, symbol)));
     }
-    // 删除通过数字验证码验证的标志
-    private void deleteVerifiedSigDigitCode(String scene, String username) {
-        redisService.delete(RedisKeyConstants.sixDigitCodeVerified(scene, username));
+    // 删除通过数字验证码验证的标志===============================
+    private void deleteVerifiedSigDigitCode(String scene, String symbol) {
+        redisService.delete(RedisKeyConstants.sixDigitCodeVerified(scene, symbol));
     }
 
-    public void validateAndClearCaptcha(String scene, String username) {
-        if (!captchaService.verifyVerifiedCaptcha(scene, username)) {
-            throw new BusinessException(ResultCode.LOGIN_WITHOUT_CAPTCHA);
+    public void validateAndClearCaptcha(String scene, String symbol) {
+
+        boolean opr = redisService.hasKey(RedisKeyConstants.captchaVerified(scene, symbol)) &&
+                "true".equals(redisService.get(RedisKeyConstants.captchaVerified(scene, symbol)));
+        if (!opr) {
+            throw new BusinessException(ResultCode.CAPTCHA_VERIFIED_ERROR);
         }
-        captchaService.deleteVerifiedCaptcha(scene, username);
+        redisService.delete(RedisKeyConstants.captchaVerified(scene, symbol));
     }
 
     public String generateAndCacheSixDigitCode(String scene, String symbol){
@@ -70,39 +51,46 @@ public class CaptchaValidator {
         String sixDigVerifyCode = VerificationUtil.generateSixNumVerifCode();
 
         // 存储到redis中
-        setSigDigitCodeByMinutes(scene, symbol, sixDigVerifyCode);
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.sixDigitCode(scene, symbol),
+                sixDigVerifyCode,
+                sixDigVerifyCodeExpireTimeMinutes);
 
         return sixDigVerifyCode;
     }
 
     public void verifySixDigitCode(String scene, String symbol, String code) {
-        boolean res = verifySigDigitCode(
-                scene,
-                symbol,
-                code
-        );
+
+        String redisSixDigitCode = redisService.get(RedisKeyConstants.sixDigitCode(scene, symbol));
+        System.out.println("redisSixDigitCode = " + redisSixDigitCode);
+        boolean res = code.equals(redisSixDigitCode);
+
         if (!res) {
             throw new BusinessException(ResultCode.SIX_DIGIT_CODE_NOT_MATCH);
         }
 
         // 删除redis中存储的验证码
-        deleteSigDigitCode(scene, code);
+        redisService.delete(RedisKeyConstants.sixDigitCode(scene, code));
     }
 
     public void setVerifiedSixDigitCode(String scene, String symbol){
-        setVerifiedSigDigitCodeByMinutes(scene, symbol);
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.sixDigitCodeVerified(scene, symbol),
+                "true",
+                verifiedSixDigVerifyCodeExpireTimeMinutes
+        );
     }
 
-    public void validateVerifiedCodeFlag(String scene ,String username){
+    public void validateVerifiedCodeFlag(String scene, String symbol){
         boolean res = verifyVerifiedSigDigitCode(
                 scene,
-                username
+                symbol
         );
         if (!res) {
             throw new BusinessException(ResultCode.SIX_DIGIT_CODE_NOT_MATCH);
         }
 
         // 删除redis中存储的验证码
-        deleteVerifiedSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, username);
+        deleteVerifiedSigDigitCode(RedisKeyConstants.FORGET_PASSWORD, symbol);
     }
 }

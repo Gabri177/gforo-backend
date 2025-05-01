@@ -1,16 +1,13 @@
 package com.yugao.service.validator;
 
-import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
-import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.data.UserTokenService;
-import com.yugao.util.captcha.VerificationUtil;
 import com.yugao.util.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,8 +41,8 @@ public class UserValidator {
         return userDomain;
     }
 
-    public User validateExistenceName(String username) {
-        User existUser = userService.getUserByName(username);
+    public User validateExistenceEmail(String email) {
+        User existUser = userService.getUserByEmail(email);
         if (existUser == null) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
@@ -81,17 +78,6 @@ public class UserValidator {
             throw new BusinessException(ResultCode.PASSWORD_NOT_MATCH);
         }
         return user;
-    }
-
-    public User validateUsernameAndEmail(String username, String email) {
-        User existUser = userService.getUserByName(username);
-        if (existUser == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
-        }
-        if (!existUser.getEmail().equals(email)) {
-            throw new BusinessException(ResultCode.EMAIL_NOT_MATCH);
-        }
-        return existUser;
     }
 
     public void validateIfIsBlocked(User user){

@@ -3,6 +3,7 @@ package com.yugao.service.business.captcha.impl;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.dto.captcha.GraphCaptchaDTO;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
@@ -60,23 +61,21 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> verifyCaptcha(String verCode, String captchaId, String username, String scene) {
-        /**
-         * 这里最好不要依赖于requestparam的参数 设置为非必须 自己检查并精细返回错误
-         */
-        boolean res = verifyCaptcha(captchaId, verCode);
+    public ResponseEntity<ResultFormat> verifyCaptcha(GraphCaptchaDTO dto) {
+
+        boolean res = verifyCaptcha(dto.getCaptchaId(), dto.getVerCode());
         if (!res) {
             return ResultResponse.error(ResultCode.CAPTCHA_VERIFIED_ERROR);
         }
 
         // 验证成功后删除验证码
-        redisService.delete(RedisKeyConstants.captcha(captchaId));
+        redisService.delete(RedisKeyConstants.captcha(dto.getCaptchaId()));
         // 存储验证码验证状态，设置配置中的分钟数量为有效期
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaVerified(scene, username),
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaVerified(dto.getScene(), dto.getSymbol()),
                 "true", captchaVerifiedExpireTimeMinutes);
+        System.out.println(dto.getScene() + " " + dto.getSymbol() + "等待用户登录");
 
-
-        System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(scene, username));
+        System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(dto.getScene(), dto.getSymbol()));
         return ResultResponse.success(null);
     }
 
@@ -89,14 +88,4 @@ public class CaptchaServiceImpl implements CaptchaService {
         return ResultResponse.success(null);
     }
 
-    @Override
-    public boolean verifyVerifiedCaptcha(String scene, String username) {
-        return redisService.hasKey(RedisKeyConstants.captchaVerified(scene, username)) &&
-                "true".equals(redisService.get(RedisKeyConstants.captchaVerified(scene, username)));
-    }
-
-    @Override
-    public void deleteVerifiedCaptcha(String scene, String username) {
-        redisService.delete(RedisKeyConstants.captchaVerified(scene, username));
-    }
 }

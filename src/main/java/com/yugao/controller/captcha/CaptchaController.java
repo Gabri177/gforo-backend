@@ -1,9 +1,11 @@
 package com.yugao.controller.captcha;
 
+import com.yugao.dto.captcha.GraphCaptchaDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.captcha.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,11 +26,10 @@ public class CaptchaController {
     }
 
     @PostMapping
-    public ResponseEntity<ResultFormat> checkCaptcha(@RequestParam("code") String verCode,
-                                                     @RequestParam("id") String captchaId,
-                                                     @RequestParam("username") String username,
-                                                     @RequestParam("scene") String scene) {
-        return captchaService.verifyCaptcha(verCode, captchaId, username, scene);
+    public ResponseEntity<ResultFormat> checkCaptcha(
+            @Validated @RequestBody GraphCaptchaDTO graphCaptchaDTO
+            ) {
+        return captchaService.verifyCaptcha(graphCaptchaDTO);
     }
 
     /**

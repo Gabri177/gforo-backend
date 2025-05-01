@@ -55,11 +55,7 @@ public class RegisterServiceImpl implements RegisterService {
     public ResponseEntity<ResultFormat> registerAccount(UserRegisterDTO userRegisterDTO) {
 
         // 校验图形验证码
-        boolean res = captchaService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
-        if (!res) {
-            return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA);
-        }
-        captchaService.deleteVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
+        captchaValidator.validateAndClearCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getSymbol());
 
         // 检查redis是否存在正在注册的用户使用该邮箱
         if (redisService.hasKey(RedisKeyConstants.registerEmail(userRegisterDTO.getEmail())))

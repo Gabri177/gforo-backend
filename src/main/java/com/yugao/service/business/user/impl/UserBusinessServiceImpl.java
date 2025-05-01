@@ -51,6 +51,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Autowired
     private CommentService commentService;
+
     @Autowired
     private CaptchaValidator captchaValidator;
 

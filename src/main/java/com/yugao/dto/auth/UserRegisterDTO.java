@@ -23,4 +23,7 @@ public class UserRegisterDTO {
 
     @NotBlank(message = "Avatar cannot be empty", groups = {ValidationGroups.Register.class})
     private String headerUrl;
+
+    @NotBlank(message = "Verification code cannot be empty", groups = {ValidationGroups.DefaultGroup.class})
+    private String symbol; //标志位  确定验证码key的唯一性
 }
