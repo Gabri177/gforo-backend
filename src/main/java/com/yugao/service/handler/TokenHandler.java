@@ -1,5 +1,6 @@
 package com.yugao.service.handler;
 
+import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
 import com.yugao.domain.UserToken;
 import com.yugao.exception.BusinessException;
@@ -19,6 +20,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class TokenHandler {
@@ -34,6 +36,9 @@ public class TokenHandler {
 
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
+
+    @Value("${jwt.accessTokenExpiredMillis}")
+    private long accessTokenExpireTimeMillis;
 
     public void invalidateExistingToken(Long userId) {
 
@@ -90,13 +95,13 @@ public class TokenHandler {
         if (userToken.getExpiresAt().getTime() < System.currentTimeMillis()) {
             // refreshToken过期 删除数据库中的 user_token 登录数据, 同一个用户不能重复登录
             userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
-            redisService.deleteUserAccessToken(Long.parseLong(userId));
+            deleteUserAccessToken(Long.parseLong(userId));
             throw new BusinessException(ResultCode.REFRESHTOKEN_EXPIRED);
         }
 
         // 没有过期 生成新的AccessToken
         String newAccessToken = jwtUtil.generateAccessToken(userId);
-        redisService.setUserAccessToken(Long.parseLong(userId), newAccessToken);
+        setUserAccessToken(Long.parseLong(userId), newAccessToken);
         userTokenService.updateAccessToken(Long.parseLong(userId), newAccessToken);
 
 //        Map<String, String> resultMap = new HashMap<>();
@@ -106,7 +111,6 @@ public class TokenHandler {
         newAccessTokenVO.setNewAccessToken(newAccessToken);
         return newAccessTokenVO;
     }
-
 
     public TokenInfoVO generateAndStoreToken(Long userId, User loginUser) {
         // 生成token
@@ -124,7 +128,7 @@ public class TokenHandler {
                 .toInstant()));
         // 存储到redis中
         // "access_token:" + loginUser.getId()
-        redisService.setUserAccessToken(loginUser.getId(), accessToken);
+        setUserAccessToken(loginUser.getId(), accessToken);
         // 存储到Sql中
         try {
             userTokenService.saveUserToken(userToken);
@@ -141,5 +145,20 @@ public class TokenHandler {
 //        resultMap.put("refresh_token", refreshToken);
 //        return resultMap;
         return tokenInfoVO;
+    }
+
+    private void setUserAccessToken(Long userId, String accessToken) {
+        redisService.set(RedisKeyConstants.userIdAccessToken(userId), accessToken,
+                accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
+    }
+    // 删除用户访问令牌
+    private void deleteUserAccessToken(Long userId) {
+
+        redisService.delete(RedisKeyConstants.userIdAccessToken(userId));
+    }
+    // 验证用户访问令牌
+    public boolean verifyUserAccessToken(Long userId, String accessToken){
+        String redisAccessToken = redisService.get(RedisKeyConstants.userIdAccessToken(userId));
+        return accessToken != null && accessToken.equals(redisAccessToken);
     }
 }

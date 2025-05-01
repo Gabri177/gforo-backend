@@ -94,8 +94,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
 //        System.out.println("userVerifyEmailDTO = " + userVerifyEmailDTO);
         Long currentUserId = SecurityUtils.getCurrentUserId();
-        userValidator.hasPermissionToChangeEmail(currentUserId);
-        emailRateLimiter.check(userVerifyEmailDTO.getEmail());
+        //userValidator.hasPermissionToChangeEmail(currentUserId);
+        //emailRateLimiter.check(userVerifyEmailDTO.getEmail());
         String code = captchaValidator.generateAndCacheSixDigitCode(
                 RedisKeyConstants.CHANGE_EMAIL,
                 userVerifyEmailDTO.getEmail());
@@ -128,7 +128,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public ResponseEntity<ResultFormat> changeUsername(UserChangeUsernameDTO userChangeUsernameDTO) {
 
         Long userId = SecurityUtils.getCurrentUserId();
-        userValidator.hasPermissionToChangeUsername(userId);
+        //userValidator.hasPermissionToChangeUsername(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCode.USER_USERNAME_UPDATE_ERROR);
         return ResultResponse.success(null);

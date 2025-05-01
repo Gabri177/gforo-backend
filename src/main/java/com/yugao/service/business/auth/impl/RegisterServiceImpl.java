@@ -12,17 +12,22 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.auth.RegisterService;
+import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegisterServiceImpl implements RegisterService {
+
+    @Value("${email.active-account.request-expire-time-minutes}")
+    private Long emailRequestExpireTimeMinutes;
 
     @Autowired
     private UserService userService;
@@ -43,19 +48,21 @@ public class RegisterServiceImpl implements RegisterService {
     private EmailRateLimiter emailRateLimiter;
     @Autowired
     private CaptchaValidator captchaValidator;
+    @Autowired
+    private CaptchaService captchaService;
 
     @Override
     public ResponseEntity<ResultFormat> registerAccount(UserRegisterDTO userRegisterDTO) {
 
         // 校验图形验证码
-        boolean res = redisService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
+        boolean res = captchaService.verifyVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
         if (!res) {
             return ResultResponse.error(ResultCode.NO_PASS_THE_CAPTCHA);
         }
-        redisService.deleteCaptcha(RedisKeyConstants.REGISTER);
+        captchaService.deleteVerifiedCaptcha(RedisKeyConstants.REGISTER, userRegisterDTO.getUsername());
 
         // 检查redis是否存在正在注册的用户使用该邮箱
-        if (redisService.hasTemporaryUserByEmail(userRegisterDTO.getEmail()))
+        if (redisService.hasKey(RedisKeyConstants.registerEmail(userRegisterDTO.getEmail())))
             throw new BusinessException(ResultCode.ACCOUNT_IS_REGISTERING);
         if (userService.existsByEmail(userRegisterDTO.getEmail()))
             throw new BusinessException(ResultCode.EMAIL_ALERADY_REGISTERED);
@@ -67,7 +74,11 @@ public class RegisterServiceImpl implements RegisterService {
 
         emailRateLimiter.check(userDomain.getEmail());
         // 先保存到redis
-        redisService.saveTemporaryUser(userDomain);
+        redisService.setObjectTemmporarilyByMinutes(
+                RedisKeyConstants.registerEmail(userDomain.getEmail()),
+                userDomain,
+                emailRequestExpireTimeMinutes
+        );
         String code = captchaValidator.generateAndCacheSixDigitCode(
                 RedisKeyConstants.ACTIVATE_ACCOUNT ,
                 userDomain.getEmail());
@@ -80,14 +91,17 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public ResponseEntity<ResultFormat> activateAccount(ActiveAccountDTO activeAccountDTO) {
 
-        if (!redisService.hasTemporaryUserByEmail(activeAccountDTO.getEmail()))
+        if (!redisService.hasKey(RedisKeyConstants.registerEmail(activeAccountDTO.getEmail())))
             throw new BusinessException(ResultCode.VERIFY_EXPIRED);
         captchaValidator.verifySixDigitCode(
                 RedisKeyConstants.ACTIVATE_ACCOUNT,
                 activeAccountDTO.getEmail(),
                 activeAccountDTO.getSixDigitCode());
-        User user = redisService.getTemporaryUserByEmail(activeAccountDTO.getEmail());
-        redisService.deleteTemporaryUserByEmail(activeAccountDTO.getEmail());
+        User user = redisService.getObject(
+                RedisKeyConstants.registerEmail(activeAccountDTO.getEmail()),
+                User.class
+        );
+        redisService.delete(RedisKeyConstants.registerEmail(activeAccountDTO.getEmail()));
         userService.addUser(user);
         return ResultResponse.success(null);
     }

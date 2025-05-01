@@ -1,6 +1,5 @@
 package com.yugao.service.builder;
 
-import com.yugao.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,8 +9,8 @@ public class EmailBuilder {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    @Value("${resetPassword.sixDigVerifyCodeExpireTimeMinutes}")
-    private long resetPasswordSixDigVerifyCodeExpireTimeMinutes;
+    @Value("${captcha.sixDigVerifyCodeExpireTimeMinutes}")
+    private long sixDigVerifyCodeExpireTimeMinutes;
 
     public String buildActivationLink(String email, String code) {
         return frontendUrl + "/register/" + email + "/" + code;
@@ -33,7 +32,7 @@ public class EmailBuilder {
                 "</span>.</p>" +
                 "<p>This code will expire in " +
                 "<span style='color:orange; font-weight:bold'>" +
-                resetPasswordSixDigVerifyCodeExpireTimeMinutes +
+                sixDigVerifyCodeExpireTimeMinutes +
                 "</span> minutes.</p>";
         return htmlContent;
     }
@@ -46,7 +45,7 @@ public class EmailBuilder {
                 "</span>.</p>" +
                 "<p>This code will expire in " +
                 "<span style='color:orange; font-weight:bold'>" +
-                resetPasswordSixDigVerifyCodeExpireTimeMinutes +
+                sixDigVerifyCodeExpireTimeMinutes +
                 "</span> minutes.</p>";
         if (link != null) {
             htmlContent += "<p>You can also click the link to re-fill your verification code:</p>" +

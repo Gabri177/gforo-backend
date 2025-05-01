@@ -5,6 +5,7 @@ import com.yugao.constants.SecurityWhiteListConstants;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.base.RedisService;
+import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,6 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private ObjectMapper objectMapper;
 
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    @Autowired
+    private TokenHandler tokenHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -52,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
                 // 查询 Redis 中的 access token
-                boolean res = redisService.verifyUserAccessToken(Long.parseLong(userId), token);
+                boolean res = tokenHandler.verifyUserAccessToken(Long.parseLong(userId), token);
                 if (res) {
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
