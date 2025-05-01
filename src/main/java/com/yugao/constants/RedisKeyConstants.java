@@ -2,6 +2,7 @@ package com.yugao.constants;
 
 public final class RedisKeyConstants {
 
+    private RedisKeyConstants() {}
 
     // 使用场景
     public static final String LOGIN = "login:";
@@ -12,12 +13,12 @@ public final class RedisKeyConstants {
     public static final String CHANGE_EMAIL = "change_email:";
 
     // 图片验证码相关
-    private static final String CAPTCHA_VERIFIED = "captcha_verified:";
-    private static final String CAPTCHA = "captcha:";
+    private static final String GRAPH_CAPTCHA_VERIFIED = "graph_captcha_verified:";
+    private static final String GRAPH_CAPTCHA = "graph_captcha:";
 
     // 数字验证码相关
-    private static final String SIX_DIGIT_CODE = "six_digit_code:";
-    private static final String SIX_DIGIT_CODE_VERIFIED = "six_digit_code_verify:";
+    private static final String SIX_DIGIT_CAPTCHA = "six_digit_captcha:";
+    private static final String SIX_DIGIT_CAPTCHA_VERIFIED = "six_digit_captcha_verify:";
 
     // 访问令牌 (Access Token) 相关
     private static final String ACCESS_TOKEN = "access_token:";
@@ -26,32 +27,35 @@ public final class RedisKeyConstants {
     private static final String REQUEST_ACCOUNT_ACTIVATION_EMAIL = "request_account_activation_email:";
 
     // 图形验证码
-    public static String captcha(String captchaId) {
-        return CAPTCHA + captchaId;
+    public static String buildGraphCaptchaKey(String captchaId) {
+        return GRAPH_CAPTCHA + captchaId;
     }
 
     // 图形验证码验证通过: captcha_verified: + scene + symbol
-    public static String captchaVerified(String scene, String symbol) {
-        return CAPTCHA_VERIFIED + scene + symbol;
+    public static String buildGraphCaptchaVerifiedKey(String scene, String symbol) {
+        return GRAPH_CAPTCHA_VERIFIED + scene + symbol;
     }
 
-    public static String userIdAccessToken(Long userId) {
+    public static String buildUserIdAccessTokenKey(Long userId) {
         return ACCESS_TOKEN + userId;
     }
 
-    public static String sixDigitCode(String scene, String symbol) {
+    public static String buildSixDigitCaptchaKey(String scene, String symbol) {
 
-        return SIX_DIGIT_CODE + scene + symbol;
+        return SIX_DIGIT_CAPTCHA + scene + symbol;
     }
 
-    public static String sixDigitCodeVerified(String scene, String symbol) {
-        return SIX_DIGIT_CODE_VERIFIED + scene + symbol;
+    public static String buildSixDigitCaptchaVerifiedKey(String scene, String symbol) {
+        return SIX_DIGIT_CAPTCHA_VERIFIED + scene + symbol;
     }
 
-    public static String emailActivationInterval(String email) {
+    public static String buildEmailActivationIntervalKey(String email) {
         return REQUEST_ACCOUNT_ACTIVATION_EMAIL + email;
     }
 
-    public static String registerEmail(String email) { return REGISTER + email; }
+    public static String buildRegisterEmailIntervalKey(String email) {
+        return REGISTER + email;
+    }
 
 }
+

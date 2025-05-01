@@ -22,14 +22,14 @@ public class CaptchaController {
      */
     @GetMapping()
     public ResponseEntity<ResultFormat> getCaptchaInfo(){
-       return captchaService.generateCaptcha();
+       return captchaService.generateGraphCaptcha();
     }
 
     @PostMapping
     public ResponseEntity<ResultFormat> checkCaptcha(
             @Validated @RequestBody GraphCaptchaDTO graphCaptchaDTO
             ) {
-        return captchaService.verifyCaptcha(graphCaptchaDTO);
+        return captchaService.verifyGraphCaptcha(graphCaptchaDTO);
     }
 
     /**
@@ -39,6 +39,6 @@ public class CaptchaController {
      */
     @DeleteMapping("/{captchaId}")
     public ResponseEntity<ResultFormat> logout(@PathVariable String captchaId) {
-        return captchaService.deleteCaptcha(captchaId);
+        return captchaService.deleteGraphCaptcha(captchaId);
     }
 }

@@ -9,18 +9,20 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.util.captcha.VerificationUtil;
 import com.yugao.vo.captcha.CaptchaGraphVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
+
+    @Value("${captcha.sixDigVerifyCodeExpireTimeMinutes}")
+    private long sixDigVerifyCodeExpireTimeMinutes;
 
     @Value("${captcha.expire-time-minutes}")
     private Long captchaExpireTimeMinutes;
@@ -32,13 +34,13 @@ public class CaptchaServiceImpl implements CaptchaService {
     private RedisService redisService;
 
     // 判断是否通过验证码
-    public boolean verifyCaptcha(String captchaId, String captchaCode) {
-        String captchaText = redisService.get(RedisKeyConstants.captcha(captchaId));
+    public boolean verifyGraphCaptcha(String captchaId, String captchaCode) {
+        String captchaText = redisService.get(RedisKeyConstants.buildGraphCaptchaKey(captchaId));
         return captchaCode != null && captchaCode.equals(captchaText);
     }
 
     @Override
-    public ResponseEntity<ResultFormat> generateCaptcha() {
+    public ResponseEntity<ResultFormat> generateGraphCaptcha() {
         // 生成验证码
         SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 5);
         specCaptcha.setCharType(Captcha.TYPE_NUM_AND_UPPER);
@@ -49,7 +51,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 
         // 存入 Redis（有效期 3 分钟）
         // "captcha:" + captchaId
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captcha(captchaId),
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.buildGraphCaptchaKey(captchaId),
                 captchaText, captchaExpireTimeMinutes);
 
         // 返回验证码图片 + captchaId
@@ -61,31 +63,43 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> verifyCaptcha(GraphCaptchaDTO dto) {
+    public ResponseEntity<ResultFormat> verifyGraphCaptcha(GraphCaptchaDTO dto) {
 
-        boolean res = verifyCaptcha(dto.getCaptchaId(), dto.getVerCode());
+        boolean res = verifyGraphCaptcha(dto.getCaptchaId(), dto.getVerCode());
         if (!res) {
             return ResultResponse.error(ResultCode.CAPTCHA_VERIFIED_ERROR);
         }
 
         // 验证成功后删除验证码
-        redisService.delete(RedisKeyConstants.captcha(dto.getCaptchaId()));
+        redisService.delete(RedisKeyConstants.buildGraphCaptchaKey(dto.getCaptchaId()));
         // 存储验证码验证状态，设置配置中的分钟数量为有效期
-        redisService.setTemporarilyByMinutes(RedisKeyConstants.captchaVerified(dto.getScene(), dto.getSymbol()),
+        redisService.setTemporarilyByMinutes(RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()),
                 "true", captchaVerifiedExpireTimeMinutes);
         System.out.println(dto.getScene() + " " + dto.getSymbol() + "等待用户登录");
 
-        System.out.println("Captcha correct :" +  RedisKeyConstants.captchaVerified(dto.getScene(), dto.getSymbol()));
+        System.out.println("Captcha correct :" +  RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()));
         return ResultResponse.success(null);
     }
 
     @Override
-    public ResponseEntity<ResultFormat> deleteCaptcha(String captchaId) {
+    public ResponseEntity<ResultFormat> deleteGraphCaptcha(String captchaId) {
 
         // "captcha:" + captchaId
-        redisService.delete(RedisKeyConstants.captcha(captchaId));
+        redisService.delete(RedisKeyConstants.buildGraphCaptchaKey(captchaId));
 
         return ResultResponse.success(null);
+    }
+
+    @Override
+    public String generateSixDigitCaptcha(String scene, String symbol){
+        // 生成六位数验证码
+        String sixDigVerifyCode = VerificationUtil.generateSixNumVerifCode();
+        // 存储到redis中
+        redisService.setTemporarilyByMinutes(
+                RedisKeyConstants.buildSixDigitCaptchaKey(scene, symbol),
+                sixDigVerifyCode,
+                sixDigVerifyCodeExpireTimeMinutes);
+        return sixDigVerifyCode;
     }
 
 }

@@ -13,6 +13,7 @@ import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
+import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
@@ -54,6 +55,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Autowired
     private CaptchaValidator captchaValidator;
+    @Autowired
+    private CaptchaService captchaService;
 
     @Override
     public ResponseEntity<ResultFormat> getUserInfo(String token) {
@@ -97,7 +100,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long currentUserId = SecurityUtils.getCurrentUserId();
         userValidator.validateEmailChangeInterval(currentUserId);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
-        String code = captchaValidator.generateAndCacheSixDigitCode(
+        String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.CHANGE_EMAIL,
                 userVerifyEmailDTO.getEmail());
         System.out.println("code = " + code);
@@ -115,10 +118,10 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
         System.out.println("activeAccountDTO = " + activeAccountDTO);
         Long currentUserId = SecurityUtils.getCurrentUserId();
-        captchaValidator.verifySixDigitCode(
+        captchaValidator.validateSixDigitCaptcha(
                 RedisKeyConstants.CHANGE_EMAIL,
                 activeAccountDTO.getEmail(),
-                activeAccountDTO.getSixDigitCode());
+                activeAccountDTO.getSixDigitCaptcha());
         userValidator.validateUserIdExists(currentUserId);
         if (!userService.updateEmail(currentUserId, activeAccountDTO.getEmail()))
             throw new BusinessException(ResultCode.USER_EMAIL_UPDATE_ERROR);

@@ -10,6 +10,7 @@ import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.auth.AuthService;
+import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.util.mail.MailClientUtil;
@@ -44,13 +45,16 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private EmailBuilder emailBuilder;
 
+    @Autowired
+    private CaptchaService captchaService;
+
 
     @Override
     public ResponseEntity<ResultFormat> login(UserRegisterDTO userRegisterDTO) {
 
         // symbol 这里让前端运行的时候生成固定的uuid 然后存到localstorage中 用来做设备标识符
         System.out.println("login =================== " + userRegisterDTO);
-        captchaValidator.validateAndClearCaptcha(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
+        captchaValidator.validateAndClearGraphCaptchaVerifiedFlag(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
         User loginUser = userValidator.validateLoginCredentials(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
         tokenHandler.invalidateExistingToken(loginUser.getId());
@@ -74,13 +78,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> sendForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO) {
 
-        captchaValidator.validateAndClearCaptcha(
+        captchaValidator.validateAndClearGraphCaptchaVerifiedFlag(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getSymbol());
         User user = userService.getUserByEmail(userForgetPasswordDTO.getEmail());
         if (user == null)
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
-        String code = captchaValidator.generateAndCacheSixDigitCode(
+        String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail());
         System.out.println("reset password code =================== " + code);
@@ -94,11 +98,11 @@ public class AuthServiceImpl implements AuthService {
 
         System.out.println("verifyForgetPasswordCode =================== " + userForgetPasswordDTO);
         System.out.println("verified reset password code =================== " + code);
-        captchaValidator.verifySixDigitCode(
+        captchaValidator.validateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail(),
                 code);
-        captchaValidator.setVerifiedSixDigitCode(
+        captchaValidator.markSixDigitCaptchaAsVerified(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail());
         return ResultResponse.success(null);
@@ -107,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> resetPassword(UserForgetPasswordResetDTO userForgetPasswordResetDTO) {
 
-        captchaValidator.validateVerifiedCodeFlag(
+        captchaValidator.validateAndClearSixDigitCaptchaVerifiedFlag(
                 RedisKeyConstants.FORGET_PASSWORD ,
                 userForgetPasswordResetDTO.getEmail());
         User existUser = userValidator.validateEmailExists(userForgetPasswordResetDTO.getEmail());

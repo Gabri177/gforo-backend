@@ -67,7 +67,7 @@ public class UserController {
     public ResponseEntity<ResultFormat> verifyChangeEmailCode(
             @Validated @RequestBody ActiveAccountDTO activeAccountDTO
             ) {
-
+        System.out.println("change email verify " + activeAccountDTO);
         return userBusinessService.verifyEmail(activeAccountDTO);
     }
 

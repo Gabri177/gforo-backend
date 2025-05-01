@@ -81,12 +81,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResultFormat> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errmsgs = new HashMap<>();
+        StringBuilder combindMsg = new StringBuilder(ResultCode.INPUT_FORMAT_ERROR.getMessage() + ": ");
         ex.getBindingResult().getFieldErrors().forEach(error ->
-                errmsgs.put(error.getField(), error.getDefaultMessage())
+                combindMsg.append(error.getField())
+                        .append(" ")
+                        .append(error.getDefaultMessage())
+                        .append("; ")
         );
-        String msg = errmsgs.toString();
-        return ResultResponse.error(ResultCode.INPUT_FORMAT_ERROR);
+        if (!combindMsg.isEmpty() && combindMsg.charAt(combindMsg.length() - 2) == ';') {
+            combindMsg.setLength(combindMsg.length() - 2);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ResultFormat(ResultCode.INPUT_FORMAT_ERROR,
+                        combindMsg.toString()));
     }
 
 

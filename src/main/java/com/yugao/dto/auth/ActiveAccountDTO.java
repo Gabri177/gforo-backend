@@ -8,7 +8,7 @@ import lombok.Data;
 public class ActiveAccountDTO {
 
     @NotBlank(message = "Captcha cannot be empty")
-    private String sixDigitCode;
+    private String sixDigitCaptcha;
 
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Invalid email format")

@@ -6,9 +6,11 @@ import com.yugao.result.ResultFormat;
 
 public interface CaptchaService {
 
-    ResponseEntity<ResultFormat> generateCaptcha();
+    ResponseEntity<ResultFormat> generateGraphCaptcha();
 
-    ResponseEntity<ResultFormat> verifyCaptcha(GraphCaptchaDTO graphCaptchaDTO);
+    ResponseEntity<ResultFormat> verifyGraphCaptcha(GraphCaptchaDTO graphCaptchaDTO);
 
-    ResponseEntity<ResultFormat> deleteCaptcha(String captchaId);
+    ResponseEntity<ResultFormat> deleteGraphCaptcha(String captchaId);
+
+    String generateSixDigitCaptcha(String scene, String symbol);
 }

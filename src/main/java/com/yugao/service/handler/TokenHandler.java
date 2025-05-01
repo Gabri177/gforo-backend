@@ -18,8 +18,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -148,17 +146,17 @@ public class TokenHandler {
     }
 
     private void setUserAccessToken(Long userId, String accessToken) {
-        redisService.set(RedisKeyConstants.userIdAccessToken(userId), accessToken,
+        redisService.set(RedisKeyConstants.buildUserIdAccessTokenKey(userId), accessToken,
                 accessTokenExpireTimeMillis, TimeUnit.MILLISECONDS);
     }
     // 删除用户访问令牌
     private void deleteUserAccessToken(Long userId) {
 
-        redisService.delete(RedisKeyConstants.userIdAccessToken(userId));
+        redisService.delete(RedisKeyConstants.buildUserIdAccessTokenKey(userId));
     }
     // 验证用户访问令牌
     public boolean verifyUserAccessToken(Long userId, String accessToken){
-        String redisAccessToken = redisService.get(RedisKeyConstants.userIdAccessToken(userId));
+        String redisAccessToken = redisService.get(RedisKeyConstants.buildUserIdAccessTokenKey(userId));
         return accessToken != null && accessToken.equals(redisAccessToken);
     }
 }

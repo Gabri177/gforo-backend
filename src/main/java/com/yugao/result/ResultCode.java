@@ -13,8 +13,8 @@ public enum ResultCode {
     LOGIN_WITHOUT_CAPTCHA(40002, "Login without passing captcha"),
     USER_NOT_FOUND(40003, "User not found"),
     EMAIL_NOT_MATCH(40004, "Email not match"),
-    SIX_DIGIT_CODE_NOT_MATCH(40005, "Six-digit code does not match"),
-    SIX_DIGIT_CODE_EXPIRED(40006, "Six-digit code expired"),
+    SIX_DIGIT_CAPTCHA_NOT_MATCH(40005, "Six-digit captcha does not match"),
+    SIX_DIGIT_CAPTCHA_EXPIRED(40006, "Six-digit captcha expired"),
 
     // // sql error
     SQL_EXCEPTION(40007, "SQL error"),
