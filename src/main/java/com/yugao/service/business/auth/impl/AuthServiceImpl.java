@@ -83,13 +83,14 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
         captchaValidator.verifySixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername(), code);
+        captchaValidator.setVerifiedSixDigitCode(RedisKeyConstants.FORGET_PASSWORD, userForgetPasswordDTO.getUsername());
         return ResultResponse.success(null);
     }
 
     @Override
     public ResponseEntity<ResultFormat> resetPassword(UserForgetPasswordResetDTO userForgetPasswordResetDTO) {
 
-        captchaValidator.validateVerifiedCodeFlag(userForgetPasswordResetDTO.getUsername());
+        captchaValidator.validateVerifiedCodeFlag(RedisKeyConstants.FORGET_PASSWORD ,userForgetPasswordResetDTO.getUsername());
         User existUser = userValidator.validateExistenceName(userForgetPasswordResetDTO.getUsername());
         String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean res = userService.updatePassword(existUser.getId(), newPassword);

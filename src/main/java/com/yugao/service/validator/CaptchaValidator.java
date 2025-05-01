@@ -47,14 +47,15 @@ public class CaptchaValidator {
 
         // 删除redis中存储的验证码
         redisService.deleteSigDigitCode(scene, code);
-        // 设置一个标志位 用来表示用户已经验证过验证码
-        // 后续应该可以删除
-        redisService.setVerifiedSigDigitCodeByMinutes(scene, symbol);  //////////这个应该自立门户///////////
     }
 
-    public void validateVerifiedCodeFlag(String username){ // 这个函数有问题 到时候看看reset passwd 如何修改
+    public void setVerifiedSixDigitCode(String scene, String symbol){
+        redisService.setVerifiedSigDigitCodeByMinutes(scene, symbol);
+    }
+
+    public void validateVerifiedCodeFlag(String scene ,String username){
         boolean res = redisService.verifyVerifiedSigDigitCode(
-                RedisKeyConstants.FORGET_PASSWORD,
+                scene,
                 username
         );
         if (!res) {
