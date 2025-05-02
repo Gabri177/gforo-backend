@@ -47,9 +47,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResponseEntity<ResultFormat> publishPost(NewDiscussPostDTO newDiscussPostDTO) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
-        if (userId == null)
-            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        Long userId = SecurityUtils.mustGetLoginUserId();
         DiscussPost newDiscussPost = DiscussPostConverter.newDiscussPostDTOtoDiscussPost(newDiscussPostDTO, userId);
         discussPostService.addDiscussPost(newDiscussPost);
         return ResultResponse.success(null);
@@ -58,9 +56,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResponseEntity<ResultFormat> deletePost(Long postId) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
-        if (userId == null)
-            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        Long userId = SecurityUtils.mustGetLoginUserId();
         DiscussPost post = discussPostService.getDiscussPostById(postId);
         if (post == null)
             throw new BusinessException(ResultCode.POST_NOT_FOUND);
@@ -73,9 +69,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResponseEntity<ResultFormat> updatePost(CommonContentDTO commonContentDTO) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
-        if (userId == null)
-            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+        Long userId = SecurityUtils.mustGetLoginUserId();
         DiscussPost post = discussPostService.getDiscussPostById(commonContentDTO.getId());
         if (post == null)
             throw new BusinessException(ResultCode.POST_NOT_FOUND);

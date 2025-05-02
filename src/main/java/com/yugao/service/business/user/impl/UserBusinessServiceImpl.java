@@ -55,13 +55,14 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Autowired
     private CaptchaValidator captchaValidator;
+
     @Autowired
     private CaptchaService captchaService;
 
     @Override
     public ResponseEntity<ResultFormat> getUserInfo(String token) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
         userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId));
@@ -74,7 +75,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO) {
         System.out.println(userChangePasswordDTO);
 
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
         userValidator.validatePasswordChange(userDomain, userChangePasswordDTO);
         String newRawPassword = userChangePasswordDTO.getNewPassword();
@@ -86,7 +87,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> updateUserInfo(UserInfoUpdateDTO userInfoUpdateDTO) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
         if(!userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO))
             throw new BusinessException(ResultCode.USER_PROFILE_UPDATE_ERROR);
@@ -97,7 +98,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public ResponseEntity<ResultFormat> sendVerifyEmail(UserVerifyEmailDTO userVerifyEmailDTO) {
 
 //        System.out.println("userVerifyEmailDTO = " + userVerifyEmailDTO);
-        Long currentUserId = SecurityUtils.getCurrentUserId();
+        Long currentUserId = SecurityUtils.mustGetLoginUserId();
         userValidator.validateEmailChangeInterval(currentUserId);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
         String code = captchaService.generateSixDigitCaptcha(
@@ -117,7 +118,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public ResponseEntity<ResultFormat> verifyEmail(ActiveAccountDTO activeAccountDTO) {
 
         System.out.println("activeAccountDTO = " + activeAccountDTO);
-        Long currentUserId = SecurityUtils.getCurrentUserId();
+        Long currentUserId = SecurityUtils.mustGetLoginUserId();
         captchaValidator.validateSixDigitCaptcha(
                 RedisKeyConstants.CHANGE_EMAIL,
                 activeAccountDTO.getEmail(),
@@ -131,7 +132,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> changeUsername(UserChangeUsernameDTO userChangeUsernameDTO) {
 
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = SecurityUtils.mustGetLoginUserId();
         userValidator.validateUsernameChangeInterval(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCode.USER_USERNAME_UPDATE_ERROR);

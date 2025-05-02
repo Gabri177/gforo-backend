@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         User loginUser = userValidator.validateLoginCredentials(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
         tokenHandler.invalidateExistingToken(loginUser.getId());
-        TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser.getId(), loginUser);
+        TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser);
         return ResultResponse.success(tokenInfoVO);
     }
 

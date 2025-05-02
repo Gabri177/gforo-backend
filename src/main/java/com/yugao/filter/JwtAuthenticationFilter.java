@@ -2,15 +2,19 @@ package com.yugao.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.SecurityWhiteListConstants;
+import com.yugao.domain.User;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
+import com.yugao.security.LoginUser;
 import com.yugao.service.base.RedisService;
+import com.yugao.service.data.UserService;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,9 +40,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
     @Autowired
     private TokenHandler tokenHandler;
+
+    @Autowired
+    private UserService userService;
+
+    private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -55,11 +63,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
                 // 查询 Redis 中的 access token
-                boolean res = tokenHandler.verifyUserAccessToken(Long.parseLong(userId), token);
+                boolean res = tokenHandler.verifyUserAccessToken(token);
                 if (res) {
+                    User user = userService.getUserById(Long.parseLong(userId));
+                    /**
+                     * 未来可以在数据库中添加 User 的权限设置 然后将其转换复制给 LoginUser
+                     */
+                    LoginUser loginUser = new LoginUser();
+                    BeanUtils.copyProperties(user, loginUser);
+                    System.out.println("loginUser: " + loginUser);
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userId, null, null);
+                            new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     filterChain.doFilter(request, response);
                     return;

@@ -110,7 +110,7 @@ public class TokenHandler {
         return newAccessTokenVO;
     }
 
-    public TokenInfoVO generateAndStoreToken(Long userId, User loginUser) {
+    public TokenInfoVO generateAndStoreToken(User loginUser) {
         // 生成token
         String accessToken = jwtUtil.generateAccessToken(loginUser.getId().toString());
         String refreshToken = jwtUtil.generateRefreshToken(loginUser.getId().toString());
@@ -155,7 +155,8 @@ public class TokenHandler {
         redisService.delete(RedisKeyConstants.buildUserIdAccessTokenKey(userId));
     }
     // 验证用户访问令牌
-    public boolean verifyUserAccessToken(Long userId, String accessToken){
+    public boolean verifyUserAccessToken(String accessToken){
+        Long userId = Long.parseLong(jwtUtil.getUserIdWithToken(accessToken));
         String redisAccessToken = redisService.get(RedisKeyConstants.buildUserIdAccessTokenKey(userId));
         return accessToken != null && accessToken.equals(redisAccessToken);
     }
