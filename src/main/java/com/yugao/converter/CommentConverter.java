@@ -19,7 +19,7 @@ public class CommentConverter {
         comment.setContent(dto.getContent());
         comment.setStatus(StatusEnum.NORMAL);
         comment.setCreateTime(new Date());
-        comment.setParentId(0L);
+        comment.setPostId(dto.getEntityId());
         return comment;
     }
 
@@ -32,7 +32,7 @@ public class CommentConverter {
         comment.setContent(dto.getContent());
         comment.setStatus(StatusEnum.NORMAL);
         comment.setCreateTime(new Date());
-        comment.setParentId(0L);
+        comment.setPostId(dto.getPostId());
         return comment;
     }
 }

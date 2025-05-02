@@ -20,4 +20,7 @@ public class CommentToCommentDTO {
     @NotBlank(message = "Content cannot be empty")
     @Size(min = 1, max = 500, message = "Content length must be between 1 and 500")
     private String content; // 评论内容
+
+    @NotNull(message = "PostId cannot be null")
+    private Long postId;
 }
