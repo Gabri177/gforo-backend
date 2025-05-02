@@ -1,6 +1,7 @@
 package com.yugao.controller.post;
 
 import com.yugao.dto.comment.CommonContentDTO;
+import com.yugao.dto.post.BoardPostsPageDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.PostService;
@@ -23,6 +24,15 @@ public class PostController {
             @PathVariable Long currentPage) {
         System.out.println("getPostDetail: " + postId + " " + currentPage);
         return postService.getPostDetail(postId, currentPage);
+    }
+
+    @PostMapping("/board/{boardId}")
+    public ResponseEntity<ResultFormat> getPostsInBoard(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody BoardPostsPageDTO boardPostsPageDTO
+            ) {
+        System.out.println("getPostsInBoard: " + boardId + " " + boardPostsPageDTO);
+        return postService.getPostsInBoard(boardId, boardPostsPageDTO);
     }
 
     @PostMapping("/publish")

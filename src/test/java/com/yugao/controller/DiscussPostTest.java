@@ -36,7 +36,7 @@ public class DiscussPostTest {
 
     @Test
     public void TestGetPage() {
-        IPage<DiscussPost> records = discussPostService.getDiscussPosts(0L, 0, 1, 0);
+        IPage<DiscussPost> records = discussPostService.getDiscussPosts(0L, 0L,0, 1, 0);
         System.out.println(records.getRecords());
     }
 

@@ -1,5 +1,6 @@
 package com.yugao.vo.user;
 
+import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
 @Data
@@ -15,7 +16,7 @@ public class UserInfoVO {
 
     private String bio;
 
-    private Integer status;
+    private StatusEnum status;
 
     private String createdAt;
 

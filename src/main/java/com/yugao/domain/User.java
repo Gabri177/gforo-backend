@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -37,7 +38,7 @@ public class User {
 
     private Integer type; // 这个变量还没有用到 0-普通用户 1 2 目前默认初始化为0
 
-    private Integer status; // 0-用户状态正常 1-用户状态被封禁
+    private StatusEnum status; // 0-用户状态正常 1-用户状态被封禁
 
     private String headerUrl;
 
@@ -59,7 +60,7 @@ public class User {
         user.setUsername("unknownUser" + randomStr);
         user.setEmail("unknownEmail" + randomStr + "@example.com");
         user.setType(0);
-        user.setStatus(0);
+        user.setStatus(StatusEnum.NORMAL);
         user.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
         user.setCreateTime(new Date());
         user.setBio("this is unknown user");

@@ -3,6 +3,8 @@ package com.yugao.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yugao.enums.CommentEntityTypeEnum;
+import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -32,7 +34,7 @@ public class Comment {
     // entityType = 1, entityId = 帖子Id, targetId = 其他用户Id 针对帖子的评论的评论且带有@对象
     // entityType = 2, entityId = 评论Id, targetId = 0 针对帖子的评论的评论
     // entityType = 2, entityId = 评论Id, targetId = 其他用户Id 针对帖子的评论的评论且带@对象
-    private Integer entityType;
+    private CommentEntityTypeEnum entityType;
 
     // 评论的帖子Id或者评论的评论的Id
     private Long entityId;
@@ -44,7 +46,7 @@ public class Comment {
     private String content;
 
     // 评论状态，0-正常，1-删除
-    private Integer status;
+    private StatusEnum status;
 
     private Date createTime;
 

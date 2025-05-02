@@ -1,5 +1,6 @@
 package com.yugao.dto.comment;
 
+import com.yugao.enums.CommentEntityTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,7 +10,7 @@ import lombok.Data;
 public class CommentToCommentDTO {
 
     @NotNull(message = "EntityType cannot be null")
-    private Integer entityType; // 评论类型
+    private CommentEntityTypeEnum entityType; // 评论类型
 
     @NotNull(message = "EntityId cannot be null")
     private Long entityId; // 评论的帖子Id 或者 评论的评论的Id

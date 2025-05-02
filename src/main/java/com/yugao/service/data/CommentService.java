@@ -10,6 +10,8 @@ public interface CommentService {
 
     Long getCommentCountByPostId(Long postId);
 
+    Long getCommentCountByPostIds(List<Long> postIds);
+
     List<Comment> findCommentsToPostFloor(Long postId);
 
     List<Comment> findCommentsToPost(Long postId, Long current, Integer limit);

@@ -3,6 +3,7 @@ package com.yugao.converter;
 
 import com.yugao.domain.DiscussPost;
 import com.yugao.dto.post.NewDiscussPostDTO;
+import com.yugao.enums.StatusEnum;
 
 import java.util.Date;
 
@@ -13,10 +14,11 @@ public class DiscussPostConverter {
         discussPost.setUserId(userId);
         discussPost.setTitle(dto.getTitle());
         discussPost.setContent(dto.getContent());
-        discussPost.setStatus(0);
+        discussPost.setStatus(StatusEnum.NORMAL);
         discussPost.setType(0);
         discussPost.setCreateTime(new Date());
         discussPost.setScore(0.0);
+        discussPost.setBoardId(dto.getBoardId());
         return discussPost;
     }
 }

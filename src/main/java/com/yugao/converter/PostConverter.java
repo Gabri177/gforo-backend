@@ -11,15 +11,13 @@ public class PostConverter {
 
     public static PostDetailVO toPostDetailVO(DiscussPost discussPost,
                                               SimpleUserVO auther,
-                                              List<CommentVO> replies,
-                                              Boolean isExpanded) {
+                                              List<CommentVO> replies) {
 
         PostDetailVO vo = new PostDetailVO();
         vo.setId(discussPost.getId());
         vo.setTitle(discussPost.getTitle());
         vo.setContent(discussPost.getContent());
         vo.setCreateTime(discussPost.getCreateTime());
-        vo.setIsExpanded(isExpanded);
         vo.setAuthor(auther);
         vo.setReplies(replies);
         return vo;

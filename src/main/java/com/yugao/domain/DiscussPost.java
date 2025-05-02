@@ -3,6 +3,7 @@ package com.yugao.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -29,11 +30,13 @@ public class DiscussPost {
 
     private String content;
 
-    private Integer type; // 帖子类型，0-普通，1-置顶
+    private Integer type; // 帖子类型，0-普通，1-置顶 2-精华
 
-    private Integer status; // 帖子状态，0-正常，1-精华，2-删除
+    private StatusEnum status; // 帖子状态，0-正常, 1-删除
 
     private Date createTime;
 
     private Double score;
+
+    private Long boardId; // 板块Id
 }

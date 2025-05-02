@@ -2,6 +2,7 @@ package com.yugao.converter;
 
 import com.yugao.domain.User;
 import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.enums.StatusEnum;
 import com.yugao.util.common.EncryptedUtil;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.vo.user.SimpleUserVO;
@@ -18,7 +19,7 @@ public class UserConverter {
         user.setEmail(userRegisterDTO.getEmail());
         user.setHeaderUrl(userRegisterDTO.getHeaderUrl());
         user.setType(0);
-        user.setStatus(0); // 0-用户状态正常 1-用户状态被封禁
+        user.setStatus(StatusEnum.NORMAL);
         user.setCreateTime(new Date());
         user.setNickname(userRegisterDTO.getUsername());
         return user;

@@ -81,7 +81,6 @@ public class PostHandler {
             vo.setId(comment.getId());
             vo.setContent(comment.getContent());
             vo.setCreateTime(comment.getCreateTime());
-            vo.setIsExpanded(false);
             vo.setAuthor(UserConverter.toSimpleVO(userMap.get(comment.getUserId())));
 
             if (comment.getTargetId() != 0L) {
@@ -114,7 +113,7 @@ public class PostHandler {
         SimpleUserVO author = getAuthorInfo(originalPost.getUserId());
         List<CommentVO> replies = buildComments(postId);
 
-        return PostConverter.toPostDetailVO(originalPost, author, replies, false);
+        return PostConverter.toPostDetailVO(originalPost, author, replies);
     }
 
     public List<PostDetailVO> getCommentPostDetailList(Long postId, Long currentPage) {
@@ -134,7 +133,6 @@ public class PostHandler {
             postDetailVO.setId(comment.getId());
             postDetailVO.setContent(comment.getContent());
             postDetailVO.setCreateTime(comment.getCreateTime());
-            postDetailVO.setIsExpanded(false);
 
             User user = userMap.get(comment.getUserId());
             postDetailVO.setAuthor(UserConverter.toSimpleVO(user));

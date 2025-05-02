@@ -65,7 +65,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
-        userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId));
+        userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId, 0L));
         userInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
 //        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);

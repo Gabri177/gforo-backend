@@ -43,7 +43,7 @@ public enum ResultCode {
     USER_NOT_LOGIN(40028, "User not logged in"),
     USER_NOT_AUTHORIZED(40029, "User not authorized"),
     COMMENT_NOT_FOUND(40030, "Comment not found"),
-    USER_BLOCKED (40031, "User has been blocked, Please contact the Admin"),
+    USER_DELETED(40031, "User deleted"),
     REDIS_SAVING_ERROR(40032, "Redis saving error"),
     JSON_PARSE_ERROR(40033, "JSON parse error"),
     VERIFY_EXPIRED(40034, "Verification expired, Please re-register"),
@@ -56,6 +56,8 @@ public enum ResultCode {
     USER_PASSWORD_UPDATE_ERROR(40041, "User password update error"),
     USER_EMAIL_UPDATE_ERROR(40042, "User email update error"),
     USER_USERNAME_UPDATE_ERROR(40043, "User username update error"),
+    INVALID_STATUS_VALUE(40044, "Invalid status value"),
+    BOARD_NOT_FOUND(40045, "Board not found"),
 
 
     // 系统异常

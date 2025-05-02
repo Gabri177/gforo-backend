@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.domain.Comment;
+import com.yugao.enums.CommentEntityTypeEnum;
+import com.yugao.enums.StatusEnum;
 import com.yugao.mapper.CommentMapper;
 import com.yugao.service.data.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     public Long getCommentCountByUserId(Long userId) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
         queryWrapper.eq(Comment::getUserId, userId);
         if (userId != 0L) {
             queryWrapper.eq(Comment::getUserId, userId);
@@ -32,10 +34,23 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Long getCommentCountByPostId(Long postId) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
-        queryWrapper.eq(Comment::getEntityType, 0);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getEntityType, CommentEntityTypeEnum.POST);
         if (postId != 0L)
             queryWrapper.eq(Comment::getEntityId, postId);
+        return commentMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public Long getCommentCountByPostIds(List<Long> postIds) {
+
+        if (postIds == null || postIds.isEmpty())
+            return 0L;
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.in(Comment::getEntityType, CommentEntityTypeEnum.POST);
+        queryWrapper.in(Comment::getEntityId, postIds);
         return commentMapper.selectCount(queryWrapper);
     }
 
@@ -48,8 +63,8 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findCommentsToPostFloor(Long postId) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
-        queryWrapper.eq(Comment::getEntityType, 1);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getEntityType, CommentEntityTypeEnum.POST_FLOOR);
         queryWrapper.eq(Comment::getEntityId, postId);
         queryWrapper.orderByAsc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper);
@@ -64,8 +79,8 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findCommentsToPost(Long postId, Long current, Integer limit) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
-        queryWrapper.eq(Comment::getEntityType, 0);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getEntityType, CommentEntityTypeEnum.POST);
         queryWrapper.eq(Comment::getEntityId, postId);
         queryWrapper.orderByAsc(Comment::getCreateTime);
 
@@ -83,8 +98,8 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findCommentListOfComment(Long EntityId) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
-        queryWrapper.eq(Comment::getEntityType, 2);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getEntityType, CommentEntityTypeEnum.POST_COMMENT_FLOOR);
         queryWrapper.eq(Comment::getEntityId, EntityId);
         queryWrapper.orderByAsc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper);
@@ -99,7 +114,7 @@ public class CommentServiceImpl implements CommentService {
     public Boolean deleteComment(Long commentId) {
         LambdaUpdateWrapper<Comment> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Comment::getId, commentId);
-        updateWrapper.set(Comment::getStatus, 1); // 设置为删除状态
+        updateWrapper.set(Comment::getStatus, StatusEnum.DELETED);
         return commentMapper.update(null, updateWrapper) > 0;
     }
 
@@ -107,7 +122,7 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findCommentListOfUser(Long userId, Long current, Integer limit) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Comment::getStatus, 1);
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
         queryWrapper.eq(Comment::getUserId, userId);
         queryWrapper.orderByAsc(Comment::getCreateTime);
 
@@ -117,11 +132,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment findCommentById(Long commentId) {
+
         return commentMapper.selectById(commentId);
     }
 
     @Override
     public Boolean updateContent(Long id, String content) {
+
         LambdaUpdateWrapper<Comment> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Comment::getId, id);
         updateWrapper.set(Comment::getContent, content);
@@ -130,6 +147,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Boolean updateComment(Comment comment) {
+
         return commentMapper.updateById(comment) > 0;
     }
 

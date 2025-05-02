@@ -3,6 +3,7 @@ package com.yugao.service.validator;
 import com.yugao.domain.User;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.service.base.RedisService;
@@ -80,9 +81,9 @@ public class UserValidator {
         return user;
     }
 
-    public void validateIfIsBlocked(User user){
-        if (user.getStatus() == 1)
-            throw new BusinessException(ResultCode.USER_BLOCKED); ////////////status 值考虑////////////////////
+    public void validateIfIsDeleted(User user){
+        if (user.getStatus() == StatusEnum.DELETED)
+            throw new BusinessException(ResultCode.USER_DELETED);
     }
 
     public void validateEmailChangeInterval(Long userId){

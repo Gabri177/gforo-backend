@@ -14,7 +14,6 @@ public class PostDetailVO {
     private String title;
     private String content;
     private Date createTime;
-    private Boolean isExpanded;
     private SimpleUserVO author; // 作者（简略版用户信息）
     private List<CommentVO> replies; // 回复列表
 }
