@@ -1,5 +1,6 @@
 package com.yugao.result;
 
+import com.yugao.enums.ResultCodeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,18 +15,18 @@ public class ResultFormat {
     public ResultFormat() {
     }
 
-    public ResultFormat(ResultCode resultCode, Object data) {
-        this.code = resultCode.code();
-        this.message = resultCode.getMessage();
+    public ResultFormat(ResultCodeEnum resultCodeEnum, Object data) {
+        this.code = resultCodeEnum.code();
+        this.message = resultCodeEnum.getMessage();
         this.data = data;
     }
 
     // default success resultformat constructor
     public static ResultFormat success(Object data) {
-        return new ResultFormat(ResultCode.SUCCESS, data);
+        return new ResultFormat(ResultCodeEnum.SUCCESS, data);
     }
 
-    public static ResultFormat error(ResultCode resultCode) {
-        return new ResultFormat(resultCode, null);
+    public static ResultFormat error(ResultCodeEnum resultCodeEnum) {
+        return new ResultFormat(resultCodeEnum, null);
     }
 }

@@ -1,22 +1,22 @@
 package com.yugao.exception;
 
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 
 public class SystemException extends RuntimeException {
 
-    private final ResultCode resultCode;
+    private final ResultCodeEnum resultCodeEnum;
 
     public SystemException(){
-        super(ResultCode.SYSTEM_EXCEPTION.getMessage());
-        this.resultCode = ResultCode.SYSTEM_EXCEPTION;
+        super(ResultCodeEnum.SYSTEM_EXCEPTION.getMessage());
+        this.resultCodeEnum = ResultCodeEnum.SYSTEM_EXCEPTION;
     }
 
-    public SystemException(ResultCode resultCode) {
-        super(resultCode.getMessage());
-        this.resultCode = resultCode;
+    public SystemException(ResultCodeEnum resultCodeEnum) {
+        super(resultCodeEnum.getMessage());
+        this.resultCodeEnum = resultCodeEnum;
     }
 
-    public ResultCode getResultCode() {
-        return resultCode;
+    public ResultCodeEnum getResultCode() {
+        return resultCodeEnum;
     }
 }

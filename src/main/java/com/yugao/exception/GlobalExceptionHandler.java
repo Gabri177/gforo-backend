@@ -1,7 +1,7 @@
 package com.yugao.exception;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.util.common.ErrorParseUtil;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -54,18 +52,18 @@ public class GlobalExceptionHandler {
         System.out.println("SQLException: " + e.getMessage());
         if (e.getMessage().contains("Duplicate entry")) {
             if (e.getMessage().contains("uniq_username"))
-                return ResultResponse.error(ResultCode.SQL_USERNAME_EXIST);
+                return ResultResponse.error(ResultCodeEnum.SQL_USERNAME_EXIST);
             else if (e.getMessage().contains("uniq_email"))
-                return ResultResponse.error(ResultCode.SQL_EMAIL_EXIST);
+                return ResultResponse.error(ResultCodeEnum.SQL_EMAIL_EXIST);
         }
-        return ResultResponse.error(ResultCode.SQL_EXCEPTION);
+        return ResultResponse.error(ResultCodeEnum.SQL_EXCEPTION);
     }
 
     // 事务异常处理
     @ExceptionHandler({TransactionSystemException.class, UnexpectedRollbackException.class})
     public ResponseEntity<ResultFormat> handleTransactionException(Exception e) {
         System.out.println("TransactionException: " + e.getMessage());
-        return ResultResponse.error(ResultCode.SQL_TRANSACTION_ERROR);
+        return ResultResponse.error(ResultCodeEnum.SQL_TRANSACTION_ERROR);
     }
 
     // 未知异常处理
@@ -74,14 +72,14 @@ public class GlobalExceptionHandler {
         System.out.println("UnknownException: " + e.getMessage());
         System.out.println(e.getClass());
         e.printStackTrace();
-        return ResultResponse.error(ResultCode.UNKNOWN_EXCEPTION);
+        return ResultResponse.error(ResultCodeEnum.UNKNOWN_EXCEPTION);
     }
 
     // 参数校验异常处理
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResultFormat> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        StringBuilder combindMsg = new StringBuilder(ResultCode.INPUT_FORMAT_ERROR.getMessage() + ": ");
+        StringBuilder combindMsg = new StringBuilder(ResultCodeEnum.INPUT_FORMAT_ERROR.getMessage() + ": ");
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 combindMsg.append(error.getField())
                         .append(" ")
@@ -92,7 +90,7 @@ public class GlobalExceptionHandler {
             combindMsg.setLength(combindMsg.length() - 2);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ResultFormat(ResultCode.INPUT_FORMAT_ERROR,
+                new ResultFormat(ResultCodeEnum.INPUT_FORMAT_ERROR,
                         combindMsg.toString()));
     }
 

@@ -2,7 +2,7 @@ package com.yugao.service.validator;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class CaptchaValidator {
         boolean opr = redisService.hasKey(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol)) &&
                 "true".equals(redisService.get(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol)));
         if (!opr) {
-            throw new BusinessException(ResultCode.CAPTCHA_VERIFIED_ERROR);
+            throw new BusinessException(ResultCodeEnum.CAPTCHA_VERIFIED_ERROR);
         }
         redisService.delete(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol));
     }
@@ -39,7 +39,7 @@ public class CaptchaValidator {
         boolean res = code.equals(redisSixDigitCaptcha);
 
         if (!res) {
-            throw new BusinessException(ResultCode.SIX_DIGIT_CAPTCHA_NOT_MATCH);
+            throw new BusinessException(ResultCodeEnum.SIX_DIGIT_CAPTCHA_NOT_MATCH);
         }
 
         // 删除redis中存储的验证码
@@ -60,7 +60,7 @@ public class CaptchaValidator {
                 symbol
         );
         if (!res)
-            throw new BusinessException(ResultCode.SIX_DIGIT_CAPTCHA_NOT_MATCH);
+            throw new BusinessException(ResultCodeEnum.SIX_DIGIT_CAPTCHA_NOT_MATCH);
 
         // 删除redis中存储的验证码
         redisService.delete(RedisKeyConstants.buildSixDigitCaptchaVerifiedKey(scene, symbol));

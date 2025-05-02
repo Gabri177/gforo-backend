@@ -7,13 +7,11 @@ import com.yugao.domain.User;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.data.UserService;
-import com.yugao.util.common.EncryptedUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Date;
@@ -117,7 +115,7 @@ public class UserServiceImpl implements UserService {
         // 查询当前用户
         User user = getUserById(id);
         if (user == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         // 更新用户信息
         BeanUtils.copyProperties(userInfoUpdateDTO, user);
@@ -130,7 +128,7 @@ public class UserServiceImpl implements UserService {
         wrapper.eq(User::getId, id);
         User user = userMapper.selectOne(wrapper);
         if (user == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         return user.getLastUsernameUpdateTime();
     }
@@ -142,7 +140,7 @@ public class UserServiceImpl implements UserService {
         wrapper.eq(User::getId, id);
         User user = userMapper.selectOne(wrapper);
         if (user == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         return user.getLastEmailUpdateTime();
     }

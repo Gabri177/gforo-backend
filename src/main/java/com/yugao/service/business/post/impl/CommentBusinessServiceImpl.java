@@ -6,7 +6,7 @@ import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.post.CommentBusinessService;
@@ -54,9 +54,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         Long currentUserId = SecurityUtils.mustGetLoginUserId();
         Comment comment = commentService.findCommentById(commentId);
         if (comment == null)
-            throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
         if (!comment.getUserId().equals(currentUserId))
-            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         commentService.deleteComment(commentId);
         return ResultResponse.success(null);
     }
@@ -67,9 +67,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         Long currentUserId = SecurityUtils.mustGetLoginUserId();
         Comment comment = commentService.findCommentById(commonContentDTO.getId());
         if (comment == null)
-            throw new BusinessException(ResultCode.COMMENT_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
         if (!comment.getUserId().equals(currentUserId))
-            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         comment.setContent(commonContentDTO.getContent());
         commentService.updateComment(comment);
         return ResultResponse.success(null);

@@ -1,7 +1,7 @@
 package com.yugao.util.security;
 
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -31,11 +31,11 @@ public class JwtUtil {
     public void init() {
         try {
             if (secretKey == null || secretKey.length() < 32) {
-                throw new BusinessException(ResultCode.JWT_SETTING_ERROR);
+                throw new BusinessException(ResultCodeEnum.JWT_SETTING_ERROR);
             }
             key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         } catch (IllegalArgumentException e) {
-            throw new BusinessException(ResultCode.JWT_INIT_ERROR);
+            throw new BusinessException(ResultCodeEnum.JWT_INIT_ERROR);
         }
     }
 

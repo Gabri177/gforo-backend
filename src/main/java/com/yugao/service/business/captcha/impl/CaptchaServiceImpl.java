@@ -4,7 +4,7 @@ import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.dto.captcha.GraphCaptchaDTO;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
@@ -67,7 +67,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 
         boolean res = verifyGraphCaptcha(dto.getCaptchaId(), dto.getVerCode());
         if (!res) {
-            return ResultResponse.error(ResultCode.CAPTCHA_VERIFIED_ERROR);
+            return ResultResponse.error(ResultCodeEnum.CAPTCHA_VERIFIED_ERROR);
         }
 
         // 验证成功后删除验证码

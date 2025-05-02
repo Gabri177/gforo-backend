@@ -1,6 +1,6 @@
-package com.yugao.result;
+package com.yugao.enums;
 
-public enum ResultCode {
+public enum ResultCodeEnum {
 
     // 成功
     SUCCESS(20000, "Success"),
@@ -76,7 +76,7 @@ public enum ResultCode {
     private final int code;
     private final String message;
 
-    ResultCode(int code, String message) {
+    ResultCodeEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -89,8 +89,8 @@ public enum ResultCode {
         return message;
     }
 
-    public static ResultCode fromCode(int code) {
-        for (ResultCode value : ResultCode.values()) {
+    public static ResultCodeEnum fromCode(int code) {
+        for (ResultCodeEnum value : ResultCodeEnum.values()) {
             if (value.code == code) {
                 return value;
             }

@@ -1,5 +1,6 @@
 package com.yugao.result;
 
+import com.yugao.enums.ResultCodeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,9 +15,9 @@ public class ResultResponse {
     }
 
     // 错误返回
-    public static ResponseEntity<ResultFormat> error(ResultCode resultCode) {
+    public static ResponseEntity<ResultFormat> error(ResultCodeEnum resultCodeEnum) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultFormat.error(resultCode));
+                .body(ResultFormat.error(resultCodeEnum));
     }
 }
 

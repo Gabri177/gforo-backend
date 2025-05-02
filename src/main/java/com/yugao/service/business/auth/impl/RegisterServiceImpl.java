@@ -6,7 +6,7 @@ import com.yugao.domain.User;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
@@ -58,11 +58,11 @@ public class RegisterServiceImpl implements RegisterService {
 
         // 检查redis是否存在正在注册的用户使用该邮箱
         if (redisService.hasKey(RedisKeyConstants.buildRegisterEmailIntervalKey(userRegisterDTO.getEmail())))
-            throw new BusinessException(ResultCode.ACCOUNT_IS_REGISTERING);
+            throw new BusinessException(ResultCodeEnum.ACCOUNT_IS_REGISTERING);
         if (userService.existsByEmail(userRegisterDTO.getEmail()))
-            throw new BusinessException(ResultCode.EMAIL_ALERADY_REGISTERED);
+            throw new BusinessException(ResultCodeEnum.EMAIL_ALERADY_REGISTERED);
         if (userService.existsByUsername(userRegisterDTO.getUsername()))
-            throw new BusinessException(ResultCode.USERNAME_ALREADY_REGISTERED);
+            throw new BusinessException(ResultCodeEnum.USERNAME_ALREADY_REGISTERED);
 
         User userDomain = UserConverter.toDomain(userRegisterDTO);
 
@@ -87,7 +87,7 @@ public class RegisterServiceImpl implements RegisterService {
     public ResponseEntity<ResultFormat> activateAccount(ActiveAccountDTO activeAccountDTO) {
 
         if (!redisService.hasKey(RedisKeyConstants.buildRegisterEmailIntervalKey(activeAccountDTO.getEmail())))
-            throw new BusinessException(ResultCode.VERIFY_EXPIRED);
+            throw new BusinessException(ResultCodeEnum.VERIFY_EXPIRED);
         captchaValidator.validateSixDigitCaptcha(
                 RedisKeyConstants.ACTIVATE_ACCOUNT,
                 activeAccountDTO.getEmail(),

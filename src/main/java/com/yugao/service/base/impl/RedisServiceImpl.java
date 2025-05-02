@@ -1,13 +1,10 @@
 package com.yugao.service.base.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yugao.constants.RedisKeyConstants;
-import com.yugao.domain.User;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +55,7 @@ public class RedisServiceImpl implements RedisService {
             String val = objectMapper.writeValueAsString(value);
             setTemporarilyByMinutes(key, val, timeoutByMinutes);
         } catch (Exception e) {
-            throw new BusinessException(ResultCode.REDIS_SAVING_ERROR);
+            throw new BusinessException(ResultCodeEnum.REDIS_SAVING_ERROR);
         }
     }
 
@@ -66,11 +63,11 @@ public class RedisServiceImpl implements RedisService {
     public <T> T getObject(String key, Class<T> clazz) {
         String json = get(key);
         if (json == null)
-            throw new BusinessException(ResultCode.VERIFY_EXPIRED);
+            throw new BusinessException(ResultCodeEnum.VERIFY_EXPIRED);
         try {
             return objectMapper.readValue(json, clazz);
         } catch (Exception e) {
-            throw new BusinessException(ResultCode.JSON_PARSE_ERROR);
+            throw new BusinessException(ResultCodeEnum.JSON_PARSE_ERROR);
         }
     }
 

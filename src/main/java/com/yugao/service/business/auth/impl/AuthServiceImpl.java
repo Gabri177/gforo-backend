@@ -6,7 +6,7 @@ import com.yugao.dto.auth.UserForgetPasswordDTO;
 import com.yugao.dto.auth.UserForgetPasswordResetDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.auth.AuthService;
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 userForgetPasswordDTO.getSymbol());
         User user = userService.getUserByEmail(userForgetPasswordDTO.getEmail());
         if (user == null)
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail());
@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
         String newPassword = PasswordUtil.encode(userForgetPasswordResetDTO.getPassword());
         boolean res = userService.updatePassword(existUser.getId(), newPassword);
         if (!res) {
-            return ResultResponse.error(ResultCode.SQL_UPDATING_ERROR);
+            return ResultResponse.error(ResultCodeEnum.SQL_UPDATING_ERROR);
         }
 
         return ResultResponse.success(null);

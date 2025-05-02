@@ -3,7 +3,7 @@ package com.yugao.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.SecurityWhiteListConstants;
 import com.yugao.domain.User;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.security.LoginUser;
 import com.yugao.service.base.RedisService;
@@ -79,10 +79,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 }
-                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCode.ACCESSTOKEN_EXPIRED);
+                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCodeEnum.ACCESSTOKEN_EXPIRED);
                 return ;
             }
-            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCode.ACCESSTOKEN_UNAUTHORIZED);
+            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCodeEnum.ACCESSTOKEN_UNAUTHORIZED);
             return ;
         }
         filterChain.doFilter(request, response);
@@ -92,7 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * 统一返回 JSON 格式的错误信息
      */
-    private void sendJsonErrorResponse(HttpServletResponse response, int code, ResultCode errorCode) throws IOException {
+    private void sendJsonErrorResponse(HttpServletResponse response, int code, ResultCodeEnum errorCode) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(code);
         ResultFormat errorResponse = ResultFormat.error(errorCode);

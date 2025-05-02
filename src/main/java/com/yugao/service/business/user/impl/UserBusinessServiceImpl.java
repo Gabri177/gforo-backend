@@ -9,7 +9,7 @@ import com.yugao.dto.user.UserChangeUsernameDTO;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
@@ -80,7 +80,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userValidator.validatePasswordChange(userDomain, userChangePasswordDTO);
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         if (!userService.updatePassword(userId, PasswordUtil.encode(newRawPassword)))
-            throw new BusinessException(ResultCode.USER_PASSWORD_UPDATE_ERROR);
+            throw new BusinessException(ResultCodeEnum.USER_PASSWORD_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 
@@ -90,7 +90,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
         if(!userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO))
-            throw new BusinessException(ResultCode.USER_PROFILE_UPDATE_ERROR);
+            throw new BusinessException(ResultCodeEnum.USER_PROFILE_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 
@@ -125,7 +125,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
                 activeAccountDTO.getSixDigitCaptcha());
         userValidator.validateUserIdExists(currentUserId);
         if (!userService.updateEmail(currentUserId, activeAccountDTO.getEmail()))
-            throw new BusinessException(ResultCode.USER_EMAIL_UPDATE_ERROR);
+            throw new BusinessException(ResultCodeEnum.USER_EMAIL_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 
@@ -135,7 +135,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         userValidator.validateUsernameChangeInterval(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
-            throw new BusinessException(ResultCode.USER_USERNAME_UPDATE_ERROR);
+            throw new BusinessException(ResultCodeEnum.USER_USERNAME_UPDATE_ERROR);
         return ResultResponse.success(null);
     }
 }

@@ -2,7 +2,7 @@ package com.yugao.service.limiter;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +36,7 @@ public class EmailRateLimiter {
 
     public void check(String email) {
         if (verifyEmailActivationInterval(email)) {
-            throw new BusinessException(ResultCode.TOO_SHORT_INTERVAL);
+            throw new BusinessException(ResultCodeEnum.TOO_SHORT_INTERVAL);
         }
         deleteEmailActivationInterval(email);
         setEmailActivationIntervalByMinutes(email);

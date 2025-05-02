@@ -1,23 +1,23 @@
 package com.yugao.exception;
 
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 
 public class BusinessException extends RuntimeException {
 
-    private final ResultCode resultCode;
+    private final ResultCodeEnum resultCodeEnum;
 
     public BusinessException() {
-        super(ResultCode.BUSINESS_EXCEPTION.getMessage());
-        this.resultCode = ResultCode.BUSINESS_EXCEPTION;
+        super(ResultCodeEnum.BUSINESS_EXCEPTION.getMessage());
+        this.resultCodeEnum = ResultCodeEnum.BUSINESS_EXCEPTION;
     }
 
-    public BusinessException(ResultCode resultCode) {
-        super(resultCode.getMessage());
-        this.resultCode = resultCode;
+    public BusinessException(ResultCodeEnum resultCodeEnum) {
+        super(resultCodeEnum.getMessage());
+        this.resultCodeEnum = resultCodeEnum;
     }
 
-    public ResultCode getResultCode() {
-        return resultCode;
+    public ResultCodeEnum getResultCode() {
+        return resultCodeEnum;
     }
 }
 

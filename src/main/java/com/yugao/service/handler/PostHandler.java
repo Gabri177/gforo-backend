@@ -6,7 +6,7 @@ import com.yugao.domain.Comment;
 import com.yugao.domain.DiscussPost;
 import com.yugao.domain.User;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
@@ -108,7 +108,7 @@ public class PostHandler {
         System.out.println("getOriginalPostDetail: " + postId);
         DiscussPost originalPost = discussPostService.getDiscussPostById(postId);
         if (originalPost == null)
-            throw new BusinessException(ResultCode.POST_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
 
         SimpleUserVO author = getAuthorInfo(originalPost.getUserId());
         List<CommentVO> replies = buildComments(postId);

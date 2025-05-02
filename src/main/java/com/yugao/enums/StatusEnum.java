@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
 
 public enum StatusEnum implements IEnum<Integer> {
     NORMAL(0, "正常"),
@@ -31,6 +30,6 @@ public enum StatusEnum implements IEnum<Integer> {
                 return status;
             }
         }
-        throw new BusinessException(ResultCode.INVALID_STATUS_VALUE);
+        throw new BusinessException(ResultCodeEnum.INVALID_STATUS_VALUE);
     }
 }

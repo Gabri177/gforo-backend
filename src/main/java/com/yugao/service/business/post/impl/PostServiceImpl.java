@@ -6,7 +6,7 @@ import com.yugao.domain.DiscussPost;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.ItemBuilder;
@@ -64,7 +64,7 @@ public class PostServiceImpl implements PostService {
 
         Long userId = SecurityUtils.mustGetLoginUserId();
         if (!boardService.isExistBoard(newDiscussPostDTO.getBoardId()))
-            throw new BusinessException(ResultCode.BOARD_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.BOARD_NOT_FOUND);
         DiscussPost newDiscussPost = DiscussPostConverter.newDiscussPostDTOtoDiscussPost(newDiscussPostDTO, userId);
         discussPostService.addDiscussPost(newDiscussPost);
         return ResultResponse.success(null);
@@ -76,9 +76,9 @@ public class PostServiceImpl implements PostService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         DiscussPost post = discussPostService.getDiscussPostById(postId);
         if (post == null)
-            throw new BusinessException(ResultCode.POST_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         if (!userId.equals(post.getUserId()))
-            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         discussPostService.deleteDiscussPost(postId);
         return ResultResponse.success(null);
     }
@@ -89,9 +89,9 @@ public class PostServiceImpl implements PostService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         DiscussPost post = discussPostService.getDiscussPostById(commonContentDTO.getId());
         if (post == null)
-            throw new BusinessException(ResultCode.POST_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         if (!userId.equals(post.getUserId()))
-            throw new BusinessException(ResultCode.USER_NOT_AUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         post.setTitle(commonContentDTO.getTitle());
         post.setContent(commonContentDTO.getContent());
         discussPostService.updateDiscussPost(post);

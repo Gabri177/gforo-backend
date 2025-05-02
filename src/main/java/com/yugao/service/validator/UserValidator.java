@@ -5,7 +5,7 @@ import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.data.UserTokenService;
@@ -38,14 +38,14 @@ public class UserValidator {
     public User validateUserIdExists(Long userId) {
         User userDomain = userService.getUserById(userId);
         if (userDomain == null)
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         return userDomain;
     }
 
     public User validateEmailExists(String email) {
         User existUser = userService.getUserByEmail(email);
         if (existUser == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         return existUser;
     }
@@ -53,37 +53,37 @@ public class UserValidator {
     public void validatePasswordChange(User userDomain, UserChangePasswordDTO userChangePasswordDTO) {
 
         if (userDomain == null) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
 
         if (userChangePasswordDTO.getOldPassword().equals(userChangePasswordDTO.getNewPassword())) {
-            throw new BusinessException(ResultCode.NEW_PASSWORD_SAME);
+            throw new BusinessException(ResultCodeEnum.NEW_PASSWORD_SAME);
         }
 
         String oldRawPassword = userChangePasswordDTO.getOldPassword();
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         String currentPassword = userDomain.getPassword();
         if (!PasswordUtil.matches(oldRawPassword, currentPassword)) {
-            throw new BusinessException(ResultCode.OLD_PASSWORD_INCORRECT);
+            throw new BusinessException(ResultCodeEnum.OLD_PASSWORD_INCORRECT);
         }
 
         if (PasswordUtil.matches(newRawPassword, currentPassword)) {
-            throw new BusinessException(ResultCode.NEW_PASSWORD_SAME);
+            throw new BusinessException(ResultCodeEnum.NEW_PASSWORD_SAME);
         }
     }
 
     public User validateLoginCredentials(UserRegisterDTO dto) {
         User user = userService.getUserByName(dto.getUsername());
-        if (user == null) throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        if (user == null) throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
-            throw new BusinessException(ResultCode.PASSWORD_NOT_MATCH);
+            throw new BusinessException(ResultCodeEnum.PASSWORD_NOT_MATCH);
         }
         return user;
     }
 
     public void validateIfIsDeleted(User user){
         if (user.getStatus() == StatusEnum.DELETED)
-            throw new BusinessException(ResultCode.USER_DELETED);
+            throw new BusinessException(ResultCodeEnum.USER_DELETED);
     }
 
     public void validateEmailChangeInterval(Long userId){
@@ -94,7 +94,7 @@ public class UserValidator {
                 lastEmailUpdateTime.toInstant(),
                 new Date().toInstant());
         if (diff < emailChangeIntervalLimitDays)
-            throw new BusinessException(ResultCode.EMAIL_CHANGE_INTERVAL_TOO_SHORT);
+            throw new BusinessException(ResultCodeEnum.EMAIL_CHANGE_INTERVAL_TOO_SHORT);
     }
 
     public void validateUsernameChangeInterval(Long userId){
@@ -105,7 +105,7 @@ public class UserValidator {
                 lastUsernameUpdateTime.toInstant(),
                 new Date().toInstant());
         if (diff < usernameChangeIntervalLimitDays)
-            throw new BusinessException(ResultCode.USERNAME_CHANGE_INTERVAL_TOO_SHORT);
+            throw new BusinessException(ResultCodeEnum.USERNAME_CHANGE_INTERVAL_TOO_SHORT);
     }
 
 

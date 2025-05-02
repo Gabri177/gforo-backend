@@ -1,7 +1,7 @@
 package com.yugao.util.security;
 
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.security.LoginUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +12,7 @@ public class SecurityUtils {
     public static Long mustGetLoginUserId() {
         Long id = getLoginUserId();
         if (id == null) {
-            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_LOGIN);
         }
         return id;
     }
@@ -36,7 +36,7 @@ public class SecurityUtils {
     public static LoginUser mustGetLoginUser(){
         LoginUser loginUser = getLoginUser();
         if (loginUser == null) {
-            throw new BusinessException(ResultCode.USER_NOT_LOGIN);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_LOGIN);
         }
         return loginUser;
     }

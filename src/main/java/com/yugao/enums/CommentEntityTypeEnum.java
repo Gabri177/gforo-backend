@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.yugao.exception.BusinessException;
-import com.yugao.result.ResultCode;
 
 public enum CommentEntityTypeEnum implements IEnum<Integer> {
     POST(0, "帖子"),
@@ -32,6 +31,6 @@ public enum CommentEntityTypeEnum implements IEnum<Integer> {
                 return type;
             }
         }
-        throw new BusinessException(ResultCode.INVALID_STATUS_VALUE);
+        throw new BusinessException(ResultCodeEnum.INVALID_STATUS_VALUE);
     }
 }
