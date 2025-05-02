@@ -2,29 +2,23 @@ package com.yugao.service.business.post.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yugao.converter.DiscussPostConverter;
-import com.yugao.converter.UserConverter;
 import com.yugao.domain.DiscussPost;
-import com.yugao.domain.User;
 import com.yugao.dto.comment.CommonContentDTO;
-import com.yugao.dto.post.BoardPostsPageDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultCode;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.service.builder.ItemBuilder;
 import com.yugao.service.business.post.PostService;
 import com.yugao.service.data.BoardService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
-import com.yugao.service.data.UserService;
 import com.yugao.service.handler.PostHandler;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
 import com.yugao.vo.post.PostPageVO;
-import com.yugao.vo.post.SimpleDiscussPostVO;
-import com.yugao.vo.user.SimpleUserVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,18 +40,18 @@ public class PostServiceImpl implements PostService {
     private DiscussPostService discussPostService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private ItemBuilder itemBuilder;
+
     @Override
-    public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage) {
+    public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
 
         System.out.println("getPostDetail: " + postId + " " + currentPage);
         PostPageVO postPageVO = new PostPageVO();
         postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
-        postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage));
+        postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage, pageSize, isAsc));
         postPageVO.setCurrentPage(currentPage);
         postPageVO.setTotalRows(commentService.getCommentCountByPostId(postId));
         postPageVO.setLimit(10); // 暂时没用 以防万一
@@ -105,11 +99,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> getPostsInBoard(Long boardId, BoardPostsPageDTO boardPostsPageDTO) {
-
-        int limit = boardPostsPageDTO.getSafeLimit();
-        int index = boardPostsPageDTO.getSafeIndex();
-        int orderMode = boardPostsPageDTO.getSafeOrderMode();
+    public ResponseEntity<ResultFormat> getPostsInBoard(Long boardId,
+                                                        Integer currentPage,
+                                                        Integer pageSize,
+                                                        Integer orderMode) {
 
         // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
@@ -118,7 +111,7 @@ public class PostServiceImpl implements PostService {
         // 分页查询帖子
         // userId = 0 表示查询所有用户的帖子
         IPage<DiscussPost> pages = discussPostService.getDiscussPosts(
-                0L, boardId, index, limit, orderMode);
+                0L, boardId, currentPage, pageSize, orderMode);
         List<DiscussPost> postList = pages.getRecords();
 
         List<CurrentPageItemVO> discussPostListVOList = new ArrayList<>();
@@ -127,22 +120,7 @@ public class PostServiceImpl implements PostService {
         // 封装帖子+作者+点赞数
         if (!postList.isEmpty()) {
             for (DiscussPost post : postList) {
-                CurrentPageItemVO currentPageItemVO = new CurrentPageItemVO();
-                SimpleDiscussPostVO simpleDiscussPostVO = new SimpleDiscussPostVO();
-                BeanUtils.copyProperties(post, simpleDiscussPostVO);
-                currentPageItemVO.setDiscussPosts(simpleDiscussPostVO);
-
-                User user = userService.getUserById(post.getUserId());
-                SimpleUserVO userInfoVO = UserConverter.toSimpleVO(user);
-                currentPageItemVO.setUser(userInfoVO);
-
-                Long postCommentCount = commentService.getCommentCountByPostId(post.getId());
-                System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
-                currentPageItemVO.setCommentCount(postCommentCount);
-
-//                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
-//                map.put("likeCount", likeCount);
-                // 还没有封装点赞数量
+                CurrentPageItemVO currentPageItemVO = itemBuilder.buildCurrentPageItemVO(post);
 
                 discussPostListVOList.add(currentPageItemVO);
             }
@@ -150,7 +128,7 @@ public class PostServiceImpl implements PostService {
         // 封装分页信息和数据
         currentPageVO.setTotalRows(totalRows);
         currentPageVO.setCurrentPage(pages.getCurrent());
-        currentPageVO.setLimit(limit);
+        currentPageVO.setLimit(pageSize);
         currentPageVO.setDiscussPosts(discussPostListVOList);
 
 

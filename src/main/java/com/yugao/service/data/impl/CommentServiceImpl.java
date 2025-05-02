@@ -76,14 +76,17 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     @Override
-    public List<Comment> findCommentsToPost(Long postId, Long current, Integer limit) {
+    public List<Comment> findCommentsToPost(Long postId, Long current, Integer limit, Boolean isAsc) {
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
         queryWrapper.eq(Comment::getEntityType, CommentEntityTypeEnum.POST);
         queryWrapper.eq(Comment::getEntityId, postId);
-        queryWrapper.orderByAsc(Comment::getCreateTime);
-
+        if (isAsc) {
+            queryWrapper.orderByAsc(Comment::getCreateTime);
+        } else {
+            queryWrapper.orderByDesc(Comment::getCreateTime);
+        }
         Page<Comment> page = new Page<>(current, limit);
         return commentMapper.selectPage(page, queryWrapper).getRecords();
     }

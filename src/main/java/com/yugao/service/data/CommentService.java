@@ -14,7 +14,7 @@ public interface CommentService {
 
     List<Comment> findCommentsToPostFloor(Long postId);
 
-    List<Comment> findCommentsToPost(Long postId, Long current, Integer limit);
+    List<Comment> findCommentsToPost(Long postId, Long current, Integer limit, Boolean isAsc);
 
     List<Comment> findCommentListOfComment(Long EntityId);
 

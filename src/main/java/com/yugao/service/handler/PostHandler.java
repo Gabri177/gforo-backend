@@ -116,8 +116,8 @@ public class PostHandler {
         return PostConverter.toPostDetailVO(originalPost, author, replies);
     }
 
-    public List<PostDetailVO> getCommentPostDetailList(Long postId, Long currentPage) {
-        List<Comment> commentList = commentService.findCommentsToPost(postId, currentPage, 10);
+    public List<PostDetailVO> getCommentPostDetailList(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
+        List<Comment> commentList = commentService.findCommentsToPost(postId, currentPage, pageSize, isAsc);
         if (commentList.isEmpty()) {
             return Collections.emptyList();
         }

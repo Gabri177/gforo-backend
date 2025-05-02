@@ -1,7 +1,6 @@
 package com.yugao.controller.post;
 
 import com.yugao.dto.comment.CommonContentDTO;
-import com.yugao.dto.post.BoardPostsPageDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.PostService;
@@ -18,21 +17,26 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/{postId}/{currentPage}")
+    @GetMapping("/detail/{postId}")
     public ResponseEntity<ResultFormat> getPostDetail(
             @PathVariable Long postId,
-            @PathVariable Long currentPage) {
-        System.out.println("getPostDetail: " + postId + " " + currentPage);
-        return postService.getPostDetail(postId, currentPage);
+            @RequestParam (defaultValue = "1", name = "currentPage", required = false) Long currentPage,
+            @RequestParam (defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
+            @RequestParam (defaultValue = "0", name = "isAsc", required = false) Boolean isAsc
+            ) {
+        System.out.println("getPostDetail: " + postId + " " + currentPage + " " + pageSize + " " + isAsc);
+        return postService.getPostDetail(postId, currentPage, pageSize, isAsc);
     }
 
-    @PostMapping("/board/{boardId}")
+    @GetMapping("/board/{boardId}")
     public ResponseEntity<ResultFormat> getPostsInBoard(
             @PathVariable("boardId") Long boardId,
-            @RequestBody BoardPostsPageDTO boardPostsPageDTO
+            @RequestParam(defaultValue = "1", name = "currentPage", required = false) Integer currentPage,
+            @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "0", name = "orderMode", required = false) Integer orderMode
             ) {
-        System.out.println("getPostsInBoard: " + boardId + " " + boardPostsPageDTO);
-        return postService.getPostsInBoard(boardId, boardPostsPageDTO);
+        System.out.println("getPostsInBoard: " + boardId + " " + currentPage + " " + pageSize + " " + orderMode);
+        return postService.getPostsInBoard(boardId, currentPage, pageSize, orderMode);
     }
 
     @PostMapping("/publish")

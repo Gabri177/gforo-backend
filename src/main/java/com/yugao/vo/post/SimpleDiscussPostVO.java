@@ -11,9 +11,9 @@ public class SimpleDiscussPostVO {
 
     private String title;
 
-    private Integer type; // 帖子类型，0-普通，1-置顶
+    private Integer type; // 帖子类型，0-普通，1-置顶 2-精华
 
-    private Integer status; // 帖子状态，0-正常，1-精华，2-删除
+    private Integer status; // 帖子状态，0-正常，1-删除
 
     private Date createTime;
 

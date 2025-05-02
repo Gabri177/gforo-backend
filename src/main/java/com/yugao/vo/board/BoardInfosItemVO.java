@@ -1,5 +1,6 @@
 package com.yugao.vo.board;
 
+import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
 import lombok.Data;
 
@@ -18,5 +19,5 @@ public class BoardInfosItemVO {
 
     private Long commentCount;
 
-    private SimpleDiscussPostVO latestPost; // 最新帖子
+    private CurrentPageItemVO latestPost; // 最新帖子
 }
