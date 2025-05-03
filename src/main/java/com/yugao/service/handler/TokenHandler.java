@@ -69,14 +69,14 @@ public class TokenHandler {
         }
     }
 
+    /**
+     * 参数名字不对 !!!!!!!!!!!!!!!!!!!!!!!
+     * @param refreshToken
+     * @return
+     */
     public NewAccessTokenVO refreshAccessToken(String refreshToken){
 
 //        System.out.println("refresh token: " + refreshToken);
-        if (refreshToken == null || !refreshToken.startsWith("Bearer ")){
-            throw new BusinessException(ResultCodeEnum.REFRESHTOKEN_UNAUTHORIZED);
-        }
-
-        refreshToken = refreshToken.replace("Bearer ", "");
 
         // 这里是接收到的RefreshToken 用来更新AccessToken
         String userId = jwtUtil.getUserIdWithToken(refreshToken);
@@ -91,7 +91,7 @@ public class TokenHandler {
 
         // 检查数据库中的 refresh token 是否过期
         if (userToken.getExpiresAt().getTime() < System.currentTimeMillis()) {
-            // refreshToken过期 删除数据库中的 user_token 登录数据, 同一个用户不能重复登录
+
             userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
             deleteUserAccessToken(Long.parseLong(userId));
             throw new BusinessException(ResultCodeEnum.REFRESHTOKEN_EXPIRED);

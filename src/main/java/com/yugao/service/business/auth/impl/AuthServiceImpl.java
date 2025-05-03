@@ -2,6 +2,7 @@ package com.yugao.service.business.auth.impl;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.User;
+import com.yugao.dto.auth.RefreshTokenDTO;
 import com.yugao.dto.auth.UserForgetPasswordDTO;
 import com.yugao.dto.auth.UserForgetPasswordResetDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
@@ -69,9 +70,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> refresh(String refreshToken) {
-        System.out.println("refreshToken =================== " + refreshToken);
-        NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshToken);
+    public ResponseEntity<ResultFormat> refresh(RefreshTokenDTO refreshTokenDTO) {
+        System.out.println("refreshToken =================== " + refreshTokenDTO.getRefreshToken());
+        NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshTokenDTO.getRefreshToken());
         return ResultResponse.success(newAccessTokenVO);
     }
 

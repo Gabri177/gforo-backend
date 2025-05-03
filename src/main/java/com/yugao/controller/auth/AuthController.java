@@ -1,5 +1,6 @@
 package com.yugao.controller.auth;
 
+import com.yugao.dto.auth.RefreshTokenDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.dto.auth.UserForgetPasswordDTO;
 import com.yugao.dto.auth.UserForgetPasswordResetDTO;
@@ -29,10 +30,7 @@ public class AuthController {
         return authService.login(userRegisterDTO);
     }
 
-    /**
-     * 退出登录
-     * @return
-     */
+
     @DeleteMapping("/logout")
     public ResponseEntity<ResultFormat> logout(@RequestHeader("Authorization") String accessToken) {
        return authService.logout(accessToken);
@@ -40,12 +38,14 @@ public class AuthController {
 
     /**
      * 刷新token
-     * @param refreshToken
+     * @param refreshTokenDTO
      * @return
      */
     @PostMapping("/refresh-token")
-    public ResponseEntity<ResultFormat> refresh(@RequestHeader("Authorization") String refreshToken) {
-        return authService.refresh(refreshToken);
+    public ResponseEntity<ResultFormat> refresh(
+           @Validated @RequestBody RefreshTokenDTO refreshTokenDTO) {
+        System.out.println("refreshToken ===" + refreshTokenDTO.getRefreshToken());
+        return authService.refresh(refreshTokenDTO);
     }
 
     /**
