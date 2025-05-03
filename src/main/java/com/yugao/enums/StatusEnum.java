@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.yugao.exception.BusinessException;
 
 public enum StatusEnum implements IEnum<Integer> {
-    NORMAL(0, "正常"),
-    DELETED(1, "删除");
+    NORMAL(1, "正常"),
+    DELETED(0, "删除");
 
     private final Integer value;
     private final String description;

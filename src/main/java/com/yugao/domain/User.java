@@ -38,7 +38,7 @@ public class User {
 
     private Integer type; // 这个变量还没有用到 0-普通用户 1 2 目前默认初始化为0
 
-    private StatusEnum status; // 0-用户状态正常 1-用户状态被封禁
+    private StatusEnum status;
 
     private String headerUrl;
 

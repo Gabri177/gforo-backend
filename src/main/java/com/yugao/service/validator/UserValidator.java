@@ -75,9 +75,11 @@ public class UserValidator {
     public User validateLoginCredentials(UserRegisterDTO dto) {
         User user = userService.getUserByName(dto.getUsername());
         if (user == null) throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
-        if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
+        if (!PasswordUtil.matches(dto.getPassword(), user.getPassword()))
             throw new BusinessException(ResultCodeEnum.PASSWORD_NOT_MATCH);
-        }
+        if (user.getStatus() != StatusEnum.NORMAL)
+            throw new BusinessException(ResultCodeEnum.USER_ACCOUNT_ABNORMAL);
+
         return user;
     }
 

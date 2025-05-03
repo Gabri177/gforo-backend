@@ -58,6 +58,7 @@ public enum ResultCodeEnum {
     USER_USERNAME_UPDATE_ERROR(40043, "User username update error"),
     INVALID_STATUS_VALUE(40044, "Invalid status value"),
     BOARD_NOT_FOUND(40045, "Board not found"),
+    USER_ACCOUNT_ABNORMAL(40046, "User account abnormal"),
 
 
     // 系统异常
