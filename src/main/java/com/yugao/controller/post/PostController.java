@@ -36,7 +36,7 @@ public class PostController {
             @RequestParam(defaultValue = "0", name = "orderMode", required = false) Integer orderMode
             ) {
         System.out.println("getPostsInBoard: " + boardId + " " + currentPage + " " + pageSize + " " + orderMode);
-        return postService.getPostsInBoard(boardId, currentPage, pageSize, orderMode);
+        return postService.getPosts(0L, boardId, currentPage, pageSize, orderMode);
     }
 
     @PostMapping("/publish")

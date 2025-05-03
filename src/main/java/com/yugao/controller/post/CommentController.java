@@ -34,6 +34,9 @@ public class CommentController {
         return commentBusinessService.addCommentToComment(commentToCommentDTO);
     }
 
+    // ------------
+    // 这里可以考虑当一个帖子删除以后 同步标记这个帖子相关的所有评论都为删除状态
+    // ------------
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ResultFormat> deleteComment(@PathVariable Long commentId){
         System.out.println("deleteComment: " + commentId);

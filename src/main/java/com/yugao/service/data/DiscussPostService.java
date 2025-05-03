@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DiscussPostService {
 
-    IPage<DiscussPost> getDiscussPosts(Long userId, Long boardId, int current, int limit, int orderMode);
+    List<DiscussPost> getDiscussPosts(Long userId, Long boardId, int current, int limit, int orderMode);
 
     Long getDiscussPostRows(Long userId, Long boardId);
 

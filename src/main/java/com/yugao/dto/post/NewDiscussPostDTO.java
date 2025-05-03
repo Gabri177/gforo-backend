@@ -12,6 +12,7 @@ public class NewDiscussPostDTO {
     @NotNull(message = "Board ID cannot be empty")
     private Long boardId;
 
+    // 太长了 重新考虑最大值
     @NotBlank(message = "Title cannot be empty")
     @Size(min = 1, max = 50, message = "Title length must be between 1 and 50")
     private String title;

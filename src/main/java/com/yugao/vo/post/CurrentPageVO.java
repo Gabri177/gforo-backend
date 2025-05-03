@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class CurrentPageVO {
 
-    private Long currentPage;
+    private Integer currentPage;
 
     private List<CurrentPageItemVO> discussPosts;
 

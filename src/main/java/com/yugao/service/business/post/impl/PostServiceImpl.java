@@ -54,7 +54,7 @@ public class PostServiceImpl implements PostService {
         postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage, pageSize, isAsc));
         postPageVO.setCurrentPage(currentPage);
         postPageVO.setTotalRows(commentService.getCommentCountByPostId(postId));
-        postPageVO.setLimit(10); // 暂时没用 以防万一
+        postPageVO.setLimit(pageSize); // 暂时没用 以防万一
 
         return ResultResponse.success(postPageVO);
     }
@@ -99,20 +99,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> getPostsInBoard(Long boardId,
-                                                        Integer currentPage,
-                                                        Integer pageSize,
-                                                        Integer orderMode) {
+    public ResponseEntity<ResultFormat> getPosts(Long userId,
+                                                 Long boardId,
+                                                 Integer currentPage,
+                                                 Integer pageSize,
+                                                 Integer orderMode) {
 
         // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
-        Long totalRows = discussPostService.getDiscussPostRows(0L, boardId);
+        Long totalRows = discussPostService.getDiscussPostRows(userId, boardId);
 
         // 分页查询帖子
         // userId = 0 表示查询所有用户的帖子
-        IPage<DiscussPost> pages = discussPostService.getDiscussPosts(
-                0L, boardId, currentPage, pageSize, orderMode);
-        List<DiscussPost> postList = pages.getRecords();
+        List<DiscussPost> postList = discussPostService.getDiscussPosts(
+                userId, boardId, currentPage, pageSize, orderMode);
 
         List<CurrentPageItemVO> discussPostListVOList = new ArrayList<>();
         CurrentPageVO currentPageVO = new CurrentPageVO();
@@ -127,7 +127,7 @@ public class PostServiceImpl implements PostService {
         }
         // 封装分页信息和数据
         currentPageVO.setTotalRows(totalRows);
-        currentPageVO.setCurrentPage(pages.getCurrent());
+        currentPageVO.setCurrentPage(currentPage);
         currentPageVO.setLimit(pageSize);
         currentPageVO.setDiscussPosts(discussPostListVOList);
 

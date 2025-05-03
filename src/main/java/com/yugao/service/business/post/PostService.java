@@ -15,5 +15,5 @@ public interface PostService {
 
     ResponseEntity<ResultFormat> updatePost(CommonContentDTO commonContentDTO);
 
-    ResponseEntity<ResultFormat> getPostsInBoard(Long boardId, Integer currentPage, Integer pageSize, Integer orderMode);
+    ResponseEntity<ResultFormat> getPosts(Long userId, Long boardId, Integer currentPage, Integer pageSize, Integer orderMode);
 }

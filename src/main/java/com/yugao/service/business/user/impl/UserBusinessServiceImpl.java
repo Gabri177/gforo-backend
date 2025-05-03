@@ -60,7 +60,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private CaptchaService captchaService;
 
     @Override
-    public ResponseEntity<ResultFormat> getUserInfo(String token) {
+    public ResponseEntity<ResultFormat> getUserInfo() {
 
         Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);

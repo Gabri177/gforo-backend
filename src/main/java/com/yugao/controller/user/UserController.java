@@ -19,10 +19,11 @@ public class UserController {
     @Autowired
     private UserBusinessService userBusinessService;
 
+    // 加入一个id参数 用来看看是查看是自己的信息还是查看别人的信息
     @GetMapping("/info")
-    public ResponseEntity<ResultFormat> getUserInfo(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResultFormat> getUserInfo() {
 
-        return userBusinessService.getUserInfo(token);
+        return userBusinessService.getUserInfo();
     }
 
     @PutMapping ("/change-password")
@@ -39,18 +40,12 @@ public class UserController {
         return userBusinessService.changeUsername(userChangeUsernameDTO);
     }
 
-    @PutMapping("/info") //需要修改
+    @PutMapping("/info")
     public ResponseEntity<ResultFormat> updateUserInfo(
             @Validated @RequestBody UserInfoUpdateDTO userInfoUpdateDTO) {
         return userBusinessService.updateUserInfo(userInfoUpdateDTO);
     }
 
-
-    /**
-     * 发送邮件验证码
-     * @param userVerifyEmailDTO
-     * @return
-     */
     @PostMapping("/send-verify-email")
     public ResponseEntity<ResultFormat> sendChangeEmailVerify(
             @Validated @RequestBody UserVerifyEmailDTO userVerifyEmailDTO) {
@@ -58,11 +53,6 @@ public class UserController {
         return userBusinessService.sendVerifyEmail(userVerifyEmailDTO);
     }
 
-    /**
-     * 验证邮件验证码
-     * @param activeAccountDTO
-     * @return
-     */
     @PostMapping("/verify-email")
     public ResponseEntity<ResultFormat> verifyChangeEmailCode(
             @Validated @RequestBody ActiveAccountDTO activeAccountDTO

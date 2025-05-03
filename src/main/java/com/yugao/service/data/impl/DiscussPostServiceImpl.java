@@ -21,7 +21,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     private DiscussPostMapper discussPostMapper;
 
     @Override
-    public IPage<DiscussPost> getDiscussPosts(Long userId, Long boardId, int current, int limit, int orderMode) {
+    public List<DiscussPost> getDiscussPosts(Long userId, Long boardId, int current, int limit, int orderMode) {
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, StatusEnum.DELETED);
         wrapper.eq(userId != 0, DiscussPost::getUserId, userId);
@@ -29,7 +29,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         wrapper.orderByDesc(orderMode == 0, DiscussPost::getType, DiscussPost::getCreateTime);
         wrapper.orderByDesc(orderMode == 1, DiscussPost::getType, DiscussPost::getScore, DiscussPost::getCreateTime);
         Page<DiscussPost> page = new Page<>(current, limit);
-        return discussPostMapper.selectPage(page, wrapper);
+        return discussPostMapper.selectPage(page, wrapper).getRecords();
     }
 
 

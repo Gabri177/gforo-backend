@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserBusinessService {
 
-    ResponseEntity<ResultFormat> getUserInfo(String token);
+    ResponseEntity<ResultFormat> getUserInfo();
 
     ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO);
 
