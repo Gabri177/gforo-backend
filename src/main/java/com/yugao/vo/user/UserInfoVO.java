@@ -3,6 +3,8 @@ package com.yugao.vo.user;
 import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserInfoVO {
 
@@ -25,4 +27,8 @@ public class UserInfoVO {
     private Long commentCount;
 
     private String nickname;
+
+    private List<String> roles;
+
+    private List<String> permissions;
 }

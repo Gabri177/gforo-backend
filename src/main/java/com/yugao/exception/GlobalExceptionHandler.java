@@ -66,12 +66,19 @@ public class GlobalExceptionHandler {
         return ResultResponse.error(ResultCodeEnum.SQL_TRANSACTION_ERROR);
     }
 
+    // 认证异常处理
+    @ExceptionHandler({org.springframework.security.access.AccessDeniedException.class})
+    public ResponseEntity<ResultFormat> handleAccessDeniedException(Exception e) {
+        System.out.println("AccessDeniedException: " + e.getMessage());
+        return ResultResponse.error(ResultCodeEnum.NO_PERMISSION);
+    }
+
     // 未知异常处理
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResultFormat> handleException(Exception e) {
         System.out.println("UnknownException: " + e.getMessage());
         System.out.println(e.getClass());
-        e.printStackTrace();
+        //e.printStackTrace();
         return ResultResponse.error(ResultCodeEnum.UNKNOWN_EXCEPTION);
     }
 

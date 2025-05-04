@@ -15,6 +15,7 @@ public enum ResultCodeEnum {
     EMAIL_NOT_MATCH(40004, "Email not match"),
     SIX_DIGIT_CAPTCHA_NOT_MATCH(40005, "Six-digit captcha does not match"),
     SIX_DIGIT_CAPTCHA_EXPIRED(40006, "Six-digit captcha expired"),
+    NO_PERMISSION(40007, "No permission, Please contact administrator"),
 
     // // sql error
     SQL_EXCEPTION(40007, "SQL error"),
@@ -59,6 +60,7 @@ public enum ResultCodeEnum {
     INVALID_STATUS_VALUE(40044, "Invalid status value"),
     BOARD_NOT_FOUND(40045, "Board not found"),
     USER_ACCOUNT_ABNORMAL(40046, "User account abnormal"),
+    INVALID_ROLE(40047, "Invalid role"),
 
 
     // 系统异常
@@ -69,10 +71,10 @@ public enum ResultCodeEnum {
 
     // 权限相关 70000~79999
     TOKEN_INVALID(70000, "Token invalid"),
-    ACCESSTOKEN_UNAUTHORIZED(70001, "Access token unauthorized"),
-    ACCESSTOKEN_EXPIRED(70002, "Access token expired"),
-    REFRESHTOKEN_UNAUTHORIZED(70003, "Refresh token unauthorized"),
-    REFRESHTOKEN_EXPIRED(70004, "Refresh token expired");
+    ACCESSION_UNAUTHORIZED(70001, "Access token unauthorized"),
+    ACCESSION_EXPIRED(70002, "Access token expired"),
+    REFRESHMENT_UNAUTHORIZED(70003, "Refresh token unauthorized"),
+    REFRESHMENT_EXPIRED(70004, "Refresh token expired");
 
     private final int code;
     private final String message;

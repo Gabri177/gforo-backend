@@ -50,25 +50,6 @@ public class TokenHandler {
         }
     }
 
-    public void invalidateAccessToken(String accessToken) {
-
-        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
-            throw new BusinessException(ResultCodeEnum.TOKEN_INVALID);
-        }
-        accessToken = accessToken.replace("Bearer ", "");
-        String userId = jwtUtil.getUserIdWithToken(accessToken);
-        if (userId == null) {
-            throw new BusinessException(ResultCodeEnum.ACCESSTOKEN_UNAUTHORIZED);
-        }
-        System.out.println("logout UserId: " + userId);
-        // 删除数据库中的 user_token 登录数据
-        Boolean isLogout = userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
-        System.out.println("isLogout: " + isLogout);
-        if (!isLogout) {
-            throw new BusinessException(ResultCodeEnum.LOGOUT_WITHOUT_LOGIN);
-        }
-    }
-
     /**
      * 参数名字不对 !!!!!!!!!!!!!!!!!!!!!!!
      * @param refreshToken
@@ -81,12 +62,12 @@ public class TokenHandler {
         // 这里是接收到的RefreshToken 用来更新AccessToken
         String userId = jwtUtil.getUserIdWithToken(refreshToken);
         if (userId == null) {
-            throw new BusinessException(ResultCodeEnum.REFRESHTOKEN_UNAUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.REFRESHMENT_UNAUTHORIZED);
         }
         UserToken userToken = userTokenService.findByUserId(Long.parseLong(userId));
         if (userToken == null || !userToken.getRefreshToken().equals(refreshToken)) {
 //            System.out.println("Invalid refresh token");
-            throw new BusinessException(ResultCodeEnum.REFRESHTOKEN_UNAUTHORIZED);
+            throw new BusinessException(ResultCodeEnum.REFRESHMENT_UNAUTHORIZED);
         }
 
         // 检查数据库中的 refresh token 是否过期
@@ -94,7 +75,7 @@ public class TokenHandler {
 
             userTokenService.deleteUserTokenByUserId(Long.parseLong(userId));
             deleteUserAccessToken(Long.parseLong(userId));
-            throw new BusinessException(ResultCodeEnum.REFRESHTOKEN_EXPIRED);
+            throw new BusinessException(ResultCodeEnum.REFRESHMENT_EXPIRED);
         }
 
         // 没有过期 生成新的AccessToken

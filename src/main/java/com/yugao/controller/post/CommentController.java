@@ -8,6 +8,7 @@ import com.yugao.service.business.post.CommentBusinessService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ public class CommentController {
     @Autowired
     CommentBusinessService commentBusinessService;
 
+    @PreAuthorize("hasAnyAuthority('comment:publish:topost')")
     @PostMapping("/topost")
     public ResponseEntity<ResultFormat> addCommentToPost(
             @Validated @RequestBody CommentToPostDTO commentToPostDTO){
@@ -26,6 +28,7 @@ public class CommentController {
         return commentBusinessService.addCommentToPost(commentToPostDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('comment:publish:tocomment')")
     @PostMapping("/tocomment")
     public ResponseEntity<ResultFormat> addCommentToComment(
             @Validated @RequestBody CommentToCommentDTO commentToCommentDTO){
@@ -37,12 +40,14 @@ public class CommentController {
     // ------------
     // 这里可以考虑当一个帖子删除以后 同步标记这个帖子相关的所有评论都为删除状态
     // ------------
+    @PreAuthorize("hasAnyAuthority('comment:delete:own')")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ResultFormat> deleteComment(@PathVariable Long commentId){
         System.out.println("deleteComment: " + commentId);
         return commentBusinessService.deleteComment(commentId);
     }
 
+    @PreAuthorize("hasAnyAuthority('comment:update:own')")
     @PutMapping("/update")
     public ResponseEntity<ResultFormat> updateComment(
             @Validated({ValidationGroups.Comment.class})

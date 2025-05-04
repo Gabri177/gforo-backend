@@ -14,10 +14,10 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.service.business.security.PermissionBusinessService;
 import com.yugao.service.business.user.UserBusinessService;
-import com.yugao.service.data.CommentService;
-import com.yugao.service.data.DiscussPostService;
-import com.yugao.service.data.UserService;
+import com.yugao.service.data.*;
+import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
@@ -28,6 +28,8 @@ import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserBusinessServiceImpl implements UserBusinessService {
@@ -59,6 +61,20 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Autowired
     private CaptchaService captchaService;
 
+    @Autowired
+    private TokenHandler tokenHandler;
+
+    @Autowired
+    private UserTokenService userTokenService;
+
+    @Autowired
+    private PermissionBusinessService permissionBusinessService;
+
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private UserRoleService userRoleService;
+
     @Override
     public ResponseEntity<ResultFormat> getUserInfo() {
 
@@ -67,6 +83,10 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
         userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId, 0L));
         userInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
+        userInfoVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(userId));
+        List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
+        List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
+        userInfoVO.setRoles(roleNames);
 //        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);
     }
@@ -136,6 +156,18 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userValidator.validateUsernameChangeInterval(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCodeEnum.USER_USERNAME_UPDATE_ERROR);
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> logout() {
+
+        Long userId = SecurityUtils.mustGetLoginUserId();
+        Boolean isLogout = userTokenService.deleteUserTokenByUserId(userId);
+        System.out.println("isLogout: " + isLogout);
+        if (!isLogout) {
+            throw new BusinessException(ResultCodeEnum.LOGOUT_WITHOUT_LOGIN);
+        }
         return ResultResponse.success(null);
     }
 }

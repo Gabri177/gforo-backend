@@ -3,8 +3,10 @@ package com.yugao.service.business.auth.impl;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.User;
+import com.yugao.domain.UserRole;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
+import com.yugao.enums.RoleEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
@@ -13,6 +15,7 @@ import com.yugao.service.base.RedisService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.auth.RegisterService;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.service.data.UserRoleService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
@@ -48,6 +51,8 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
     private CaptchaService captchaService;
+    @Autowired
+    private UserRoleService userRoleService;
 
 
     @Override
@@ -98,6 +103,7 @@ public class RegisterServiceImpl implements RegisterService {
         );
         redisService.delete(RedisKeyConstants.buildRegisterEmailIntervalKey(activeAccountDTO.getEmail()));
         userService.addUser(user);
+        userRoleService.addUserRole(new UserRole(user.getId(), RoleEnum.ROLE_USER));
         return ResultResponse.success(null);
     }
 }

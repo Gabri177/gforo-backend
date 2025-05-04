@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserBusinessService {
 
+    ResponseEntity<ResultFormat> logout();
+
     ResponseEntity<ResultFormat> getUserInfo();
 
     ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO);

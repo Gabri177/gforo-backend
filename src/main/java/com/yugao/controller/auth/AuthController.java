@@ -30,12 +30,6 @@ public class AuthController {
         return authService.login(userRegisterDTO);
     }
 
-
-    @DeleteMapping("/logout")
-    public ResponseEntity<ResultFormat> logout(@RequestHeader("Authorization") String accessToken) {
-       return authService.logout(accessToken);
-    }
-
     /**
      * 刷新token
      * @param refreshTokenDTO
@@ -45,7 +39,7 @@ public class AuthController {
     public ResponseEntity<ResultFormat> refresh(
            @Validated @RequestBody RefreshTokenDTO refreshTokenDTO) {
         System.out.println("refreshToken ===" + refreshTokenDTO.getRefreshToken());
-        return authService.refresh(refreshTokenDTO);
+        return authService.refreshAccessToken(refreshTokenDTO);
     }
 
     /**

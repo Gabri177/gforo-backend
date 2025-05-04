@@ -9,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
     ResponseEntity<ResultFormat> login(UserRegisterDTO userRegisterDTO);
-    ResponseEntity<ResultFormat> logout(String accessToken);
-    ResponseEntity<ResultFormat> refresh(RefreshTokenDTO refreshTokenDTO);
+    ResponseEntity<ResultFormat> refreshAccessToken(RefreshTokenDTO refreshTokenDTO);
     ResponseEntity<ResultFormat> sendForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO);
     ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code);
     ResponseEntity<ResultFormat> resetPassword(UserForgetPasswordResetDTO userForgetPasswordResetDTO);

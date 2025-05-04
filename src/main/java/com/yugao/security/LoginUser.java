@@ -6,6 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 
 @Data
 public class LoginUser implements UserDetails {
@@ -15,6 +18,21 @@ public class LoginUser implements UserDetails {
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+
+    public LoginUser(Long userId, String username, String password, List<String> perms) {
+        this.id = userId;
+        this.username = username;
+        this.password = password;
+        this.authorities = perms.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasAuthority(String code) {
+        if (this.authorities == null) return false;
+        return this.authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals(code));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

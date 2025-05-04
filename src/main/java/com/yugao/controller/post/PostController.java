@@ -7,6 +7,7 @@ import com.yugao.service.business.post.PostService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class PostController {
         return postService.getPosts(0L, boardId, currentPage, pageSize, orderMode);
     }
 
+    @PreAuthorize("hasAnyAuthority('post:publish')")
     @PostMapping("/publish")
     public ResponseEntity<ResultFormat> publishPost(
             @Validated @RequestBody NewDiscussPostDTO newDiscussPostDTO) {
@@ -46,12 +48,14 @@ public class PostController {
         return postService.publishPost(newDiscussPostDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('post:delete:own')")
     @DeleteMapping("/{postId}")
     public ResponseEntity<ResultFormat> deletePost(@PathVariable Long postId) {
         System.out.println("deletePost: " + postId);
         return postService.deletePost(postId);
     }
 
+    @PreAuthorize("hasAnyAuthority('post:update:own')")
     @PutMapping("/update")
     public ResponseEntity<ResultFormat> updatePost(
             @Validated({ValidationGroups.Post.class})

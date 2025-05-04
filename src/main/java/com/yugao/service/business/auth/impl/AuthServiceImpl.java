@@ -64,13 +64,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> logout(String accessToken) {
-        tokenHandler.invalidateAccessToken(accessToken);
-        return ResultResponse.success(null);
-    }
-
-    @Override
-    public ResponseEntity<ResultFormat> refresh(RefreshTokenDTO refreshTokenDTO) {
+    public ResponseEntity<ResultFormat> refreshAccessToken(RefreshTokenDTO refreshTokenDTO) {
         System.out.println("refreshToken =================== " + refreshTokenDTO.getRefreshToken());
         NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshTokenDTO.getRefreshToken());
         return ResultResponse.success(newAccessTokenVO);

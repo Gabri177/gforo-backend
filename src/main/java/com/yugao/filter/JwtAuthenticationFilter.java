@@ -6,7 +6,7 @@ import com.yugao.domain.User;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.security.LoginUser;
-import com.yugao.service.base.RedisService;
+import com.yugao.service.business.security.PermissionBusinessService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
@@ -14,7 +14,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +23,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 // 因为有过滤器 先经过过滤器然后再被Security拦截
 // 两个同时起作用5
@@ -32,7 +33,7 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private RedisService redisService;
+    private PermissionBusinessService permissionBusinessService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -66,11 +67,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 boolean res = tokenHandler.verifyUserAccessToken(token);
                 if (res) {
                     User user = userService.getUserById(Long.parseLong(userId));
-                    /**
-                     * 未来可以在数据库中添加 User 的权限设置 然后将其转换复制给 LoginUser
-                     */
-                    LoginUser loginUser = new LoginUser();
-                    BeanUtils.copyProperties(user, loginUser);
+                    List<String> permissionCodes =
+                                permissionBusinessService.getPermissionCodesByUserId(user.getId());
+                    System.out.println("permissionCodes: " + permissionCodes);
+                    LoginUser loginUser = new LoginUser(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getPassword(),
+                            permissionCodes
+                    );
+                    // BeanUtils.copyProperties(user, loginUser);
                     System.out.println("loginUser: " + loginUser);
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
@@ -79,10 +85,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 }
-                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCodeEnum.ACCESSTOKEN_EXPIRED);
+                sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), ResultCodeEnum.ACCESSION_EXPIRED);
                 return ;
             }
-            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCodeEnum.ACCESSTOKEN_UNAUTHORIZED);
+            sendJsonErrorResponse(response, HttpStatus.FORBIDDEN.value(), ResultCodeEnum.ACCESSION_UNAUTHORIZED);
             return ;
         }
         filterChain.doFilter(request, response);

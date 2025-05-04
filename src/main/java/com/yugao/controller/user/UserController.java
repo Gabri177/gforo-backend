@@ -9,6 +9,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.user.UserBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,14 @@ public class UserController {
     private UserBusinessService userBusinessService;
 
     // 加入一个id参数 用来看看是查看是自己的信息还是查看别人的信息
+    @PreAuthorize("hasAnyAuthority('user:info:own')")
     @GetMapping("/info")
     public ResponseEntity<ResultFormat> getUserInfo() {
-
+        System.out.println("get user info");
         return userBusinessService.getUserInfo();
     }
 
+    @PreAuthorize("hasAnyAuthority('user:password-change:own')")
     @PutMapping ("/change-password")
     public ResponseEntity<ResultFormat> changePasswoed(
             @Validated @RequestBody UserChangePasswordDTO userChangePasswordDTO) {
@@ -59,6 +62,11 @@ public class UserController {
             ) {
         System.out.println("change email verify " + activeAccountDTO);
         return userBusinessService.verifyEmail(activeAccountDTO);
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<ResultFormat> logout() {
+        return userBusinessService.logout();
     }
 
 }
