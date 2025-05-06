@@ -12,7 +12,7 @@ public interface UserBusinessService {
 
     ResponseEntity<ResultFormat> logout();
 
-    ResponseEntity<ResultFormat> getUserInfo();
+    ResponseEntity<ResultFormat> getUserInfo(Long userId);
 
     ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO);
 

@@ -7,7 +7,8 @@ import com.yugao.exception.BusinessException;
 
 public enum StatusEnum implements IEnum<Integer> {
     NORMAL(1, "正常"),
-    DELETED(0, "删除");
+    DELETED(0, "删除"),
+    DISABLED(2, "禁用");
 
     private final Integer value;
     private final String description;

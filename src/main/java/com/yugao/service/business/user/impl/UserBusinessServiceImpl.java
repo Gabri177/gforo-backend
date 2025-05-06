@@ -24,6 +24,7 @@ import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
+import com.yugao.vo.user.OtherUserInfoVO;
 import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -74,21 +75,38 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private RoleService roleService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private BoardPosterService boardPosterService;
 
     @Override
-    public ResponseEntity<ResultFormat> getUserInfo() {
+    public ResponseEntity<ResultFormat> getUserInfo(Long userId) {
 
-        Long userId = SecurityUtils.mustGetLoginUserId();
-        User userDomain = userValidator.validateUserIdExists(userId);
-        UserInfoVO userInfoVO = UserConverter.toVO(userDomain);
-        userInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId, 0L));
-        userInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
-        userInfoVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(userId));
-        List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
-        List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
-        userInfoVO.setRoles(roleNames);
+        Long curUserId = SecurityUtils.mustGetLoginUserId();
+        if (userId != null && !userId.equals(curUserId)) {
+            User otherUser = userValidator.validateUserIdExists(userId);
+            OtherUserInfoVO otherUserInfoVO = UserConverter.toOtherUserInfoVO(otherUser);
+            otherUserInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId, 0L));
+            otherUserInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
+            List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
+            List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
+            List<Long> boardIds = boardPosterService.getBoardIdsByUserId(userId);
+            otherUserInfoVO.setBoardIds(boardIds);
+            otherUserInfoVO.setRoles(roleNames);
+            return ResultResponse.success(otherUserInfoVO);
+        } else {
+            User userDomain = userValidator.validateUserIdExists(curUserId);
+            UserInfoVO userInfoVO = UserConverter.toUserInfoVO(userDomain);
+            userInfoVO.setPostCount(discussPostService.getDiscussPostRows(curUserId, 0L));
+            userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
+            userInfoVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(curUserId));
+            List<Long> roleIds = userRoleService.getRoleIdsByUserId(curUserId);
+            List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
+            List<Long> boardIds = boardPosterService.getBoardIdsByUserId(curUserId);
+            userInfoVO.setBoardIds(boardIds);
+            userInfoVO.setRoles(roleNames);
 //        System.out.println(userInfoVO);
-        return ResultResponse.success(userInfoVO);
+            return ResultResponse.success(userInfoVO);
+        }
     }
 
     @Override

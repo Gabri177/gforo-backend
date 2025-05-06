@@ -58,9 +58,11 @@ public class ItemBuilder {
         User user = userService.getUserById(post.getUserId());
         SimpleUserVO userInfoVO = UserConverter.toSimpleVO(user);
         currentPageItemVO.setUser(userInfoVO);
+        //System.out.println("用户简单信息: " + userInfoVO);
 
         Long postCommentCount = commentService.getCommentCountByPostId(post.getId());
-        System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
+        System.out.println("用户状态: " + user.getStatus().getValue() + " username: " + user.getUsername());
+        //System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
         currentPageItemVO.setCommentCount(postCommentCount);
 
 //                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());

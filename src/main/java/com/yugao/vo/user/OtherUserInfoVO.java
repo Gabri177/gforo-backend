@@ -7,31 +7,18 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class UserInfoVO {
+public class OtherUserInfoVO {
 
     private Long id;
-
     private String username;
-
-    private String email;
-
     private String headerUrl;
-
-    private String bio;
-
-    private StatusEnum status;
-
-    private Date createdAt;
-
-    private Long postCount;
-
-    private Long commentCount;
-
     private String nickname;
-
+    private String bio;
+    private String email;
+    private StatusEnum status;
+    private Long postCount;
+    private Long commentCount;
+    private Date createdAt;
     private List<String> roles;
-
-    private List<String> permissions;
-
     private List<Long> boardIds;
 }

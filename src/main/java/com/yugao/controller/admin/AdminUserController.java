@@ -1,11 +1,11 @@
 package com.yugao.controller.admin;
 
-import com.yugao.dto.user.UserChangePasswordDTO;
+import com.yugao.dto.admin.ForceChangePasswordDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.admin.AdminUserService;
-import com.yugao.service.data.UserTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,44 +25,51 @@ public class AdminUserController {
     @Autowired
     private AdminUserService adminUserService;
 
-    // 当boardId为0时，表示查询所有的用户
-    @GetMapping("/list/{boardId}")
-    public ResponseEntity<ResultFormat> getUserList(
-            @PathVariable("boardId") Long boardId,
-            @RequestParam(defaultValue = "1", name = "currentPage", required = false) Integer currentPage,
-            @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize
-    ) {
-        return null;
-    }
-
+    @PreAuthorize("hasAnyAuthority('user:info:any')")
     @GetMapping("/info/{userId}")
     public ResponseEntity<ResultFormat> getUserInfo(
-            @PathVariable("userId") Long userId
+            @PathVariable("userId") Long userId,
+            @RequestParam(defaultValue = "1", name = "currentPage", required = false) Integer currentPage,
+            @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "true", name = "isAsc", required = false) Boolean isAsc
     ) {
-        return null;
+        return adminUserService.getUserInfo(userId, currentPage, pageSize, isAsc);
     }
 
-    @PutMapping("/change-password")
+    @PreAuthorize("hasAnyAuthority('user:password:change:any')")
+    @PutMapping("/change-password/{userId}")
     public ResponseEntity<ResultFormat> changePassword(
-            @Validated @RequestBody UserChangePasswordDTO userChangePasswordDTO
+            @PathVariable("userId") Long userId,
+            @Validated @RequestBody ForceChangePasswordDTO forceChangePasswordDTO
             ) {
-        return null;
+        return adminUserService.changePassword(userId, forceChangePasswordDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:activate:any')")
     @PutMapping("/activate/{userId}")
     public ResponseEntity<ResultFormat> activateUser(
             @PathVariable("userId") Long userId
     ) {
-        return null;
+        return adminUserService.activateUser(userId);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:disable:any')")
+    @PutMapping("/disable/{userId}")
+    public ResponseEntity<ResultFormat> disableUser(
+            @PathVariable("userId") Long userId
+    ) {
+        return adminUserService.disableUser(userId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('user:delete:any')")
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ResultFormat> deleteUser(
             @PathVariable("userId") Long userId
     ) {
-        return null;
+        return adminUserService.deleteUser(userId);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:logout:any')")
     @DeleteMapping("/logout/{userId}")
     public ResponseEntity<ResultFormat> logout(
             @PathVariable("userId") Long userId

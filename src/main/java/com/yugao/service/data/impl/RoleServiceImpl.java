@@ -43,6 +43,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<String> getRoleNamesByIds(List<Long> ids) {
 
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Role::getId, ids);
         List<Role> roles = roleMapper.selectList(queryWrapper);

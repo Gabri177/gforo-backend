@@ -10,6 +10,7 @@ import com.yugao.mapper.CommentMapper;
 import com.yugao.service.data.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.comments.CommentType;
 
 import java.util.List;
 
@@ -106,6 +107,25 @@ public class CommentServiceImpl implements CommentService {
         queryWrapper.eq(Comment::getEntityId, EntityId);
         queryWrapper.orderByAsc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Comment> findCommentListByPostIds(List<Long> postIds, Long current, Integer limit, Boolean isAsc) {
+
+        if (postIds == null || postIds.isEmpty())
+            return null;
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.in(Comment::getEntityType, CommentEntityTypeEnum.POST);
+        queryWrapper.in(Comment::getEntityId, postIds);
+        if (isAsc) {
+            queryWrapper.orderByAsc(Comment::getCreateTime);
+        } else {
+            queryWrapper.orderByDesc(Comment::getCreateTime);
+        }
+        Page<Comment> page = new Page<>(current, limit);
+        return commentMapper.selectPage(page, queryWrapper).getRecords();
     }
 
     @Override

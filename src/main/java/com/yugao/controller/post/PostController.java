@@ -23,7 +23,7 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam (defaultValue = "1", name = "currentPage", required = false) Long currentPage,
             @RequestParam (defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
-            @RequestParam (defaultValue = "0", name = "isAsc", required = false) Boolean isAsc
+            @RequestParam (defaultValue = "true", name = "isAsc", required = false) Boolean isAsc
             ) {
         System.out.println("getPostDetail: " + postId + " " + currentPage + " " + pageSize + " " + isAsc);
         return postService.getPostDetail(postId, currentPage, pageSize, isAsc);

@@ -3,8 +3,11 @@ package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yugao.domain.DiscussPost;
 import com.yugao.domain.User;
 import com.yugao.dto.user.UserInfoUpdateDTO;
+import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.mapper.UserMapper;
 import com.yugao.enums.ResultCodeEnum;
@@ -24,7 +27,14 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
+    public Long getUserCount() {
+
+        return userMapper.selectCount(null);
+    }
+
+    @Override
     public User getUserById(Long id) {
+
         return userMapper.selectById(id);
     }
 
@@ -52,6 +62,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Boolean isAsc) {
+
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(id != 0, User::getId, id);
+        if (isAsc)
+            wrapper.orderByAsc(User::getCreateTime);
+        else
+            wrapper.orderByDesc(User::getCreateTime);
+        Page<User> page = new Page<>(currentPage, pageSize);
+        return userMapper.selectPage(page, wrapper).getRecords();
+    }
+
+    @Override
     public boolean updateUser(User user) {
         return userMapper.updateById(user) > 0;
     }
@@ -62,7 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateStatus(Long id, int status) {
+    public boolean updateStatus(Long id, StatusEnum status) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId, id).set(User::getStatus, status);
         return userMapper.update(null, wrapper) > 0;

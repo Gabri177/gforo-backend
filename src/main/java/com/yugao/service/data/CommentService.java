@@ -1,6 +1,7 @@
 package com.yugao.service.data;
 
 import com.yugao.domain.Comment;
+import org.yaml.snakeyaml.comments.CommentType;
 
 import java.util.List;
 
@@ -17,6 +18,11 @@ public interface CommentService {
     List<Comment> findCommentsToPost(Long postId, Long current, Integer limit, Boolean isAsc);
 
     List<Comment> findCommentListOfComment(Long EntityId);
+
+    List<Comment> findCommentListByPostIds(List<Long> postIds,
+                                           Long current,
+                                           Integer limit,
+                                           Boolean isAsc);
 
     Boolean addComment(Comment comment);
 

@@ -3,14 +3,32 @@ package com.yugao.converter;
 import com.yugao.domain.User;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.StatusEnum;
-import com.yugao.util.common.EncryptedUtil;
 import com.yugao.util.security.PasswordUtil;
+import com.yugao.vo.user.OtherUserInfoVO;
 import com.yugao.vo.user.SimpleUserVO;
 import com.yugao.vo.user.UserInfoVO;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.Date;
 
 public class UserConverter {
+
+    private static String maskEmail(String email) {
+        if (email == null || !email.contains("@")) return email;
+
+        String[] parts = email.split("@");
+        String name = parts[0];
+        String domain = parts[1];
+
+        if (name.length() <= 2) {
+            return name.charAt(0) + "..." + "@" + domain;
+        } else if (name.length() <= 6) {
+            return name.substring(0, 1) + "..." + name.substring(name.length() - 1) + "@" + domain;
+        } else {
+            return name.substring(0, 2) + "..." + name.substring(name.length() - 2) + "@" + domain;
+        }
+    }
+
 
     public static User toDomain(UserRegisterDTO userRegisterDTO) {
         User user = new User();
@@ -25,32 +43,49 @@ public class UserConverter {
         return user;
     }
 
-    public static UserInfoVO toVO(User domain) {
+    public static UserInfoVO toUserInfoVO(User domain) {
         UserInfoVO vo = new UserInfoVO();
         vo.setId(domain.getId());
         vo.setUsername(domain.getUsername());
         vo.setEmail(domain.getEmail());
         vo.setHeaderUrl(domain.getHeaderUrl());
         vo.setBio(domain.getBio());
-        vo.setCreatedAt(domain.getCreateTime().toString());
+        vo.setCreatedAt(domain.getCreateTime());
+        vo.setStatus(domain.getStatus());
+        vo.setNickname(domain.getNickname());
+        return vo;
+    }
+
+    public static OtherUserInfoVO toOtherUserInfoVO(User domain) {
+        OtherUserInfoVO vo = new OtherUserInfoVO();
+        vo.setId(domain.getId());
+        vo.setUsername(domain.getUsername());
+        vo.setEmail(maskEmail(domain.getEmail()));
+        vo.setHeaderUrl(domain.getHeaderUrl());
+        vo.setBio(domain.getBio());
+        vo.setCreatedAt(domain.getCreateTime());
         vo.setStatus(domain.getStatus());
         vo.setNickname(domain.getNickname());
         return vo;
     }
 
     /**
-     * !!!!!!!!!!! 对于未知用户的处理 可能要修改
      * @param domain
      * @return
      */
     public static SimpleUserVO toSimpleVO(User domain) {
         SimpleUserVO vo = new SimpleUserVO();
-        if (domain == null) {
-          domain = User.createUnknownUser();
+        if (domain == null || domain.getStatus() == StatusEnum.DELETED)
+            domain = User.createGhostUser();
+        if (domain.getStatus() == StatusEnum.DISABLED){
+            vo.setUsername(domain.getUsername() + "（Disabled）");
+            vo.setNickname(domain.getNickname() + "（Disabled）");
+        } else {
+            vo.setUsername(domain.getUsername());
+            vo.setNickname(domain.getNickname());
         }
+
         vo.setId(domain.getId());
-        vo.setUsername(domain.getUsername());
-        vo.setNickname(domain.getNickname());
         vo.setHeaderUrl(domain.getHeaderUrl());
 
         return vo;

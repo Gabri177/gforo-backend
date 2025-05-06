@@ -23,9 +23,11 @@ public class UserController {
     // 加入一个id参数 用来看看是查看是自己的信息还是查看别人的信息
     @PreAuthorize("hasAnyAuthority('user:info:own')")
     @GetMapping("/info")
-    public ResponseEntity<ResultFormat> getUserInfo() {
-        System.out.println("get user info");
-        return userBusinessService.getUserInfo();
+    public ResponseEntity<ResultFormat> getUserInfo(
+            @RequestParam(name="userId", required = false) Long userId
+    ) {
+        System.out.println("get user info: " + userId);
+        return userBusinessService.getUserInfo(userId);
     }
 
     @PreAuthorize("hasAnyAuthority('user:password-change:own')")

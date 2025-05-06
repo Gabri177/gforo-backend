@@ -1,4 +1,4 @@
-package com.yugao.vo.user;
+package com.yugao.vo.admin;
 
 import com.yugao.enums.StatusEnum;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class UserInfoVO {
+public class DetailedUserInfoVO {
 
     private Long id;
 
@@ -19,15 +19,21 @@ public class UserInfoVO {
 
     private String bio;
 
+    private Integer type;
+
     private StatusEnum status;
 
-    private Date createdAt;
+    private Date createTime;
 
     private Long postCount;
 
     private Long commentCount;
 
     private String nickname;
+
+    private Date lastUsernameUpdateTime;
+
+    private Date lastEmailUpdateTime;
 
     private List<String> roles;
 
