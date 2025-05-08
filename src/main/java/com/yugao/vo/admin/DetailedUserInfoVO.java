@@ -1,6 +1,7 @@
 package com.yugao.vo.admin;
 
 import com.yugao.enums.StatusEnum;
+import com.yugao.vo.auth.AccessControlVO;
 import lombok.Data;
 
 import java.util.Date;
@@ -35,9 +36,6 @@ public class DetailedUserInfoVO {
 
     private Date lastEmailUpdateTime;
 
-    private List<String> roles;
+    private AccessControlVO accessControl;
 
-    private List<String> permissions;
-
-    private List<Long> boardIds;
 }

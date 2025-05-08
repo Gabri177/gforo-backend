@@ -13,24 +13,20 @@ import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
+import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
-import com.yugao.service.business.security.PermissionBusinessService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
-import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
-import com.yugao.vo.user.OtherUserInfoVO;
 import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserBusinessServiceImpl implements UserBusinessService {
@@ -63,50 +59,29 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private CaptchaService captchaService;
 
     @Autowired
-    private TokenHandler tokenHandler;
-
-    @Autowired
     private UserTokenService userTokenService;
 
     @Autowired
-    private PermissionBusinessService permissionBusinessService;
+    private VOBuilder voBuilder;
 
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private UserRoleService userRoleService;
-    @Autowired
-    private BoardPosterService boardPosterService;
 
     @Override
     public ResponseEntity<ResultFormat> getUserInfo(Long userId) {
 
         Long curUserId = SecurityUtils.mustGetLoginUserId();
-        if (userId != null && !userId.equals(curUserId)) {
-            User otherUser = userValidator.validateUserIdExists(userId);
-            OtherUserInfoVO otherUserInfoVO = UserConverter.toOtherUserInfoVO(otherUser);
-            otherUserInfoVO.setPostCount(discussPostService.getDiscussPostRows(userId, 0L));
-            otherUserInfoVO.setCommentCount(commentService.getCommentCountByUserId(userId));
-            List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
-            List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
-            List<Long> boardIds = boardPosterService.getBoardIdsByUserId(userId);
-            otherUserInfoVO.setBoardIds(boardIds);
-            otherUserInfoVO.setRoles(roleNames);
-            return ResultResponse.success(otherUserInfoVO);
-        } else {
-            User userDomain = userValidator.validateUserIdExists(curUserId);
-            UserInfoVO userInfoVO = UserConverter.toUserInfoVO(userDomain);
-            userInfoVO.setPostCount(discussPostService.getDiscussPostRows(curUserId, 0L));
-            userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
-            userInfoVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(curUserId));
-            List<Long> roleIds = userRoleService.getRoleIdsByUserId(curUserId);
-            List<String> roleNames = roleService.getRoleNamesByIds(roleIds);
-            List<Long> boardIds = boardPosterService.getBoardIdsByUserId(curUserId);
-            userInfoVO.setBoardIds(boardIds);
-            userInfoVO.setRoles(roleNames);
+        if (userId != null && !userId.equals(curUserId))
+            curUserId = userId;
+        User userDomain = userValidator.validateUserIdExists(curUserId);
+        UserInfoVO userInfoVO;
+        if (SecurityUtils.mustGetLoginUserId().equals(curUserId))
+            userInfoVO = UserConverter.toUserInfoVO(userDomain, false);
+        else
+            userInfoVO = UserConverter.toUserInfoVO(userDomain, true);
+        userInfoVO.setPostCount(discussPostService.getDiscussPostRows(curUserId, 0L));
+        userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
+        userInfoVO.setAccessControl(voBuilder.buildAccessControlVO(curUserId));
 //        System.out.println(userInfoVO);
-            return ResultResponse.success(userInfoVO);
-        }
+        return ResultResponse.success(userInfoVO);
     }
 
     @Override

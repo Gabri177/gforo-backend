@@ -44,18 +44,18 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public Boolean deleteUserRoleByUserId(Long userId) {
+    public Boolean deleteUserRole(Long userId, Long roleId) {
 
         LambdaUpdateWrapper<UserRole> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(UserRole::getUserId, userId);
+        updateWrapper.eq(UserRole::getRoleId, roleId);
         return userRoleMapper.delete(updateWrapper) > 0;
     }
 
     @Override
-    public Boolean deleteUserRoleByRoleId(Long roleId) {
+    public Boolean deleteUserRole(UserRole userRole) {
 
-        LambdaUpdateWrapper<UserRole> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(UserRole::getRoleId, roleId);
-        return userRoleMapper.delete(updateWrapper) > 0;
+        return deleteUserRole(userRole.getUserId(), userRole.getRoleId());
     }
+
 }

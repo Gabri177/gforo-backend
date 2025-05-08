@@ -9,6 +9,6 @@ public interface UserRoleService {
     Boolean addUserRole(UserRole userRole);
     Boolean changeUserRole(UserRole userRole);
     List<Long> getRoleIdsByUserId(Long userId);
-    Boolean deleteUserRoleByUserId(Long userId);
-    Boolean deleteUserRoleByRoleId(Long roleId);
+    Boolean deleteUserRole(Long userId, Long roleId);
+    Boolean deleteUserRole(UserRole userRole);
 }

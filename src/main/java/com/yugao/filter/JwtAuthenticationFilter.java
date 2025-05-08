@@ -6,7 +6,7 @@ import com.yugao.domain.User;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.security.LoginUser;
-import com.yugao.service.business.security.PermissionBusinessService;
+import com.yugao.service.business.permission.PermissionBusinessService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
@@ -23,7 +23,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -18,8 +18,12 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public Boolean addRole(Role role) {
+    public Boolean addRole(String name, String description) {
 
+        Role role = new Role();
+        role.setName(name);
+        role.setDescription(description);
+        role.setStatus(StatusEnum.NORMAL);
         return roleMapper.insert(role) > 0;
     }
 
@@ -52,6 +56,14 @@ public class RoleServiceImpl implements RoleService {
         return roles.stream()
                 .map(Role::getName)
                 .toList();
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByAsc(Role::getId);
+        return roleMapper.selectList(queryWrapper);
     }
 
     @Override

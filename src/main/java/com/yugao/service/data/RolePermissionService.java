@@ -9,6 +9,8 @@ public interface RolePermissionService {
     Boolean addRolePermission(RolePermission rolePermission);
     Boolean changeRolePermission(RolePermission rolePermission);
     List<Long> getPermissionIdsByRoleIds(List<Long> roleIds);
-    Boolean deleteRolePermissionByRoleId(Long roleId);
-    Boolean deleteRolePermissionByPermissionId(Long permissionId);
+    List<Long> getPermissionIdsByRoleId(Long roleId);
+    Boolean deleteRolePermission(Long roleId, Long permissionId);
+    Boolean deleteRolePermissions(Long roleId, List<Long> permissionIds);
+    Boolean addRolePermissions(Long roleId, List<Long> permissionIds);
 }

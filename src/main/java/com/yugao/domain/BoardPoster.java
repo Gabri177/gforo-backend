@@ -13,4 +13,7 @@ public class BoardPoster {
     private Long userId;
 
     private Long boardId;
+
+    public BoardPoster(Long userId, Long boardId) {
+    }
 }

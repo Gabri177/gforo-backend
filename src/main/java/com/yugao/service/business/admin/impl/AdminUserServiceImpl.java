@@ -7,8 +7,8 @@ import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.admin.AdminUserService;
-import com.yugao.service.business.security.PermissionBusinessService;
 import com.yugao.service.data.*;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.security.PasswordUtil;
@@ -35,16 +35,12 @@ public class AdminUserServiceImpl implements AdminUserService {
     private UserValidator userValidator;
     @Autowired
     private DiscussPostService discussPostService;
+
     @Autowired
     private CommentService commentService;
+
     @Autowired
-    private PermissionBusinessService permissionBusinessService;
-    @Autowired
-    private UserRoleService userRoleService;
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private BoardPosterService boardPosterService;
+    private VOBuilder voBuilder;
 
 
     @Override
@@ -61,10 +57,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                             BeanUtils.copyProperties(item, detailedUserInfoVO);
                             detailedUserInfoVO.setPostCount(discussPostService.getDiscussPostRows(item.getId(), 0L));
                             detailedUserInfoVO.setCommentCount(commentService.getCommentCountByUserId(item.getId()));
-                            detailedUserInfoVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(item.getId()));
-                            List<Long> roleIds = userRoleService.getRoleIdsByUserId(item.getId());
-                            detailedUserInfoVO.setRoles(roleService.getRoleNamesByIds(roleIds));
-                            detailedUserInfoVO.setBoardIds(boardPosterService.getBoardIdsByUserId(item.getId()));
+                            detailedUserInfoVO.setAccessControl(voBuilder.buildAccessControlVO(item.getId()));
                             return detailedUserInfoVO;
                         })
                         .toList();

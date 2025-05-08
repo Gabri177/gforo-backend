@@ -19,4 +19,9 @@ public class UserRole {
         this.userId = id;
         this.roleId = roleEnum.getCode();
     }
+
+    public UserRole(Long id, Long roleId){
+        this.userId = id;
+        this.roleId = roleId;
+    }
 }

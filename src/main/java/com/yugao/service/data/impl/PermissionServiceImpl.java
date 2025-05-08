@@ -49,4 +49,12 @@ public class PermissionServiceImpl implements PermissionService {
                 .map(Permission::getCode)
                 .toList();
     }
+
+    @Override
+    public List<Permission> getPermissionsByIds(List<Long> ids) {
+
+        LambdaQueryWrapper<Permission> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Permission::getId, ids);
+        return permissionMapper.selectList(queryWrapper);
+    }
 }

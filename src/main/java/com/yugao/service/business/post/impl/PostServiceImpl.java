@@ -1,6 +1,5 @@
 package com.yugao.service.business.post.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yugao.converter.DiscussPostConverter;
 import com.yugao.domain.DiscussPost;
 import com.yugao.dto.comment.CommonContentDTO;
@@ -9,7 +8,7 @@ import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.service.builder.ItemBuilder;
+import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.post.PostService;
 import com.yugao.service.data.BoardService;
 import com.yugao.service.data.CommentService;
@@ -43,7 +42,7 @@ public class PostServiceImpl implements PostService {
     private BoardService boardService;
 
     @Autowired
-    private ItemBuilder itemBuilder;
+    private VOBuilder VOBuilder;
 
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -120,7 +119,7 @@ public class PostServiceImpl implements PostService {
         // 封装帖子+作者+点赞数
         if (!postList.isEmpty()) {
             for (DiscussPost post : postList) {
-                CurrentPageItemVO currentPageItemVO = itemBuilder.buildCurrentPageItemVO(post);
+                CurrentPageItemVO currentPageItemVO = VOBuilder.buildCurrentPageItemVO(post);
 
                 discussPostListVOList.add(currentPageItemVO);
             }

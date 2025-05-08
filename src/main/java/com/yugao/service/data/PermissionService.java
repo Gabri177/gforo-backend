@@ -13,4 +13,6 @@ public interface PermissionService {
     String getCodeById(Long id);
 
     List<String> getCodesByIds(List<Long> ids);
+
+    List<Permission> getPermissionsByIds(List<Long> ids);
 }

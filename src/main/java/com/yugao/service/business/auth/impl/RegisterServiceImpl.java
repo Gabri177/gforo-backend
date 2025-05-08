@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RegisterServiceImpl implements RegisterService {
@@ -88,6 +89,8 @@ public class RegisterServiceImpl implements RegisterService {
         return ResultResponse.success(null);
     }
 
+
+    @Transactional
     @Override
     public ResponseEntity<ResultFormat> activateAccount(ActiveAccountDTO activeAccountDTO) {
 
@@ -102,7 +105,9 @@ public class RegisterServiceImpl implements RegisterService {
                 User.class
         );
         redisService.delete(RedisKeyConstants.buildRegisterEmailIntervalKey(activeAccountDTO.getEmail()));
+        // 在用户表添加用户
         userService.addUser(user);
+        // 给用户分配角色
         userRoleService.addUserRole(new UserRole(user.getId(), RoleEnum.ROLE_USER));
         return ResultResponse.success(null);
     }

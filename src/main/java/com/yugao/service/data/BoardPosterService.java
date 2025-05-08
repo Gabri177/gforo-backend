@@ -11,6 +11,6 @@ public interface BoardPosterService {
     Boolean changeBoardPoster(BoardPoster boardPoster);
     List<Long> getBoardIdsByUserId(Long userId);
     Long getUserIdByBoardId(Long boardId);
-    Boolean deleteBoardPosterByUserId(Long userId);
-    Boolean deleteBoardPosterByBoardId(Long boardId);
+    Boolean deleteBoardPoster(Long userId, Long boardId);
+    Boolean deleteBoardPoster(BoardPoster boardPoster);
 }

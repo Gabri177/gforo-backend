@@ -4,11 +4,8 @@ import com.yugao.domain.User;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.StatusEnum;
 import com.yugao.util.security.PasswordUtil;
-import com.yugao.vo.user.OtherUserInfoVO;
 import com.yugao.vo.user.SimpleUserVO;
 import com.yugao.vo.user.UserInfoVO;
-
-import javax.print.attribute.standard.MediaSize;
 import java.util.Date;
 
 public class UserConverter {
@@ -43,24 +40,15 @@ public class UserConverter {
         return user;
     }
 
-    public static UserInfoVO toUserInfoVO(User domain) {
+    public static UserInfoVO toUserInfoVO(User domain, Boolean encodeEmail) {
         UserInfoVO vo = new UserInfoVO();
         vo.setId(domain.getId());
         vo.setUsername(domain.getUsername());
-        vo.setEmail(domain.getEmail());
-        vo.setHeaderUrl(domain.getHeaderUrl());
-        vo.setBio(domain.getBio());
-        vo.setCreatedAt(domain.getCreateTime());
-        vo.setStatus(domain.getStatus());
-        vo.setNickname(domain.getNickname());
-        return vo;
-    }
-
-    public static OtherUserInfoVO toOtherUserInfoVO(User domain) {
-        OtherUserInfoVO vo = new OtherUserInfoVO();
-        vo.setId(domain.getId());
-        vo.setUsername(domain.getUsername());
-        vo.setEmail(maskEmail(domain.getEmail()));
+        if (encodeEmail) {
+            vo.setEmail(maskEmail(domain.getEmail()));
+        } else {
+            vo.setEmail(domain.getEmail());
+        }
         vo.setHeaderUrl(domain.getHeaderUrl());
         vo.setBio(domain.getBio());
         vo.setCreatedAt(domain.getCreateTime());

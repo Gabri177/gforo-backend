@@ -53,16 +53,16 @@ public class BoardPosterServiceImpl implements BoardPosterService {
     }
 
     @Override
-    public Boolean deleteBoardPosterByUserId(Long userId) {
-        LambdaUpdateWrapper<BoardPoster> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(BoardPoster::getUserId, userId);
-        return boardPosterMapper.delete(wrapper) > 0;
+    public Boolean deleteBoardPoster(Long userId, Long boardId) {
+
+        LambdaQueryWrapper<BoardPoster> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BoardPoster::getUserId, userId);
+        queryWrapper.eq(BoardPoster::getBoardId, boardId);
+        return boardPosterMapper.delete(queryWrapper) > 0;
     }
 
     @Override
-    public Boolean deleteBoardPosterByBoardId(Long boardId) {
-        LambdaUpdateWrapper<BoardPoster> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(BoardPoster::getBoardId, boardId);
-        return boardPosterMapper.delete(wrapper) > 0;
+    public Boolean deleteBoardPoster(BoardPoster boardPoster) {
+        return deleteBoardPoster(boardPoster.getUserId(), boardPoster.getBoardId());
     }
 }
