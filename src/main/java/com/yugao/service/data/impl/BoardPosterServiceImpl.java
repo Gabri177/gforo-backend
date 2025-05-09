@@ -2,12 +2,16 @@ package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yugao.domain.BoardPoster;
-import com.yugao.mapper.BoardPosterMapper;
+import com.yugao.domain.permission.BoardPoster;
+import com.yugao.enums.ResultCodeEnum;
+import com.yugao.exception.BusinessException;
+import com.yugao.mapper.permission.BoardPosterMapper;
 import com.yugao.service.data.BoardPosterService;
+import org.apache.ibatis.executor.BatchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -64,5 +68,25 @@ public class BoardPosterServiceImpl implements BoardPosterService {
     @Override
     public Boolean deleteBoardPoster(BoardPoster boardPoster) {
         return deleteBoardPoster(boardPoster.getUserId(), boardPoster.getBoardId());
+    }
+
+    @Override
+    public void deleteBoardPosterByUserId(Long userId) {
+
+        LambdaQueryWrapper<BoardPoster> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BoardPoster::getUserId, userId);
+        boardPosterMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public void addBoardPosters(List<BoardPoster> boardPosters) {
+
+        List<BatchResult> results = boardPosterMapper.insert(boardPosters);
+        long total = results.stream()
+                .flatMapToInt(res -> Arrays.stream(res.getUpdateCounts()))
+                .filter(i -> i == 1)
+                .count();
+        if (total != boardPosters.size())
+            throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
     }
 }

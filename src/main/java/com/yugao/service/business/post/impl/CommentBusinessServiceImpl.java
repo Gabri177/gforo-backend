@@ -1,7 +1,7 @@
 package com.yugao.service.business.post.impl;
 
 import com.yugao.converter.CommentConverter;
-import com.yugao.domain.Comment;
+import com.yugao.domain.post.Comment;
 import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.dto.comment.CommonContentDTO;

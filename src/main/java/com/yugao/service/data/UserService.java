@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.User;
+import com.yugao.domain.user.User;
 import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.enums.StatusEnum;
 

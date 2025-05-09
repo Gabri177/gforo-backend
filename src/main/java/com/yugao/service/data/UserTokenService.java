@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.UserToken;
+import com.yugao.domain.auth.UserToken;
 
 public interface UserTokenService {
 

@@ -1,6 +1,5 @@
 package com.yugao.vo.auth;
 
-import com.yugao.domain.Permission;
 import com.yugao.enums.StatusEnum;
 import lombok.Data;
 

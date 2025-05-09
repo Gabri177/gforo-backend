@@ -1,6 +1,6 @@
 package com.yugao.service.validator;
 
-import com.yugao.domain.User;
+import com.yugao.domain.user.User;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.StatusEnum;

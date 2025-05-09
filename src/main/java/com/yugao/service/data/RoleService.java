@@ -1,13 +1,13 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.Role;
+import com.yugao.domain.permission.Role;
 import com.yugao.enums.StatusEnum;
 
 import java.util.List;
 
 public interface RoleService {
 
-    Boolean addRole(String name, String description);
+    void addRole(Role role);
     Role getRoleById(Long id);
     String getRoleNameById(Long id);
     List<String> getRoleNamesByIds(List<Long> ids);

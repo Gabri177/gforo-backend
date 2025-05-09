@@ -1,6 +1,6 @@
 package com.yugao.converter;
 
-import com.yugao.domain.Comment;
+import com.yugao.domain.post.Comment;
 import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.enums.CommentEntityTypeEnum;

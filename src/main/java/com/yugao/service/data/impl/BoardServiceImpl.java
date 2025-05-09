@@ -2,9 +2,9 @@ package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yugao.domain.Board;
+import com.yugao.domain.board.Board;
 import com.yugao.enums.StatusEnum;
-import com.yugao.mapper.BoardMapper;
+import com.yugao.mapper.board.BoardMapper;
 import com.yugao.service.data.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

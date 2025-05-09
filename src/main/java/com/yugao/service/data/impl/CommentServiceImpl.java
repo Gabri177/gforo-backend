@@ -3,14 +3,13 @@ package com.yugao.service.data.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yugao.domain.Comment;
+import com.yugao.domain.post.Comment;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.enums.StatusEnum;
-import com.yugao.mapper.CommentMapper;
+import com.yugao.mapper.post.CommentMapper;
 import com.yugao.service.data.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.comments.CommentType;
 
 import java.util.List;
 

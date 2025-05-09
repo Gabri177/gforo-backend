@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.Permission;
+import com.yugao.domain.permission.Permission;
 
 import java.util.List;
 
@@ -15,4 +15,6 @@ public interface PermissionService {
     List<String> getCodesByIds(List<Long> ids);
 
     List<Permission> getPermissionsByIds(List<Long> ids);
+
+    List<Permission> getAllPermissions();
 }

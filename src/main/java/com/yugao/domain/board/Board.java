@@ -1,4 +1,4 @@
-package com.yugao.domain;
+package com.yugao.domain.board;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -9,14 +9,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@TableName("role")
-public class Role {
-
-//    id	bigint	NO	PRI		auto_increment
-//    name	varchar(50)	NO	UNI
-//    description	varchar(100)	YES
-//    status	tinyint	YES		1
-//    create_time	datetime	YES		CURRENT_TIMESTAMP	DEFAULT_GENERATED
+@TableName("board")
+public class Board {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -28,4 +22,6 @@ public class Role {
     private StatusEnum status;
 
     private Date createTime;
+
+    private String iconUrl;
 }

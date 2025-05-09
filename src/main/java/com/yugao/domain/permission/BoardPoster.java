@@ -1,4 +1,4 @@
-package com.yugao.domain;
+package com.yugao.domain.permission;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -15,5 +15,7 @@ public class BoardPoster {
     private Long boardId;
 
     public BoardPoster(Long userId, Long boardId) {
+        this.userId = userId;
+        this.boardId = boardId;
     }
 }

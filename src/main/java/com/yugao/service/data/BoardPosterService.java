@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.BoardPoster;
+import com.yugao.domain.permission.BoardPoster;
 
 import java.util.List;
 
@@ -13,4 +13,6 @@ public interface BoardPosterService {
     Long getUserIdByBoardId(Long boardId);
     Boolean deleteBoardPoster(Long userId, Long boardId);
     Boolean deleteBoardPoster(BoardPoster boardPoster);
+    void deleteBoardPosterByUserId(Long userId);
+    void addBoardPosters(List<BoardPoster> boardPosters);
 }

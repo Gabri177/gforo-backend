@@ -2,7 +2,7 @@ package com.yugao.service.business.user.impl;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
-import com.yugao.domain.User;
+import com.yugao.domain.user.User;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
 import com.yugao.dto.user.UserChangeUsernameDTO;

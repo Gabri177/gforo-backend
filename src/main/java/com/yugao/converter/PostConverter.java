@@ -1,6 +1,6 @@
 package com.yugao.converter;
 
-import com.yugao.domain.DiscussPost;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.user.SimpleUserVO;

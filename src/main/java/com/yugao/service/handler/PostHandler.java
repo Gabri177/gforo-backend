@@ -2,9 +2,9 @@ package com.yugao.service.handler;
 
 import com.yugao.converter.PostConverter;
 import com.yugao.converter.UserConverter;
-import com.yugao.domain.Comment;
-import com.yugao.domain.DiscussPost;
-import com.yugao.domain.User;
+import com.yugao.domain.post.Comment;
+import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.user.User;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.data.CommentService;

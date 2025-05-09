@@ -1,7 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.Comment;
-import org.yaml.snakeyaml.comments.CommentType;
+import com.yugao.domain.post.Comment;
 
 import java.util.List;
 

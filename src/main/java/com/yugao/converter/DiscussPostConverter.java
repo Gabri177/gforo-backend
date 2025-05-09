@@ -1,7 +1,7 @@
 package com.yugao.converter;
 
 
-import com.yugao.domain.DiscussPost;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.enums.StatusEnum;
 

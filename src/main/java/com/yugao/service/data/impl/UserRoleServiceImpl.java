@@ -2,12 +2,16 @@ package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yugao.domain.UserRole;
-import com.yugao.mapper.UserRoleMapper;
+import com.yugao.domain.permission.UserRole;
+import com.yugao.enums.ResultCodeEnum;
+import com.yugao.exception.BusinessException;
+import com.yugao.mapper.permission.UserRoleMapper;
 import com.yugao.service.data.UserRoleService;
+import org.apache.ibatis.executor.BatchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -57,5 +61,28 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         return deleteUserRole(userRole.getUserId(), userRole.getRoleId());
     }
+
+    @Override
+    public void deleteUserRolesByUserId(Long userId) {
+
+        LambdaUpdateWrapper<UserRole> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(UserRole::getUserId, userId);
+        userRoleMapper.delete(updateWrapper);
+    }
+
+    @Override
+    public void addUserRoles(List<UserRole> userRoles) {
+
+        List<BatchResult> results = userRoleMapper.insert(userRoles);
+
+        // 总影响的行数
+        long total = results.stream()
+                .flatMapToInt(r -> Arrays.stream(r.getUpdateCounts()))
+                .filter(i -> i == 1)
+                .count();
+        if (total != userRoles.size())
+            throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
+    }
+
 
 }

@@ -61,6 +61,10 @@ public enum ResultCodeEnum {
     BOARD_NOT_FOUND(40045, "Board not found"),
     USER_ACCOUNT_ABNORMAL(40046, "User account abnormal"),
     INVALID_ROLE(40047, "Invalid role"),
+    ROLE_NOT_EXISTS(40048, "Role not exists"),
+    BOARD_NOT_EXISTS(40049, "Board not exists"),
+    SQL_DELETE_ERROR(40050, "SQL delete error"),
+    ROLE_NAME_EXISTS(40051, "Role name already exists"),
 
 
     // 系统异常

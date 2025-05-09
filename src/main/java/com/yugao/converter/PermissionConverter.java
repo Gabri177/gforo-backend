@@ -1,7 +1,6 @@
 package com.yugao.converter;
 
-import com.yugao.domain.Permission;
-import com.yugao.domain.Role;
+import com.yugao.domain.permission.Permission;
 import com.yugao.vo.auth.SimplePermissionVO;
 
 public class PermissionConverter {

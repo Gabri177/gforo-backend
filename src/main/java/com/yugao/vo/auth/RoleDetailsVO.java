@@ -8,4 +8,6 @@ import java.util.List;
 public class RoleDetailsVO {
 
     List<RoleDetailItemVO> roleDetailsList;
+
+    List<SimplePermissionVO> permissionsList;
 }

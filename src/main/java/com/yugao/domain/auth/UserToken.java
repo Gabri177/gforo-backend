@@ -1,4 +1,4 @@
-package com.yugao.domain;
+package com.yugao.domain.auth;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

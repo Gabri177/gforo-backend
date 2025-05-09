@@ -1,8 +1,8 @@
 package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yugao.domain.UserToken;
-import com.yugao.mapper.UserTokensMapper;
+import com.yugao.domain.auth.UserToken;
+import com.yugao.mapper.auth.UserTokensMapper;
 import com.yugao.service.data.UserTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

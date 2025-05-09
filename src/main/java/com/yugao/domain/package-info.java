@@ -10,7 +10,7 @@
  * - 对外返回应使用 VO，对内业务传输建议使用 DTO；
  * <p>
  * 示例：
- * {@link com.yugao.domain.User} 表示用户实体，映射至数据库中的 user 表。
+ * {@link com.yugao.domain.user.User} 表示用户实体，映射至数据库中的 user 表。
  * <p>
  * 默认本包中所有方法参数和返回值不可为 null，
  * 若允许为 null，请显式使用 {@code @Nullable} 标注。

@@ -2,15 +2,14 @@ package com.yugao.service.builder;
 
 import com.yugao.converter.PermissionConverter;
 import com.yugao.converter.UserConverter;
-import com.yugao.domain.Board;
-import com.yugao.domain.DiscussPost;
-import com.yugao.domain.Role;
-import com.yugao.domain.User;
-import com.yugao.service.business.permission.PermissionBusinessService;
+import com.yugao.domain.board.Board;
+import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.permission.Role;
+import com.yugao.domain.user.User;
 import com.yugao.service.data.*;
+import com.yugao.service.handler.PermissionHandler;
 import com.yugao.vo.auth.AccessControlVO;
 import com.yugao.vo.auth.RoleDetailItemVO;
-import com.yugao.vo.auth.RoleDetailsVO;
 import com.yugao.vo.board.BoardInfosItemVO;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
@@ -18,8 +17,6 @@ import com.yugao.vo.user.SimpleUserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,17 +36,20 @@ public class VOBuilder {
     private RoleService roleService;
 
     @Autowired
+    private PermissionService permissionService;
+
+    @Autowired
+    private RolePermissionService rolePermissionService;
+
+    @Autowired
     private UserRoleService userRoleService;
 
     @Autowired
     private BoardPosterService boardPosterService;
 
     @Autowired
-    private PermissionBusinessService permissionBusinessService;
-    @Autowired
-    private PermissionService permissionService;
-    @Autowired
-    private RolePermissionService rolePermissionService;
+    private PermissionHandler permissionHandler;
+
 
     public BoardInfosItemVO buildBoardInfosItemVO(Board board) {
 
@@ -97,39 +97,28 @@ public class VOBuilder {
     public AccessControlVO buildAccessControlVO(Long userId){
 
         AccessControlVO accessControlVO = new AccessControlVO();
-        accessControlVO.setPermissions(permissionBusinessService.getPermissionCodesByUserId(userId));
+        accessControlVO.setPermissions(permissionHandler.getPermissionCodesByUserId(userId));
         List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
         accessControlVO.setRoles(roleService.getRoleNamesByIds(roleIds));
         accessControlVO.setBoardIds(boardPosterService.getBoardIdsByUserId(userId));
         return accessControlVO;
     }
 
-    public RoleDetailsVO buildRoleDetailsVO(Long roleId) {
-
-        RoleDetailsVO roleDetailsVO = new RoleDetailsVO();
-        List<Role> roles = new ArrayList<>();
-        if (roleId == 0L)
-            roles = roleService.getAllRoles();
-        else
-            roles.add(roleService.getRoleById(roleId));
-        List<RoleDetailItemVO> roleDetailItemVOS = new ArrayList<>();
-        for (Role role : roles) {
-            RoleDetailItemVO roleDetailItemVO = new RoleDetailItemVO();
-            roleDetailItemVO.setId(role.getId());
-            roleDetailItemVO.setName(role.getName());
-            roleDetailItemVO.setDescription(role.getDescription());
-            roleDetailItemVO.setStatus(role.getStatus());
-            roleDetailItemVO.setCreateTime(role.getCreateTime());
-            roleDetailItemVO.setPermissions(
-                    permissionService.getPermissionsByIds(
-                            rolePermissionService.getPermissionIdsByRoleId(role.getId()))
-                            .stream()
-                            .map(PermissionConverter::toSimplePermissionVO)
-                            .collect(Collectors.toList())
-            );
-            roleDetailItemVOS.add(roleDetailItemVO);
-        }
-        roleDetailsVO.setRoleDetailsList(roleDetailItemVOS);
-        return roleDetailsVO;
+    public RoleDetailItemVO buildRoleDetailItemVO(Role role){
+        RoleDetailItemVO roleDetailItemVO = new RoleDetailItemVO();
+        roleDetailItemVO.setId(role.getId());
+        roleDetailItemVO.setName(role.getName());
+        roleDetailItemVO.setDescription(role.getDescription());
+        roleDetailItemVO.setStatus(role.getStatus());
+        roleDetailItemVO.setCreateTime(role.getCreateTime());
+        roleDetailItemVO.setPermissions(
+                permissionService.getPermissionsByIds(
+                                rolePermissionService.getPermissionIdsByRoleId(role.getId()))
+                        .stream()
+                        .map(PermissionConverter::toSimplePermissionVO)
+                        .collect(Collectors.toList())
+        );
+        return roleDetailItemVO;
     }
+
 }

@@ -1,4 +1,4 @@
-package com.yugao.domain;
+package com.yugao.domain.permission;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -15,5 +15,7 @@ public class RolePermission {
     private Long permissionId;
 
     public RolePermission(Long roleId, Long permissionId) {
+        this.roleId = roleId;
+        this.permissionId = permissionId;
     }
 }

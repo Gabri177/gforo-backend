@@ -1,7 +1,6 @@
 package com.yugao.service.data;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.yugao.domain.DiscussPost;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.enums.StatusEnum;
 
 import java.util.List;

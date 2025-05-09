@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.Board;
+import com.yugao.domain.board.Board;
 
 import java.util.List;
 

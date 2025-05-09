@@ -1,9 +1,11 @@
 package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.yugao.domain.Role;
+import com.yugao.domain.permission.Role;
+import com.yugao.enums.ResultCodeEnum;
 import com.yugao.enums.StatusEnum;
-import com.yugao.mapper.RoleMapper;
+import com.yugao.exception.BusinessException;
+import com.yugao.mapper.permission.RoleMapper;
 import com.yugao.service.data.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +20,10 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public Boolean addRole(String name, String description) {
+    public void addRole(Role role) {
 
-        Role role = new Role();
-        role.setName(name);
-        role.setDescription(description);
-        role.setStatus(StatusEnum.NORMAL);
-        return roleMapper.insert(role) > 0;
+        if (!(roleMapper.insert(role) > 0))
+            throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
     }
 
     @Override

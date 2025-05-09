@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.RolePermission;
+import com.yugao.domain.permission.RolePermission;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface RolePermissionService {
     Boolean changeRolePermission(RolePermission rolePermission);
     List<Long> getPermissionIdsByRoleIds(List<Long> roleIds);
     List<Long> getPermissionIdsByRoleId(Long roleId);
-    Boolean deleteRolePermission(Long roleId, Long permissionId);
-    Boolean deleteRolePermissions(Long roleId, List<Long> permissionIds);
-    Boolean addRolePermissions(Long roleId, List<Long> permissionIds);
+    void deleteRolePermission(Long roleId, Long permissionId);
+    void deleteRolePermissionsByRoleId(Long roleId);
+    Boolean addRolePermissions(List<RolePermission> rolePermissions);
 }

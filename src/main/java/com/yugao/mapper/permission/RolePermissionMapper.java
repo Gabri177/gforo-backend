@@ -1,7 +1,7 @@
-package com.yugao.mapper;
+package com.yugao.mapper.permission;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yugao.domain.RolePermission;
+import com.yugao.domain.permission.RolePermission;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

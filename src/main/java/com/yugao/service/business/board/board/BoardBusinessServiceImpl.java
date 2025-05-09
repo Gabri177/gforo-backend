@@ -1,6 +1,6 @@
 package com.yugao.service.business.board.board;
 
-import com.yugao.domain.Board;
+import com.yugao.domain.board.Board;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;

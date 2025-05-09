@@ -1,8 +1,8 @@
 package com.yugao.service.validator;
 
-import com.yugao.domain.Comment;
-import com.yugao.domain.DiscussPost;
-import com.yugao.domain.User;
+import com.yugao.domain.post.Comment;
+import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.user.User;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;

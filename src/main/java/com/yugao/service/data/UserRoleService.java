@@ -1,6 +1,6 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.UserRole;
+import com.yugao.domain.permission.UserRole;
 
 import java.util.List;
 
@@ -11,4 +11,6 @@ public interface UserRoleService {
     List<Long> getRoleIdsByUserId(Long userId);
     Boolean deleteUserRole(Long userId, Long roleId);
     Boolean deleteUserRole(UserRole userRole);
+    void deleteUserRolesByUserId(Long userId);
+    void addUserRoles(List<UserRole> userRoles);
 }

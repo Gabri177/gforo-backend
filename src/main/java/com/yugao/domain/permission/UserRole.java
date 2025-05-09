@@ -1,4 +1,4 @@
-package com.yugao.domain;
+package com.yugao.domain.permission;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yugao.enums.RoleEnum;

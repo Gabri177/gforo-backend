@@ -2,15 +2,16 @@ package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yugao.domain.RolePermission;
+import com.yugao.domain.permission.RolePermission;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
-import com.yugao.mapper.RolePermissionMapper;
+import com.yugao.mapper.permission.RolePermissionMapper;
 import com.yugao.service.data.RolePermissionService;
+import org.apache.ibatis.executor.BatchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -57,32 +58,33 @@ public class RolePermissionImpl implements RolePermissionService {
     }
 
     @Override
-    public Boolean deleteRolePermission(Long roleId, Long permissionId) {
+    public void deleteRolePermission(Long roleId, Long permissionId) {
 
-        LambdaUpdateWrapper<RolePermission> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(RolePermission::getRoleId, roleId)
+        LambdaQueryWrapper<RolePermission> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RolePermission::getRoleId, roleId)
                 .eq(RolePermission::getPermissionId, permissionId);
-        return rolePermissionMapper.delete(updateWrapper) > 0;
+        rolePermissionMapper.delete(queryWrapper);
     }
 
     @Override
-    public Boolean deleteRolePermissions(Long roleId, List<Long> permissionIds) {
+    public void deleteRolePermissionsByRoleId(Long roleId) {
 
-        LambdaUpdateWrapper<RolePermission> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(RolePermission::getRoleId, roleId)
-                .in(RolePermission::getPermissionId, permissionIds);
-        return rolePermissionMapper.delete(updateWrapper) > 0;
+        LambdaQueryWrapper<RolePermission> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RolePermission::getRoleId, roleId);
+        rolePermissionMapper.delete(queryWrapper);
     }
 
-    @Transactional
     @Override
-    public Boolean addRolePermissions(Long roleId, List<Long> permissionIds) {
+    public Boolean addRolePermissions(List<RolePermission> rolePermissions) {
 
-        for (Long permissionId : permissionIds) {
-            RolePermission rolePermission = new RolePermission(roleId, permissionId);
-            if (!addRolePermission(rolePermission))
-                throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
-        }
+        List<BatchResult> results = rolePermissionMapper.insert(rolePermissions);
+
+        long total = results.stream()
+                .flatMapToInt(res -> Arrays.stream(res.getUpdateCounts()))
+                .filter(i -> i == 1)
+                .count();
+        if (total != rolePermissions.size())
+            throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
         return true;
     }
 

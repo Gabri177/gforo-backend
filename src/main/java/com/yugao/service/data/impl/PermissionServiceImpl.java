@@ -1,8 +1,9 @@
 package com.yugao.service.data.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.yugao.domain.Permission;
-import com.yugao.mapper.PermissionMapper;
+import com.yugao.domain.permission.Permission;
+import com.yugao.enums.StatusEnum;
+import com.yugao.mapper.permission.PermissionMapper;
 import com.yugao.service.data.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,14 @@ public class PermissionServiceImpl implements PermissionService {
 
         LambdaQueryWrapper<Permission> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Permission::getId, ids);
+        return permissionMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Permission> getAllPermissions() {
+
+        LambdaQueryWrapper<Permission> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Permission::getStatus, StatusEnum.NORMAL);
         return permissionMapper.selectList(queryWrapper);
     }
 }

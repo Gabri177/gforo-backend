@@ -1,7 +1,7 @@
 package com.yugao.service.business.post.impl;
 
 import com.yugao.converter.DiscussPostConverter;
-import com.yugao.domain.DiscussPost;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.exception.BusinessException;

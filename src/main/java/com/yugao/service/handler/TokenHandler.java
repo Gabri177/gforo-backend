@@ -1,8 +1,8 @@
 package com.yugao.service.handler;
 
 import com.yugao.constants.RedisKeyConstants;
-import com.yugao.domain.User;
-import com.yugao.domain.UserToken;
+import com.yugao.domain.user.User;
+import com.yugao.domain.auth.UserToken;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;

@@ -1,7 +1,7 @@
 package com.yugao.service.business.auth.impl;
 
 import com.yugao.constants.RedisKeyConstants;
-import com.yugao.domain.User;
+import com.yugao.domain.user.User;
 import com.yugao.dto.auth.RefreshTokenDTO;
 import com.yugao.dto.auth.UserForgetPasswordDTO;
 import com.yugao.dto.auth.UserForgetPasswordResetDTO;

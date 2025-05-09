@@ -2,12 +2,12 @@ package com.yugao.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.SecurityWhiteListConstants;
-import com.yugao.domain.User;
+import com.yugao.domain.user.User;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.security.LoginUser;
-import com.yugao.service.business.permission.PermissionBusinessService;
 import com.yugao.service.data.UserService;
+import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -32,9 +32,6 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private PermissionBusinessService permissionBusinessService;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
@@ -47,6 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UserService userService;
 
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+    @Autowired
+    private PermissionHandler permissionHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -67,8 +67,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (res) {
                     User user = userService.getUserById(Long.parseLong(userId));
                     List<String> permissionCodes =
-                                permissionBusinessService.getPermissionCodesByUserId(user.getId());
-                    System.out.println("permissionCodes: " + permissionCodes);
+                                permissionHandler.getPermissionCodesByUserId(user.getId());
+                    // System.out.println("permissionCodes: " + permissionCodes);
                     LoginUser loginUser = new LoginUser(
                             user.getId(),
                             user.getUsername(),
@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             permissionCodes
                     );
                     // BeanUtils.copyProperties(user, loginUser);
-                    System.out.println("loginUser: " + loginUser);
+                    // System.out.println("loginUser: " + loginUser);
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());

@@ -2,8 +2,8 @@ package com.yugao.service.business.auth.impl;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
-import com.yugao.domain.User;
-import com.yugao.domain.UserRole;
+import com.yugao.domain.user.User;
+import com.yugao.domain.permission.UserRole;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.RoleEnum;
