@@ -14,4 +14,6 @@ public class SimplePermissionVO {
 
     private StatusEnum status;
 
+    private Integer level;
+
 }

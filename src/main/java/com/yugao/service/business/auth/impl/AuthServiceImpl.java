@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity<ResultFormat> login(UserRegisterDTO userRegisterDTO) {
 
         // symbol 这里让前端运行的时候生成固定的uuid 然后存到localstorage中 用来做设备标识符
-        System.out.println("login =================== " + userRegisterDTO);
+//        System.out.println("login =================== " + userRegisterDTO);
         captchaValidator.validateAndClearGraphCaptchaVerifiedFlag(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
         User loginUser = userValidator.validateLoginCredentials(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<ResultFormat> refreshAccessToken(RefreshTokenDTO refreshTokenDTO) {
-        System.out.println("refreshToken =================== " + refreshTokenDTO.getRefreshToken());
+//        System.out.println("refreshToken =================== " + refreshTokenDTO.getRefreshToken());
         NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshTokenDTO.getRefreshToken());
         return ResultResponse.success(newAccessTokenVO);
     }
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail());
-        System.out.println("reset password code =================== " + code);
+//        System.out.println("reset password code =================== " + code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
         mailClient.sendHtmlMail(user.getEmail(), "GForo: Reset Password", html);
         return ResultResponse.success(null);
@@ -91,8 +91,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ResultFormat> verifyForgetPasswordCode(UserForgetPasswordDTO userForgetPasswordDTO, String code) {
 
-        System.out.println("verifyForgetPasswordCode =================== " + userForgetPasswordDTO);
-        System.out.println("verified reset password code =================== " + code);
+//        System.out.println("verifyForgetPasswordCode =================== " + userForgetPasswordDTO);
+//        System.out.println("verified reset password code =================== " + code);
         captchaValidator.validateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail(),

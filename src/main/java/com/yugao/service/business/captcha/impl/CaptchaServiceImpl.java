@@ -77,7 +77,7 @@ public class CaptchaServiceImpl implements CaptchaService {
                 "true", captchaVerifiedExpireTimeMinutes);
         System.out.println(dto.getScene() + " " + dto.getSymbol() + "等待用户登录");
 
-        System.out.println("Captcha correct :" +  RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()));
+//        System.out.println("Captcha correct :" +  RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()));
         return ResultResponse.success(null);
     }
 

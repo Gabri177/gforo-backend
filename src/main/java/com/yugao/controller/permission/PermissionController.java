@@ -7,6 +7,8 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.permission.PermissionBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonBuilderUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +19,15 @@ public class PermissionController {
     @Autowired
     private PermissionBusinessService permissionBusinessService;
 
+    //只显示role等级比当前用户最高身份低的role信息
     @GetMapping("/role-detail")
-    public ResponseEntity<ResultFormat> getRoleDetailList(
-            @RequestParam(name = "roleId", required = false, defaultValue = "0") Long roleId
-    ){
-        return permissionBusinessService.getRoleDetailList(roleId);
+    public ResponseEntity<ResultFormat> getRoleDetailList(){
+        return permissionBusinessService.getRoleDetailList();
     }
 
+
+    // 给用户分配角色
+    @PreAuthorize("principal.isSuperAdmin || principal.isAdmin")
     @PutMapping("/user-role")
     public ResponseEntity<ResultFormat> updateUserRole(
             @Validated @RequestBody UpdateUserRoleDTO updateUserRoleDTO
@@ -31,17 +35,28 @@ public class PermissionController {
         return permissionBusinessService.updateUserRole(updateUserRoleDTO);
     }
 
+    // 更新role和permission的关系
+    @PreAuthorize("principal.isSuperAdmin || principal.isAdmin")
     @PutMapping("/role-permission")
     public ResponseEntity<ResultFormat> updateRolePermission(
             @Validated @RequestBody UpdateRolePermissionDTO updateRolePermissionDTO
     ){
+        System.out.println("updateRolePermissionDTO = " + updateRolePermissionDTO);
         return permissionBusinessService.updateRolePermission(updateRolePermissionDTO);
     }
 
-    @PostMapping("/new-role")
-    public ResponseEntity<ResultFormat> addNewRole(
+    // 添加新的角色并分配权限
+    @PreAuthorize("principal.isSuperAdmin || principal.isAdmin")
+    @PostMapping("/role-permission")
+    public ResponseEntity<ResultFormat> addRolePermission(
             @Validated @RequestBody AddNewRoleDTO addNewRoleDTO
     ){
         return permissionBusinessService.addNewRole(addNewRoleDTO);
+    }
+
+    @PreAuthorize("principal.isSuperAdmin || principal.isAdmin")
+    @DeleteMapping("/role")
+    public ResponseEntity<ResultFormat> deleteRole(){
+        return null;
     }
 }

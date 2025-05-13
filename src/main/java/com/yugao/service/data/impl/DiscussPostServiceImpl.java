@@ -10,6 +10,8 @@ import com.yugao.service.data.DiscussPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -25,10 +27,19 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         wrapper.ne(DiscussPost::getStatus, StatusEnum.DELETED);
         wrapper.eq(userId != 0, DiscussPost::getUserId, userId);
         wrapper.eq(boardId != 0, DiscussPost::getBoardId, boardId);
-        wrapper.orderByDesc(orderMode == 0, DiscussPost::getType, DiscussPost::getCreateTime);
+        wrapper.orderByDesc(orderMode == 0, DiscussPost::getCreateTime); // DiscussPost::getType,
         wrapper.orderByDesc(orderMode == 1, DiscussPost::getType, DiscussPost::getScore, DiscussPost::getCreateTime);
         Page<DiscussPost> page = new Page<>(current, limit);
         return discussPostMapper.selectPage(page, wrapper).getRecords();
+    }
+
+    @Override
+    public List<DiscussPost> getDiscussPostsByIds(List<Long> ids) {
+
+        LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ne(DiscussPost::getStatus, StatusEnum.DELETED);
+        wrapper.in(DiscussPost::getId, ids);
+        return discussPostMapper.selectList(wrapper);
     }
 
 
@@ -111,6 +122,52 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     @Override
     public Boolean updateDiscussPost(DiscussPost discussPost) {
         return discussPostMapper.updateById(discussPost) > 0;
+    }
+
+    @Override
+    public Long getDiscussPostCount() {
+
+        return discussPostMapper.selectCount(null);
+    }
+
+    @Override
+    public Integer getTodayDiscussPostCount() {
+
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime now = LocalDateTime.now();
+        return Math.toIntExact(discussPostMapper.selectCount(
+                new LambdaQueryWrapper<DiscussPost>()
+                        .between(DiscussPost::getCreateTime, todayStart, now)
+//                        .ne(DiscussPost::getStatus, StatusEnum.DELETED)
+        ));
+    }
+
+    @Override
+    public Double getMonthGrowthRate() {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime firstDayOfThisMonth = now.withDayOfMonth(1).toLocalDate().atStartOfDay();
+        LocalDateTime firstDayOfLastMonth = firstDayOfThisMonth.minusMonths(1);
+
+        Long thisMonthCount = discussPostMapper.selectCount(
+                new LambdaQueryWrapper<DiscussPost>()
+                        .between(DiscussPost::getCreateTime,
+                        firstDayOfThisMonth, now)
+//                        .ne(DiscussPost::getStatus, StatusEnum.DELETED)
+        );
+
+        Long lastMonthCount = discussPostMapper.selectCount(
+                new LambdaQueryWrapper<DiscussPost>()
+                        .between(DiscussPost::getCreateTime,
+                        firstDayOfLastMonth, firstDayOfThisMonth)
+//                        .ne(DiscussPost::getStatus, StatusEnum.DELETED)
+        );
+
+        double growthRate = 0.0;
+        if (lastMonthCount != 0) {
+            growthRate = (double) (thisMonthCount - lastMonthCount) / lastMonthCount * 100;
+        }
+        return Math.round(growthRate * 100.0) / 100.0;
     }
 
 }

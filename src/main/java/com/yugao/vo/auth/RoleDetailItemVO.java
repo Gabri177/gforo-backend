@@ -19,5 +19,7 @@ public class RoleDetailItemVO {
 
     private Date createTime;
 
+    private Integer level;
+
     private List<SimplePermissionVO> permissions;
 }

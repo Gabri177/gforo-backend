@@ -10,6 +10,7 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.admin.AdminUserService;
 import com.yugao.service.data.*;
+import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
@@ -41,17 +42,19 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Autowired
     private VOBuilder voBuilder;
+    @Autowired
+    private PermissionHandler permissionHandler;
 
 
     @Override
     public ResponseEntity<ResultFormat>getUserInfo(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
 
         Long currentId = SecurityUtils.mustGetLoginUserId();
+        Integer roleLevel = permissionHandler.getUserRoleLevel(currentId);
         DetailUserInfoPageVO detailUserInfoPageVO = new DetailUserInfoPageVO();
         List<DetailedUserInfoVO> detailedUserInfoVOS =
-                userService.getUsers(userId, currentPage, pageSize, isAsc)
+                userService.getUsers(userId, currentPage, pageSize, roleLevel)
                         .stream()
-                        .filter((item) -> !item.getId().equals(currentId))
                         .map((item) -> {
                             DetailedUserInfoVO detailedUserInfoVO = new DetailedUserInfoVO();
                             BeanUtils.copyProperties(item, detailedUserInfoVO);

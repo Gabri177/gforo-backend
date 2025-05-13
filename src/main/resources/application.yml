@@ -27,6 +27,7 @@ spring:
       database: 0
       host: localhost
       port: 6379
+
 server:
   port: 8080
 
@@ -56,6 +57,13 @@ email:
 change:
   email-change-interval-limit-days: 30
   username-change-interval-limit-days: 30
+
+logging:
+  level:
+    root: INFO
+    com.yugao: INFO
+    org.springframework.security: INFO
+
 
 
 # logback

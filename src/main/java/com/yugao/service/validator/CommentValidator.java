@@ -1,6 +1,6 @@
 package com.yugao.service.validator;
 
-import com.yugao.domain.post.Comment;
+import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
 import com.yugao.enums.CommentEntityTypeEnum;
@@ -24,6 +24,14 @@ public class CommentValidator {
     @Autowired
     private CommentService commentService;
 
+    public Comment checkId(Long commentId){
+
+        Comment comment = commentService.findCommentById(commentId);
+        if (comment == null)
+            throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
+        return comment;
+    }
+
     public void check(Comment comment) {
 
         Long entityId = comment.getEntityId();
@@ -35,7 +43,7 @@ public class CommentValidator {
             if (curPost == null)
                 throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         } else if (entityType == CommentEntityTypeEnum.POST_COMMENT_FLOOR) {
-            System.out.println("entityId: " + entityId);
+//            System.out.println("entityId: " + entityId);
             Comment curComment = commentService.findCommentById(entityId);
             if (curComment == null){
                 throw new BusinessException(ResultCodeEnum.COMMENT_ENTITY_NOT_FOUND);

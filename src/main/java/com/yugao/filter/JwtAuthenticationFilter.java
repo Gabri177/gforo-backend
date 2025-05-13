@@ -14,6 +14,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,7 @@ import java.util.List;
 // 因为有过滤器 先经过过滤器然后再被Security拦截
 // 两个同时起作用5
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -66,6 +68,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 boolean res = tokenHandler.verifyUserAccessToken(token);
                 if (res) {
                     User user = userService.getUserById(Long.parseLong(userId));
+                    Integer userLevel = permissionHandler.getUserRoleLevel(user.getId());
+//                    log.info("log userLevel: {}", userLevel);
                     List<String> permissionCodes =
                                 permissionHandler.getPermissionCodesByUserId(user.getId());
                     // System.out.println("permissionCodes: " + permissionCodes);
@@ -73,10 +77,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             user.getId(),
                             user.getUsername(),
                             user.getPassword(),
+                            userLevel,
                             permissionCodes
                     );
                     // BeanUtils.copyProperties(user, loginUser);
-                    // System.out.println("loginUser: " + loginUser);
+//                    System.out.println("loginUser: " + loginUser);
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());

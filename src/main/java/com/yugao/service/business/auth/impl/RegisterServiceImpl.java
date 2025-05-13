@@ -108,7 +108,7 @@ public class RegisterServiceImpl implements RegisterService {
         // 在用户表添加用户
         userService.addUser(user);
         // 给用户分配角色
-        userRoleService.addUserRole(new UserRole(user.getId(), RoleEnum.ROLE_USER));
+        userRoleService.addUserRole(new UserRole(user.getId(), RoleEnum.ROLE_USER.getCode()));
         return ResultResponse.success(null);
     }
 }

@@ -19,7 +19,7 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Boolean isAsc);
+    List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Integer curUserLevel);
 
     boolean updateUser(User user);
 
@@ -44,6 +44,8 @@ public interface UserService {
     Date getLastUsernameUpdateTime(Long id);
 
     Date getLastEmailUpdateTime(Long id);
+
+    Double getMonthGrowthRate();
 
 
 }

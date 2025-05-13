@@ -5,9 +5,12 @@ import com.yugao.converter.RoleConverter;
 import com.yugao.domain.permission.BoardPoster;
 import com.yugao.domain.permission.Role;
 import com.yugao.domain.permission.UserRole;
+import com.yugao.domain.user.User;
 import com.yugao.dto.permission.AddNewRoleDTO;
 import com.yugao.dto.permission.UpdateRolePermissionDTO;
 import com.yugao.dto.permission.UpdateUserRoleDTO;
+import com.yugao.enums.ResultCodeEnum;
+import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;
@@ -15,8 +18,10 @@ import com.yugao.service.business.permission.PermissionBusinessService;
 import com.yugao.service.data.*;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.validator.BoardValidator;
+import com.yugao.service.validator.PermissionValidator;
 import com.yugao.service.validator.RoleValidator;
 import com.yugao.service.validator.UserValidator;
+import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.auth.RoleDetailItemVO;
 import com.yugao.vo.auth.RoleDetailsVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,25 +52,27 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
     private PermissionHandler permissionHandler;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private PermissionValidator permissionValidator;
 
     @Override
-    public ResponseEntity<ResultFormat> getRoleDetailList(Long roleId){
+    public ResponseEntity<ResultFormat> getRoleDetailList(){
 
+        Integer roleLevel = SecurityUtils.getUserLevel();
         RoleDetailsVO roleDetailsVO = new RoleDetailsVO();
-        List<Role> roles = new ArrayList<>();
-        if (roleId == 0L)
-            roles = roleService.getAllRoles();
-        else
-            roles.add(roleService.getRoleById(roleId));
-        List<RoleDetailItemVO> roleDetailItemVOS = new ArrayList<>();
-        for (Role role : roles) {
-            roleDetailItemVOS.add(voBuilder.buildRoleDetailItemVO(role));
-        }
+        List<Role> roles = roleService.getAllRoles()
+                .stream()
+                .filter(role -> role.getLevel() > roleLevel)
+                .toList();
+        List<RoleDetailItemVO> roleDetailItemVOS = roles.stream()
+                .map(voBuilder::buildRoleDetailItemVO)
+                .toList();
         roleDetailsVO.setRoleDetailsList(roleDetailItemVOS);
         roleDetailsVO.setPermissionsList(
                 permissionService.getAllPermissions()
                         .stream()
                         .map(PermissionConverter::toSimplePermissionVO)
+                        .filter(pms -> pms.getLevel() > roleLevel)
                         .toList()
         );
         return ResultResponse.success(roleDetailsVO);
@@ -77,9 +83,10 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
     public ResponseEntity<ResultFormat> updateUserRole(UpdateUserRoleDTO updateUserRoleDTO) {
 
         System.out.println("updateRoleDTO: " + updateUserRoleDTO);
-        // 1. 校验用户是否存在
+        // 1. 校验被更新的用户是否存在
         userValidator.validateUserIdExists(updateUserRoleDTO.getUserId());
-        // 2. 校验角色是否存在
+        roleValidator.checkLevel(permissionHandler.getUserRoleLevel(updateUserRoleDTO.getUserId()));
+        // 2. 校验被更新的角色是否存在
         roleValidator.checkRoleIds(updateUserRoleDTO.getRoleIds());
         // 3. 如果boardId存在 则校验boardId是否存在
         if (updateUserRoleDTO.getBoardIds() != null && !updateUserRoleDTO.getBoardIds().isEmpty())
@@ -102,18 +109,33 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
         return ResultResponse.success(null);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<ResultFormat> updateRolePermission(UpdateRolePermissionDTO updateRolePermissionDTO) {
 
-        permissionHandler.updateRolePermission(updateRolePermissionDTO);
+        if (SecurityUtils.getUserLevel() > updateRolePermissionDTO.getRoleLevel())
+            throw new BusinessException(ResultCodeEnum.ROLE_LEVEL_NOT_ENOUGH);
+        roleValidator.checkRoleId(updateRolePermissionDTO.getRoleId());
+        roleValidator.checkLevel(updateRolePermissionDTO.getRoleLevel());
+        System.out.println("level checked success");
+        permissionValidator.checkPermissionIds(updateRolePermissionDTO.getPermissionIds());
+        roleService.updateRole(RoleConverter.toRole(updateRolePermissionDTO));
+        permissionHandler.updateRolePermission(
+                updateRolePermissionDTO.getRoleId(),
+                updateRolePermissionDTO.getPermissionIds());
         return ResultResponse.success(null);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<ResultFormat> addNewRole(AddNewRoleDTO addNewRoleDTO) {
 
-        roleValidator.checkNewRole(addNewRoleDTO);
-        roleService.addRole(RoleConverter.toRole(addNewRoleDTO));
+        roleValidator.checkLevel(addNewRoleDTO.getRoleLevel());
+        roleValidator.checkRoleName(addNewRoleDTO.getRoleName());
+        permissionValidator.checkPermissionIds(addNewRoleDTO.getPermissionIds());
+        Role role = RoleConverter.toRole(addNewRoleDTO);
+        roleService.addRole(role);
+        permissionHandler.updateRolePermission(role.getId(), addNewRoleDTO.getPermissionIds());
         return ResultResponse.success(null);
     }
 

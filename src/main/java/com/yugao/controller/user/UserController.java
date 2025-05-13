@@ -20,13 +20,12 @@ public class UserController {
     @Autowired
     private UserBusinessService userBusinessService;
 
-    // 加入一个id参数 用来看看是查看是自己的信息还是查看别人的信息
     @PreAuthorize("hasAnyAuthority('user:info:own')")
     @GetMapping("/info")
     public ResponseEntity<ResultFormat> getUserInfo(
             @RequestParam(name="userId", required = false) Long userId
     ) {
-        System.out.println("get user info: " + userId);
+//        System.out.println("get user info: " + userId);
         return userBusinessService.getUserInfo(userId);
     }
 
@@ -38,6 +37,7 @@ public class UserController {
         return userBusinessService.changePassword(userChangePasswordDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:username-change:own')")
     @PutMapping("/change-username")
     public ResponseEntity<ResultFormat> changeUsername(
             @Validated @RequestBody UserChangeUsernameDTO userChangeUsernameDTO) {
@@ -45,6 +45,7 @@ public class UserController {
         return userBusinessService.changeUsername(userChangeUsernameDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:update-info:own')")
     @PutMapping("/info")
     public ResponseEntity<ResultFormat> updateUserInfo(
             @Validated @RequestBody UserInfoUpdateDTO userInfoUpdateDTO) {
@@ -62,13 +63,34 @@ public class UserController {
     public ResponseEntity<ResultFormat> verifyChangeEmailCode(
             @Validated @RequestBody ActiveAccountDTO activeAccountDTO
             ) {
-        System.out.println("change email verify " + activeAccountDTO);
+//        System.out.println("change email verify " + activeAccountDTO);
         return userBusinessService.verifyEmail(activeAccountDTO);
     }
 
     @DeleteMapping("/logout")
     public ResponseEntity<ResultFormat> logout() {
         return userBusinessService.logout();
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<ResultFormat> getComments(
+            @RequestParam(name="currentPage", defaultValue = "1") Integer currentPage,
+            @RequestParam(name="pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name="isAsc", defaultValue = "false") Boolean isAsc
+    ) {
+//        System.out.println("get comments: " + currentPage + " " + pageSize + " " + isAsc);
+        return userBusinessService.getCommentsByUserId(currentPage, pageSize, isAsc);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<ResultFormat> getPosts(
+            @RequestParam(name="userId", required = false) Long userId,
+            @RequestParam(name="currentPage", defaultValue = "1") Integer currentPage,
+            @RequestParam(name="pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name="isAsc", defaultValue = "false") Boolean isAsc
+    ) {
+//        System.out.println("get posts: " + currentPage + " " + pageSize + " " + isAsc);
+        return userBusinessService.getPostsByUserId(userId, currentPage, pageSize, isAsc);
     }
 
 }

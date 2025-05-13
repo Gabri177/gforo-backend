@@ -47,7 +47,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
 
-        System.out.println("getPostDetail: " + postId + " " + currentPage);
+//        System.out.println("getPostDetail: " + postId + " " + currentPage);
         PostPageVO postPageVO = new PostPageVO();
         postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
         postPageVO.setReplies(postHandler.getCommentPostDetailList(postId, currentPage, pageSize, isAsc));

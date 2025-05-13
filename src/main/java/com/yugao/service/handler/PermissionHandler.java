@@ -1,13 +1,12 @@
 package com.yugao.service.handler;
 
 import com.yugao.domain.permission.RolePermission;
-import com.yugao.dto.permission.UpdateRolePermissionDTO;
 import com.yugao.service.data.PermissionService;
 import com.yugao.service.data.RolePermissionService;
+import com.yugao.service.data.RoleService;
 import com.yugao.service.data.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +21,8 @@ public class PermissionHandler {
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private RoleService roleService;
 
 
     public List<String> getPermissionCodesByUserId(Long userId) {
@@ -38,20 +39,23 @@ public class PermissionHandler {
         return permissionService.getCodesByIds(permissionIds);
     }
 
-    @Transactional
-    public Boolean updateRolePermission(UpdateRolePermissionDTO updateRolePermissionDTO) {
+    public Boolean updateRolePermission(Long roleId, List<Long> permissionIds) {
 
         // 1. 删除角色的所有权限
-        rolePermissionService.deleteRolePermissionsByRoleId(updateRolePermissionDTO.getRoleId());
+        rolePermissionService.deleteRolePermissionsByRoleId(roleId);
         // 2. 添加角色的所有权限
-        if (updateRolePermissionDTO.getPermissionIds() != null &&
-                !updateRolePermissionDTO.getPermissionIds().isEmpty())
+        if (permissionIds != null && !permissionIds.isEmpty())
             rolePermissionService.addRolePermissions(
-                    updateRolePermissionDTO.getPermissionIds()
-                            .stream()
-                            .map(item -> new RolePermission(updateRolePermissionDTO.getRoleId(), item))
+                    permissionIds.stream()
+                            .map(item -> new RolePermission(roleId, item))
                             .toList()
             );
         return true;
+    }
+
+    public Integer getUserRoleLevel(Long userId) {
+
+        List<Long> roleIds = userRoleService.getRoleIdsByUserId(userId);
+        return roleService.getLowestRoleLevelByIds(roleIds);
     }
 }

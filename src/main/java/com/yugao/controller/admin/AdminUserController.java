@@ -25,6 +25,7 @@ public class AdminUserController {
     @Autowired
     private AdminUserService adminUserService;
 
+    // 只显示最高身份的用户比当前用户最高身份低的用户
     @PreAuthorize("hasAnyAuthority('user:info:any')")
     @GetMapping("/info/{userId}")
     public ResponseEntity<ResultFormat> getUserInfo(
@@ -36,7 +37,8 @@ public class AdminUserController {
         return adminUserService.getUserInfo(userId, currentPage, pageSize, isAsc);
     }
 
-    @PreAuthorize("hasAnyAuthority('user:password:change:any')")
+    // 超级管理员可以更改任意用户的密码
+    @PreAuthorize("hasAnyAuthority('user:password:change:any') && principal.isSuperAdmin")
     @PutMapping("/change-password/{userId}")
     public ResponseEntity<ResultFormat> changePassword(
             @PathVariable("userId") Long userId,
@@ -45,6 +47,8 @@ public class AdminUserController {
         return adminUserService.changePassword(userId, forceChangePasswordDTO);
     }
 
+
+    // 启用任意用户的账号
     @PreAuthorize("hasAnyAuthority('user:activate:any')")
     @PutMapping("/activate/{userId}")
     public ResponseEntity<ResultFormat> activateUser(
@@ -53,6 +57,7 @@ public class AdminUserController {
         return adminUserService.activateUser(userId);
     }
 
+    // 禁用任意用户的账号
     @PreAuthorize("hasAnyAuthority('user:disable:any')")
     @PutMapping("/disable/{userId}")
     public ResponseEntity<ResultFormat> disableUser(
@@ -61,7 +66,8 @@ public class AdminUserController {
         return adminUserService.disableUser(userId);
     }
 
-    @PreAuthorize("hasAnyAuthority('user:delete:any')")
+    // 删除任意的用户 超级管理员的权利
+    @PreAuthorize("hasAnyAuthority('user:delete:any') && principal.isSuperAdmin")
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ResultFormat> deleteUser(
             @PathVariable("userId") Long userId
@@ -69,7 +75,8 @@ public class AdminUserController {
         return adminUserService.deleteUser(userId);
     }
 
-    @PreAuthorize("hasAnyAuthority('user:logout:any')")
+    // 登出任意的用户 超级管理员的权利
+    @PreAuthorize("hasAnyAuthority('user:logout:any') && principal.isSuperAdmin")
     @DeleteMapping("/logout/{userId}")
     public ResponseEntity<ResultFormat> logout(
             @PathVariable("userId") Long userId

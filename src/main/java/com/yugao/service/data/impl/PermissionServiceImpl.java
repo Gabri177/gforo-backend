@@ -8,6 +8,7 @@ import com.yugao.service.data.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -54,6 +55,8 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<Permission> getPermissionsByIds(List<Long> ids) {
 
+        if (ids == null || ids.isEmpty())
+            return Collections.emptyList();
         LambdaQueryWrapper<Permission> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Permission::getId, ids);
         return permissionMapper.selectList(queryWrapper);

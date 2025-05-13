@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -61,16 +62,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Integer curUserLevel) {
 
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(id != 0, User::getId, id);
-        if (isAsc)
-            wrapper.orderByAsc(User::getCreateTime);
-        else
-            wrapper.orderByDesc(User::getCreateTime);
-        Page<User> page = new Page<>(currentPage, pageSize);
-        return userMapper.selectPage(page, wrapper).getRecords();
+        return userMapper.getUsersWithLowerRoleLevel(
+                new Page<>(currentPage, pageSize),
+                id,
+                curUserLevel
+        );
     }
 
     @Override
@@ -165,5 +163,24 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         return user.getLastEmailUpdateTime();
+    }
+
+    @Override
+    public Double getMonthGrowthRate() {
+
+        LocalDateTime firstDayOfMonth = LocalDateTime.now().withDayOfMonth(1);
+        LocalDateTime firstDayOfLastMonth = firstDayOfMonth.minusMonths(1);
+
+        Long currentMonthCount = userMapper.selectCount(new LambdaQueryWrapper<User>()
+                .ge(User::getCreateTime, firstDayOfMonth)
+                .lt(User::getCreateTime, LocalDateTime.now()));
+        Long lastMonthCount = userMapper.selectCount(new LambdaQueryWrapper<User>()
+                .ge(User::getCreateTime, firstDayOfLastMonth)
+                .lt(User::getCreateTime, firstDayOfMonth));
+
+        double growthRate = 0.0;
+        if (lastMonthCount != 0)
+            growthRate = ((double) (currentMonthCount - lastMonthCount) / lastMonthCount) * 100;
+        return growthRate;
     }
 }

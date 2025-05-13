@@ -17,12 +17,18 @@ public class LoginUser implements UserDetails {
     private String username;
     private String email;
     private String password;
+    private Boolean isSuperAdmin;
+    private Boolean isAdmin;
+    private Integer userLevel;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public LoginUser(Long userId, String username, String password, List<String> perms) {
+    public LoginUser(Long userId, String username, String password, Integer userLevel, List<String> perms) {
         this.id = userId;
         this.username = username;
         this.password = password;
+        this.userLevel = userLevel;
+        this.isSuperAdmin = userLevel == 0;
+        this.isAdmin = userLevel == 1;
         this.authorities = perms.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

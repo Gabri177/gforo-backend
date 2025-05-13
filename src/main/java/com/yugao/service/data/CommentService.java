@@ -1,8 +1,8 @@
 package com.yugao.service.data;
 
-import com.yugao.domain.post.Comment;
-
+import com.yugao.domain.comment.Comment;
 import java.util.List;
+import java.util.Map;
 
 public interface CommentService {
 
@@ -11,6 +11,12 @@ public interface CommentService {
     Long getCommentCountByPostId(Long postId);
 
     Long getCommentCountByPostIds(List<Long> postIds);
+
+    List<Comment> getCommentListByUserId(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc);
+
+    List<Comment> getCommentListByPostId(Long postId, Long currentPage, Integer pageSize, Boolean isAsc);
+
+    List<Comment> getCommentListByPostId(Long postId);
 
     List<Comment> findCommentsToPostFloor(Long postId);
 
@@ -34,5 +40,12 @@ public interface CommentService {
     Boolean updateContent(Long id, String content);
 
     Boolean updateComment(Comment comment);
+
+    Integer getTodayCommentCount();
+
+    Double getMonthGrowthRate();
+
+    Map<Long, Comment> getCommentMapCacheByUserId(Long userId);
+
 }
 

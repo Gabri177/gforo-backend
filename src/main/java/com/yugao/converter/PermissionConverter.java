@@ -11,6 +11,7 @@ public class PermissionConverter {
         simplePermissionVO.setName(permission.getName());
         simplePermissionVO.setDescription(permission.getDescription());
         simplePermissionVO.setStatus(permission.getStatus());
+        simplePermissionVO.setLevel(permission.getLevel());
         return simplePermissionVO;
     }
 }

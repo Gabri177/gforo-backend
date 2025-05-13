@@ -23,4 +23,17 @@ public interface UserBusinessService {
     ResponseEntity<ResultFormat> verifyEmail(ActiveAccountDTO activeAccountDTO);
 
     ResponseEntity<ResultFormat> changeUsername(UserChangeUsernameDTO userChangeUsernameDTO);
+
+    ResponseEntity<ResultFormat> getCommentsByUserId(
+                                                     Integer currentPage,
+                                                     Integer pageSize,
+                                                     Boolean isAsc);
+
+    ResponseEntity<ResultFormat> getPostsByUserId(
+            Long userId,
+            Integer currentPage,
+            Integer pageSize,
+            Boolean isAsc
+    );
+
 }

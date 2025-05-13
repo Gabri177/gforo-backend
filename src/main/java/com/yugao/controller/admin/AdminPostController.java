@@ -14,18 +14,6 @@ public class AdminPostController {
     @Autowired
     private AdminPostService adminPostService;
 
-    // 当boardId为0时，表示查询所有的帖子
-//    @PreAuthorize("hasAnyAuthority('post:info:any', 'post:info:board')")
-//    @GetMapping("/info/{boardId}")
-//    public ResponseEntity<ResultFormat> getPostList(
-//            @PathVariable("boardId") Long boardId,
-//            @RequestParam(defaultValue = "1", name = "currentPage", required = false) Long currentPage,
-//            @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
-//            @RequestParam(defaultValue = "0", name = "isAsc", required = false) Boolean isAsc
-//    ){
-//        return adminPostService.getPostList(boardId, currentPage, pageSize, isAsc);
-//    }
-
     // 删除帖子
     @PreAuthorize("hasAnyAuthority('post:delete:board', 'post:delete:any')")
     @DeleteMapping("/delete/{postId}")

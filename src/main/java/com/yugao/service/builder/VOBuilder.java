@@ -17,6 +17,7 @@ import com.yugao.vo.user.SimpleUserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,15 +52,14 @@ public class VOBuilder {
     private PermissionHandler permissionHandler;
 
 
+
     public BoardInfosItemVO buildBoardInfosItemVO(Board board) {
 
         BoardInfosItemVO boardInfosItemVO = new BoardInfosItemVO();
         BeanUtils.copyProperties(board, boardInfosItemVO);
         boardInfosItemVO.setPostCount(discussPostService.getDiscussPostRows(0L, board.getId()));
         List<Long> postIds = discussPostService.getDiscussPostIdsByBoardId(board.getId());
-        System.out.println("postIds: " + postIds);
         Long commentCount = commentService.getCommentCountByPostIds(postIds);
-        System.out.println("commentCount: " + commentCount);
         boardInfosItemVO.setCommentCount(commentCount);
         DiscussPost discussPost = discussPostService.getLatestDiscussPostByBoardId(board.getId());
         if (discussPost != null){
@@ -83,7 +83,6 @@ public class VOBuilder {
         //System.out.println("用户简单信息: " + userInfoVO);
 
         Long postCommentCount = commentService.getCommentCountByPostId(post.getId());
-        System.out.println("用户状态: " + user.getStatus().getValue() + " username: " + user.getUsername());
         //System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
         currentPageItemVO.setCommentCount(postCommentCount);
 
@@ -111,6 +110,7 @@ public class VOBuilder {
         roleDetailItemVO.setDescription(role.getDescription());
         roleDetailItemVO.setStatus(role.getStatus());
         roleDetailItemVO.setCreateTime(role.getCreateTime());
+        roleDetailItemVO.setLevel(role.getLevel());
         roleDetailItemVO.setPermissions(
                 permissionService.getPermissionsByIds(
                                 rolePermissionService.getPermissionIdsByRoleId(role.getId()))

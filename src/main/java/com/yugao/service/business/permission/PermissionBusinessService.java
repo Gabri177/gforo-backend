@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface PermissionBusinessService {
 
-    ResponseEntity<ResultFormat> getRoleDetailList(Long roleId);
+    ResponseEntity<ResultFormat> getRoleDetailList();
 
     ResponseEntity<ResultFormat> updateUserRole(UpdateUserRoleDTO updateUserRoleDTO);
 

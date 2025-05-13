@@ -95,7 +95,7 @@ public class JwtUtil {
         } catch (ExpiredJwtException e) {
             return e.getClaims().getSubject();  // 直接从 ExpiredJwtException 获取 userId
         } catch (Exception e) {
-            System.out.println("Error extracting userId from expired token: " + e.getMessage());
+//            System.out.println("Error extracting userId from expired token: " + e.getMessage());
             return null;
         }
     }

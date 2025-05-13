@@ -10,6 +10,8 @@ public interface DiscussPostService {
 
     List<DiscussPost> getDiscussPosts(Long userId, Long boardId, int current, int limit, int orderMode);
 
+    List<DiscussPost> getDiscussPostsByIds(List<Long> ids);
+
     Long getDiscussPostRows(Long userId, Long boardId);
 
     List<Long> getDiscussPostIdsByBoardId(Long boardId);
@@ -29,4 +31,12 @@ public interface DiscussPostService {
     Boolean deleteDiscussPost(Long id);
 
     Boolean updateDiscussPost(DiscussPost discussPost);
+
+    Long getDiscussPostCount();
+
+    Integer getTodayDiscussPostCount();
+
+    Double getMonthGrowthRate();
+
+
 }

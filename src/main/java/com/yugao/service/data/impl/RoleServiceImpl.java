@@ -10,6 +10,7 @@ import com.yugao.service.data.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,6 +36,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public void updateRole(Role role) {
+
+        roleMapper.updateById(role);
+    }
+
+    @Override
     public String getRoleNameById(Long id) {
 
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
@@ -56,6 +63,22 @@ public class RoleServiceImpl implements RoleService {
                 .map(Role::getName)
                 .toList();
     }
+
+    @Override
+    public Integer getLowestRoleLevelByIds(List<Long> ids) {
+
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Role::getId, ids);
+        List<Role> roles = roleMapper.selectList(queryWrapper);
+        return roles.stream()
+                .map(Role::getLevel)
+                .min(Integer::compareTo)
+                .orElse(0);
+    }
+
 
     @Override
     public List<Role> getAllRoles() {

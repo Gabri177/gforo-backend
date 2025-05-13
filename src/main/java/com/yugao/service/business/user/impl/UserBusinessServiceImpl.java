@@ -1,7 +1,11 @@
 package com.yugao.service.business.user.impl;
 
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.converter.CommentConverter;
+import com.yugao.converter.PostConverter;
 import com.yugao.converter.UserConverter;
+import com.yugao.domain.comment.Comment;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
 import com.yugao.dto.auth.ActiveAccountDTO;
 import com.yugao.dto.user.UserChangePasswordDTO;
@@ -19,14 +23,28 @@ import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
+import com.yugao.service.validator.CommentValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
+import com.yugao.vo.post.CurrentPageItemVO;
+import com.yugao.vo.post.CurrentPageVO;
+import com.yugao.vo.post.SimpleDiscussPostVO;
+import com.yugao.vo.user.SimpleUserVO;
+import com.yugao.vo.user.UserCommentsItemVO;
+import com.yugao.vo.user.UserCommentsVO;
 import com.yugao.vo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserBusinessServiceImpl implements UserBusinessService {
@@ -86,7 +104,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO) {
-        System.out.println(userChangePasswordDTO);
+//        System.out.println(userChangePasswordDTO);
 
         Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
@@ -150,6 +168,105 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCodeEnum.USER_USERNAME_UPDATE_ERROR);
         return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> getCommentsByUserId(Integer currentPage, Integer pageSize, Boolean isAsc) {
+
+        Long userId = SecurityUtils.mustGetLoginUserId();
+        UserCommentsVO userCommentsVO = new UserCommentsVO();
+        List<UserCommentsItemVO> userCommentsItemVOs = new ArrayList<>();
+        // 所需要的全部评论
+        List<Comment> comments = commentService.getCommentListByUserId(
+                userId,
+                currentPage,
+                pageSize,
+                isAsc
+        );
+        // 所需要的所有author id
+        Set<Long> authorIds = comments.stream()
+                .map(Comment::getUserId)
+                .filter(id -> id != 0L)
+                .collect(Collectors.toSet());
+        Map<Long, User> authorMap = userService.getUsersByIds(authorIds.stream().toList())
+                .stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        // 所需要的所有target id
+        Set<Long> targetIds = comments.stream()
+                .map(Comment::getTargetId)
+                .filter(id -> id != 0L)
+                .collect(Collectors.toSet());
+        Map<Long, User> targetUserMap = userService.getUsersByIds(targetIds.stream().toList())
+                .stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        // 所需要的全部帖子
+        Set<Long> postIds = comments.stream()
+                .map(Comment::getPostId)
+                .collect(Collectors.toSet());
+        List<SimpleDiscussPostVO> posts = discussPostService.getDiscussPostsByIds(postIds.stream().toList())
+                .stream()
+                .map(PostConverter::toSimpleDiscussPostVO)
+                .toList();
+        Map<Long, SimpleDiscussPostVO> postMap = posts.stream()
+                .collect(Collectors.toMap(SimpleDiscussPostVO::getId, Function.identity()));
+        // 组装
+        comments.forEach(comment -> {
+            UserCommentsItemVO userCommentsItemVO = new UserCommentsItemVO();
+            SimpleDiscussPostVO postInfo = postMap.get(comment.getPostId());
+            if (postInfo == null)
+                postInfo = PostConverter.toSimpleDiscussPostVO(DiscussPost.createGhostDiscusspost());
+            userCommentsItemVO.setPostInfo(postInfo);
+            SimpleUserVO targetUserInfo = null;
+            if (targetUserMap.get(comment.getTargetId()) != null)
+                targetUserInfo = UserConverter.toSimpleVO(targetUserMap.get(comment.getTargetId()));
+            userCommentsItemVO.setCommentInfo(
+                    CommentConverter.toCommentVO(
+                            comment,
+                            targetUserInfo,
+                            UserConverter.toSimpleVO(authorMap.get(comment.getUserId()))
+                    )
+            );
+            userCommentsItemVOs.add(userCommentsItemVO);
+        });
+        userCommentsVO.setCommentsList(userCommentsItemVOs);
+        userCommentsVO.setCurrentPage(currentPage);
+        userCommentsVO.setPageSize(pageSize);
+        userCommentsVO.setTotalRows(commentService.getCommentCountByUserId(userId));
+        return ResultResponse.success(userCommentsVO);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> getPostsByUserId(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
+
+        User tarUser = userService.getUserById(userId);
+        if (tarUser == null)
+            userId = SecurityUtils.mustGetLoginUserId();
+
+        // 总帖子数量，用于分页
+        Long totalRows = discussPostService.getDiscussPostRows(userId, 0L);
+
+        // 分页查询帖子
+        // userId = 0 表示查询所有用户的帖子
+        List<DiscussPost> postList = discussPostService.getDiscussPosts(
+                userId, 0L, currentPage, pageSize, 0);
+
+        List<CurrentPageItemVO> discussPostListVOList = new ArrayList<>();
+        CurrentPageVO currentPageVO = new CurrentPageVO();
+
+        // 封装帖子+作者+点赞数
+        if (!postList.isEmpty()) {
+            for (DiscussPost post : postList) {
+                CurrentPageItemVO currentPageItemVO = voBuilder.buildCurrentPageItemVO(post);
+
+                discussPostListVOList.add(currentPageItemVO);
+            }
+        }
+        // 封装分页信息和数据
+        currentPageVO.setTotalRows(totalRows);
+        currentPageVO.setCurrentPage(currentPage);
+        currentPageVO.setLimit(pageSize);
+        currentPageVO.setDiscussPosts(discussPostListVOList);
+        return ResultResponse.success(currentPageVO);
     }
 
     @Override

@@ -28,4 +28,6 @@ public class Role {
     private StatusEnum status;
 
     private Date createTime;
+
+    private Integer level;
 }

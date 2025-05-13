@@ -39,4 +39,6 @@ public class Permission {
     private Date createTime;
 
     private Date updateTime;
+
+    private Integer level;
 }

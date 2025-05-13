@@ -42,7 +42,7 @@ public class TokenHandler {
 
         UserToken onlineUserToken = userTokenService.findByUserId(userId);
         if (onlineUserToken != null) {
-            System.out.println("User already logged in. Deleting previous login information");
+//            System.out.println("User already logged in. Deleting previous login information");
             Boolean isDeleted = userTokenService.deleteUserTokenByUserId(onlineUserToken.getUserId());
             if (!isDeleted) {
                 throw new BusinessException(ResultCodeEnum.SQL_EXCEPTION);

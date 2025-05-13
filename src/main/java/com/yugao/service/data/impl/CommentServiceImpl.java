@@ -3,7 +3,7 @@ package com.yugao.service.data.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yugao.domain.post.Comment;
+import com.yugao.domain.comment.Comment;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.enums.StatusEnum;
 import com.yugao.mapper.post.CommentMapper;
@@ -11,7 +11,10 @@ import com.yugao.service.data.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -52,6 +55,47 @@ public class CommentServiceImpl implements CommentService {
         queryWrapper.in(Comment::getEntityType, CommentEntityTypeEnum.POST);
         queryWrapper.in(Comment::getEntityId, postIds);
         return commentMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public List<Comment> getCommentListByUserId(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getUserId, userId);
+        if (isAsc) {
+            queryWrapper.orderByAsc(Comment::getCreateTime);
+        } else {
+            queryWrapper.orderByDesc(Comment::getCreateTime);
+        }
+        Page<Comment> page = new Page<>(currentPage, pageSize);
+        return commentMapper.selectPage(page, queryWrapper).getRecords();
+    }
+
+    @Override
+    public List<Comment> getCommentListByPostId(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        if (postId != 0L)
+            queryWrapper.eq(Comment::getEntityId, postId);
+        if (isAsc) {
+            queryWrapper.orderByAsc(Comment::getCreateTime);
+        } else {
+            queryWrapper.orderByDesc(Comment::getCreateTime);
+        }
+        Page<Comment> page = new Page<>(currentPage, pageSize);
+        return commentMapper.selectPage(page, queryWrapper).getRecords();
+    }
+
+    @Override
+    public List<Comment> getCommentListByPostId(Long postId) {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        if (postId != 0L)
+            queryWrapper.eq(Comment::getEntityId, postId);
+        return commentMapper.selectList(queryWrapper);
     }
 
     /**
@@ -173,5 +217,50 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.updateById(comment) > 0;
     }
 
+    @Override
+    public Integer getTodayCommentCount() {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0);
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ge(Comment::getCreateTime, startOfDay);
+        queryWrapper.le(Comment::getCreateTime, now);
+        return commentMapper.selectCount(queryWrapper).intValue();
+    }
+
+    @Override
+    public Double getMonthGrowthRate() {
+
+        LocalDateTime firstDayOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime firstDayOfLastMonth = firstDayOfMonth.minusMonths(1);
+
+        Long currentMonthCount = commentMapper.selectCount(new LambdaQueryWrapper<Comment>()
+                .ge(Comment::getCreateTime, firstDayOfMonth)
+                .lt(Comment::getCreateTime, LocalDateTime.now()));
+        Long lastMonthCount = commentMapper.selectCount(new LambdaQueryWrapper<Comment>()
+                .ge(Comment::getCreateTime, firstDayOfLastMonth)
+                .lt(Comment::getCreateTime, firstDayOfMonth));
+
+        double growthRate = 0.0;
+        if (lastMonthCount != 0)
+            growthRate = ((double) (currentMonthCount - lastMonthCount) / lastMonthCount) * 100;
+
+        return growthRate;
+    }
+
+    public Map<Long, Comment> getCommentMapCacheByUserId(Long userId) {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.eq(Comment::getUserId, userId);
+        queryWrapper.orderByAsc(Comment::getCreateTime);
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        Map<Long, Comment> commentMapCache = new HashMap<>();
+        for (Comment comment : comments) {
+            commentMapCache.put(comment.getId(), comment);
+        }
+        return commentMapCache;
+    }
 
 }

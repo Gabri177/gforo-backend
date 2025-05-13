@@ -40,4 +40,12 @@ public class SecurityUtils {
         }
         return loginUser;
     }
+
+    public static Integer getUserLevel() {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser != null) {
+            return loginUser.getUserLevel();
+        }
+        return 0;
+    }
 }

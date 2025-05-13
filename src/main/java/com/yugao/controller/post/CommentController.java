@@ -5,6 +5,7 @@ import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.CommentBusinessService;
+import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ public class CommentController {
 
     @Autowired
     CommentBusinessService commentBusinessService;
+    @Autowired
+    private UserBusinessService userBusinessService;
 
     @PreAuthorize("hasAnyAuthority('comment:publish:topost')")
     @PostMapping("/topost")
@@ -55,5 +58,12 @@ public class CommentController {
             ) {
         System.out.println("updateComment: " + commonContentDTO);
         return commentBusinessService.updateComment(commonContentDTO);
+    }
+
+    @GetMapping("/location/{commentId}")
+    public ResponseEntity<ResultFormat> getComentLocation(
+            @PathVariable(name = "commentId") Long commentId
+    ) {
+        return commentBusinessService.getCommentLocation(commentId);
     }
 }

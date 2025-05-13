@@ -1,8 +1,9 @@
 package com.yugao.service.handler;
 
+import com.yugao.converter.CommentConverter;
 import com.yugao.converter.PostConverter;
 import com.yugao.converter.UserConverter;
-import com.yugao.domain.post.Comment;
+import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
 import com.yugao.exception.BusinessException;
@@ -77,18 +78,24 @@ public class PostHandler {
 
         List<CommentVO> commentVOList = new ArrayList<>();
         for (Comment comment : commentList) {
-            CommentVO vo = new CommentVO();
-            vo.setId(comment.getId());
-            vo.setContent(comment.getContent());
-            vo.setCreateTime(comment.getCreateTime());
-            vo.setAuthor(UserConverter.toSimpleVO(userMap.get(comment.getUserId())));
+            SimpleUserVO targetUserInfo = null;
+            SimpleUserVO author = UserConverter.toSimpleVO(userMap.get(comment.getUserId()));
+//            vo.setId(comment.getId());
+//            vo.setContent(comment.getContent());
+//            vo.setCreateTime(comment.getCreateTime());
+//            vo.setAuthor(UserConverter.toSimpleVO(userMap.get(comment.getUserId())));
 
             if (comment.getTargetId() != 0L) {
                 User targetUser = targetUserMap.get(comment.getTargetId());
                 if (targetUser != null) {
-                    vo.setTargetUserInfo(UserConverter.toSimpleVO(targetUser));
+                    targetUserInfo = UserConverter.toSimpleVO(targetUser);
                 }
             }
+            CommentVO vo = CommentConverter.toCommentVO(
+                    comment,
+                    targetUserInfo,
+                    author
+            );
             commentVOList.add(vo);
         }
         return commentVOList;
@@ -105,7 +112,7 @@ public class PostHandler {
     }
 
     public PostDetailVO getOriginalPostDetail(Long postId) {
-        System.out.println("getOriginalPostDetail: " + postId);
+//        System.out.println("getOriginalPostDetail: " + postId);
         DiscussPost originalPost = discussPostService.getDiscussPostById(postId);
         if (originalPost == null)
             throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);

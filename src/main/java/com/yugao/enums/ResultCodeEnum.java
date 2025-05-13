@@ -65,6 +65,8 @@ public enum ResultCodeEnum {
     BOARD_NOT_EXISTS(40049, "Board not exists"),
     SQL_DELETE_ERROR(40050, "SQL delete error"),
     ROLE_NAME_EXISTS(40051, "Role name already exists"),
+    PERMISSION_NOT_EXISTS(40052, "Permission not exists"),
+    ROLE_LEVEL_NOT_ENOUGH(40053, "You cannot assign a role with a lower level than your own"),
 
 
     // 系统异常

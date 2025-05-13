@@ -1,6 +1,6 @@
 package com.yugao.service.business.admin.impl;
 
-import com.yugao.domain.post.Comment;
+import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;

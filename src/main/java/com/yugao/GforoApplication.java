@@ -7,7 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GforoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GforoApplication.class, args);
+
+        try {
+            SpringApplication.run(GforoApplication.class, args);
+        } catch (Exception e) {
+            System.err.println("❌ 启动失败: " + e.getMessage());
+            e.printStackTrace();  // 打印完整异常堆栈
+        }
     }
 
 }

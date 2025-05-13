@@ -8,13 +8,14 @@ import org.springframework.http.ResponseEntity;
 
 public interface CommentBusinessService {
 
-    public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO);
+    ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO);
 
-    public ResponseEntity<ResultFormat> addCommentToComment(CommentToCommentDTO commentToCommentDTO);
+    ResponseEntity<ResultFormat> addCommentToComment(CommentToCommentDTO commentToCommentDTO);
 
-    public ResponseEntity<ResultFormat> deleteComment(Long commentId);
+    ResponseEntity<ResultFormat> deleteComment(Long commentId);
 
-    public ResponseEntity<ResultFormat> updateComment(CommonContentDTO commonContentDTO);
+    ResponseEntity<ResultFormat> updateComment(CommonContentDTO commonContentDTO);
 
+    ResponseEntity<ResultFormat> getCommentLocation(Long commentId);
 
 }

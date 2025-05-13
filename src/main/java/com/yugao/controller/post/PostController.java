@@ -25,7 +25,7 @@ public class PostController {
             @RequestParam (defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
             @RequestParam (defaultValue = "true", name = "isAsc", required = false) Boolean isAsc
             ) {
-        System.out.println("getPostDetail: " + postId + " " + currentPage + " " + pageSize + " " + isAsc);
+//        System.out.println("getPostDetail: " + postId + " " + currentPage + " " + pageSize + " " + isAsc);
         return postService.getPostDetail(postId, currentPage, pageSize, isAsc);
     }
 
@@ -36,7 +36,7 @@ public class PostController {
             @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
             @RequestParam(defaultValue = "0", name = "orderMode", required = false) Integer orderMode
             ) {
-        System.out.println("getPostsInBoard: " + boardId + " " + currentPage + " " + pageSize + " " + orderMode);
+//        System.out.println("getPostsInBoard: " + boardId + " " + currentPage + " " + pageSize + " " + orderMode);
         return postService.getPosts(0L, boardId, currentPage, pageSize, orderMode);
     }
 

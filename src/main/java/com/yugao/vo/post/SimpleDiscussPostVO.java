@@ -11,6 +11,8 @@ public class SimpleDiscussPostVO {
 
     private String title;
 
+    private String content;
+
     private Integer type; // 帖子类型，0-普通，1-置顶 2-精华
 
     private Integer status; // 帖子状态，0-正常，1-删除
@@ -18,4 +20,6 @@ public class SimpleDiscussPostVO {
     private Date createTime;
 
     private Double score;
+
+    private Long boardId; // 板块Id
 }

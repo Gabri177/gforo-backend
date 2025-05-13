@@ -39,4 +39,17 @@ public class DiscussPost {
     private Double score;
 
     private Long boardId; // 板块Id
+
+    public static DiscussPost createGhostDiscusspost() {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setId(-1L);
+        discussPost.setUserId(-1L);
+        discussPost.setTitle("Ghost");
+        discussPost.setContent("Ghost Post, The post has been deleted...");
+        discussPost.setType(0);
+        discussPost.setStatus(StatusEnum.DELETED);
+        discussPost.setCreateTime(new Date());
+        discussPost.setScore(0.0);
+        return discussPost;
+    }
 }
