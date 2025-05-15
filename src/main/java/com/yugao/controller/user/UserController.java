@@ -68,8 +68,10 @@ public class UserController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ResultFormat> logout() {
-        return userBusinessService.logout();
+    public ResponseEntity<ResultFormat> logout(
+            @RequestHeader(name="gforo-deviceId", required = false) String deviceId
+    ) {
+        return userBusinessService.logout(deviceId);
     }
 
     @GetMapping("/comments")

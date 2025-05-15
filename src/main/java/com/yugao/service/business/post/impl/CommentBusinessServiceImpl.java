@@ -15,6 +15,7 @@ import com.yugao.service.data.CommentService;
 import com.yugao.service.validator.CommentValidator;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.comment.CommentLocationVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CommentBusinessServiceImpl implements CommentBusinessService {
 
-    @Autowired
-    CommentService commentService;
-
-    @Autowired
-    CommentValidator commentValidator;
+    private final CommentService commentService;
+    private final CommentValidator commentValidator;
 
     @Override
     public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO) {

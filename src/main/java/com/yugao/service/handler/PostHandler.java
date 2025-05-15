@@ -15,6 +15,7 @@ import com.yugao.service.data.UserService;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.user.SimpleUserVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,23 +24,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class PostHandler {
 
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private LikeService likeService;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
+    private final UserService userService;
+    private final LikeService likeService;
+    private final UserHandler userHandler;
 
     private SimpleUserVO getAuthorInfo(Long userId) {
 
-        User user = userService.getUserById(userId);
+        // 111111111111111111111
+        User user = userHandler.getUser(userId);
         return UserConverter.toSimpleVO(user);
     }
 

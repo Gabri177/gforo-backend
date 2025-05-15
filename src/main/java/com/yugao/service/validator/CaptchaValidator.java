@@ -4,18 +4,19 @@ import com.yugao.constants.RedisKeyConstants;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CaptchaValidator {
 
     @Value("${captcha.verifiedSixDigVerifyCodeExpireTimeMinutes}")
     private long verifiedSixDigVerifyCodeExpireTimeMinutes;
 
-    @Autowired
-    private RedisService redisService;
+    private final RedisService redisService;
 
     // 判断是否已经通过数字验证码验证
     private boolean isSixDigitCaptchaVerified(String scene, String symbol) {

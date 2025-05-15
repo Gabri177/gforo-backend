@@ -9,11 +9,13 @@ import com.yugao.security.LoginUser;
 import com.yugao.service.data.UserService;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.handler.TokenHandler;
+import com.yugao.service.handler.UserHandler;
 import com.yugao.util.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,32 +31,28 @@ import java.util.List;
 
 // 因为有过滤器 先经过过滤器然后再被Security拦截
 // 两个同时起作用5
-@Component
+
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private TokenHandler tokenHandler;
-
-    @Autowired
-    private UserService userService;
-
+    private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
+    private final TokenHandler tokenHandler;
+    private final PermissionHandler permissionHandler;
+    private final UserHandler userHandler;
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    @Autowired
-    private PermissionHandler permissionHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
         String token = request.getHeader("Authorization");
+        String deviceId = request.getHeader("gforo-deviceId");
+
+        System.out.println("deviceId: " + deviceId);
         if (Arrays.stream(SecurityWhiteListConstants.URLS)
                 .anyMatch(pattern -> antPathMatcher.match(pattern, path)) && (
                         token == null || !token.startsWith("Bearer ")
@@ -68,9 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
                 // 查询 Redis 中的 access token
-                boolean res = tokenHandler.verifyUserAccessToken(token);
+                boolean res = tokenHandler.verifyUserAccessToken(token, deviceId);
                 if (res) {
-                    User user = userService.getUserById(Long.parseLong(userId));
+                    User user = userHandler.getUser(Long.parseLong(userId));
                     Integer userLevel = permissionHandler.getUserRoleLevel(user.getId());
 //                    log.info("log userLevel: {}", userLevel);
                     List<String> permissionCodes =

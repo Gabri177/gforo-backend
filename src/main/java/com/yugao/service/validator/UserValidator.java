@@ -9,7 +9,9 @@ import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.data.UserTokenService;
+import com.yugao.service.handler.UserHandler;
 import com.yugao.util.security.PasswordUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,16 +20,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class UserValidator {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private UserTokenService userTokenService;
+    private final UserService userService;
+    private final UserHandler userHandler;
 
     @Value("${change.email-change-interval-limit-days}")
     private Long emailChangeIntervalLimitDays;
@@ -36,7 +33,8 @@ public class UserValidator {
     private Long usernameChangeIntervalLimitDays;
 
     public User validateUserIdExists(Long userId) {
-        User userDomain = userService.getUserById(userId);
+        // 111111111111111
+        User userDomain = userHandler.getUser(userId);
         if (userDomain == null)
             throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         return userDomain;

@@ -16,5 +16,5 @@ public class GraphCaptchaDTO {
     private String scene; //场景
 
     @NotBlank(message = "symbol cannot be empty")
-    private String symbol; //标志位  通过场景和标志位确定验证码key的唯一性
+    private String symbol; //标志位  通过场景和标志位确定验证码key的唯一性 前端生成的设备Id
 }

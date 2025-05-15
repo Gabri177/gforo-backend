@@ -16,6 +16,7 @@ import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.admin.DetailUserInfoPageVO;
 import com.yugao.vo.admin.DetailedUserInfoVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,26 +25,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
 
-    @Autowired
-    private UserTokenService userTokenService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserValidator userValidator;
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private VOBuilder voBuilder;
-    @Autowired
-    private PermissionHandler permissionHandler;
+    private final UserService userService;
+    private final UserValidator userValidator;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
+    private final VOBuilder voBuilder;
+    private final PermissionHandler permissionHandler;
 
 
     @Override
@@ -108,9 +98,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     public ResponseEntity<ResultFormat> logout(Long userId) {
 
-        Boolean result = userTokenService.deleteUserTokenByUserId(userId);
-        if (!result)
-            throw new BusinessException(ResultCodeEnum.LOGOUT_WITHOUT_LOGIN);
+        // 逻辑改变
         return ResultResponse.success(null);
     }
 }

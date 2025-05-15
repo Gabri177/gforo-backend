@@ -4,15 +4,16 @@ import com.yugao.constants.RedisKeyConstants;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class EmailRateLimiter {
 
-    @Autowired
-    private RedisService redisService;
+    private final RedisService redisService;
 
     @Value("${email.active-account.request-interval-time-minutes}")
     private Long emailRequestIntervalTimeMinutes;

@@ -9,20 +9,18 @@ import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
+import com.yugao.service.handler.UserHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CommentValidator {
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
+    private final UserHandler userHandler;
 
     public Comment checkId(Long commentId){
 
@@ -49,7 +47,8 @@ public class CommentValidator {
                 throw new BusinessException(ResultCodeEnum.COMMENT_ENTITY_NOT_FOUND);
             }
             if (targetId != 0){
-                User targetUser = userService.getUserById(targetId);
+                // 1111111111111111111
+                User targetUser = userHandler.getUser(targetId);
                 if (targetUser == null)
                     throw new BusinessException(ResultCodeEnum.COMMENT_TARGET_NOT_FOUND);
             }

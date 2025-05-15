@@ -10,6 +10,7 @@ import com.yugao.service.business.admin.AdminPostService;
 import com.yugao.service.data.BoardPosterService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.util.security.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminPostServiceImpl implements AdminPostService {
 
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private BoardPosterService boardPosterService;
+    private final DiscussPostService discussPostService;
+    private final BoardPosterService boardPosterService;
 
     @Override
     public ResponseEntity<ResultFormat> deletePost(Long postId) {

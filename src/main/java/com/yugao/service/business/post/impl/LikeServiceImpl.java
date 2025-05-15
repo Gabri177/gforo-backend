@@ -14,21 +14,18 @@ import com.yugao.service.business.post.LikeService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.util.security.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class LikeServiceImpl implements LikeService {
 
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
+    private final RedisService redisService;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
 
     private void incrPostLike(Long postId){
         String key = RedisKeyConstants.buildLikeKeyWithTargetId(postId, LikeTypeEnum.POST);

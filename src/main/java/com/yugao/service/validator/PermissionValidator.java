@@ -4,16 +4,17 @@ import com.yugao.domain.permission.Permission;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.service.data.PermissionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PermissionValidator {
 
-    @Autowired
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
 
     public void checkPermissionIds(List<Long> permissionIds) {
 

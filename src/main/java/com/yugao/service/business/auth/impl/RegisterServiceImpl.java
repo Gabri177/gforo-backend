@@ -20,6 +20,7 @@ import com.yugao.service.data.UserService;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.util.mail.MailClientUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -27,33 +28,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
 
     @Value("${email.active-account.request-expire-time-minutes}")
     private Long emailRequestExpireTimeMinutes;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private EmailBuilder emailBuilder;
-
-    @Autowired
-    private MailClientUtil mailClient;
-
-    @Autowired
-    private EmailRateLimiter emailRateLimiter;
-
-    @Autowired
-    private CaptchaValidator captchaValidator;
-
-    @Autowired
-    private CaptchaService captchaService;
-    @Autowired
-    private UserRoleService userRoleService;
+    private final UserService userService;
+    private final RedisService redisService;
+    private final EmailBuilder emailBuilder;
+    private final MailClientUtil mailClient;
+    private final EmailRateLimiter emailRateLimiter;
+    private final CaptchaValidator captchaValidator;
+    private final CaptchaService captchaService;
+    private final UserRoleService userRoleService;
 
 
     @Override

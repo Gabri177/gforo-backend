@@ -18,6 +18,7 @@ import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
 import com.yugao.vo.post.PostPageVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,22 +28,14 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    @Autowired
-    private PostHandler postHandler;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private BoardService boardService;
-
-    @Autowired
-    private VOBuilder VOBuilder;
+    private final PostHandler postHandler;
+    private final CommentService commentService;
+    private final DiscussPostService discussPostService;
+    private final BoardService boardService;
+    private final VOBuilder VOBuilder;
 
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {

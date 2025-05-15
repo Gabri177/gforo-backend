@@ -6,19 +6,17 @@ import com.yugao.exception.BusinessException;
 import com.yugao.service.data.RoleService;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.util.security.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class RoleValidator {
 
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private PermissionHandler permissionHandler;
+    private final RoleService roleService;
 
     public void checkRoleIds(List<Long> roleIds) {
         List<Long> allRoleIds = roleService.getAllRoles()

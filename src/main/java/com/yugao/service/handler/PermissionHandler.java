@@ -5,25 +5,21 @@ import com.yugao.service.data.PermissionService;
 import com.yugao.service.data.RolePermissionService;
 import com.yugao.service.data.RoleService;
 import com.yugao.service.data.UserRoleService;
+import jdk.jfr.Registered;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PermissionHandler {
 
-    @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
-    private RolePermissionService rolePermissionService;
-
-    @Autowired
-    private PermissionService permissionService;
-    @Autowired
-    private RoleService roleService;
-
+    private final UserRoleService userRoleService;
+    private final RolePermissionService rolePermissionService;
+    private final PermissionService permissionService;
+    private final RoleService roleService;
 
     public List<String> getPermissionCodesByUserId(Long userId) {
 

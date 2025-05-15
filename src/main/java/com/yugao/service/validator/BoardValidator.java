@@ -4,16 +4,17 @@ import com.yugao.domain.board.Board;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.service.data.BoardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class BoardValidator {
 
-    @Autowired
-    private BoardService boardService;
+    private final BoardService boardService;
 
     public void checkBoardIds(List<Long> ids) {
         List<Long> boardIds = boardService.getAllBoard()

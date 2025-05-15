@@ -12,22 +12,19 @@ import com.yugao.service.data.BoardPosterService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.util.security.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminCommentServiceImpl implements AdminCommentService {
 
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private BoardPosterService boardPosterService;
+    private final CommentService commentService;
+    private final DiscussPostService discussPostService;
+    private final BoardPosterService boardPosterService;
 
     @Override
     public ResponseEntity<ResultFormat> getCommentList(Long boardId, Long currentPage, Integer pageSize, Boolean isAsc) {

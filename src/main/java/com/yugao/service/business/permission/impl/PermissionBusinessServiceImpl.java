@@ -24,6 +24,7 @@ import com.yugao.service.validator.UserValidator;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.auth.RoleDetailItemVO;
 import com.yugao.vo.auth.RoleDetailsVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,28 +33,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PermissionBusinessServiceImpl implements PermissionBusinessService {
 
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private VOBuilder voBuilder;
-    @Autowired
-    private UserValidator userValidator;
-    @Autowired
-    private RoleValidator roleValidator;
-    @Autowired
-    private BoardValidator boardValidator;
-    @Autowired
-    private UserRoleService userRoleService;
-    @Autowired
-    private BoardPosterService boardPosterService;
-    @Autowired
-    private PermissionHandler permissionHandler;
-    @Autowired
-    private PermissionService permissionService;
-    @Autowired
-    private PermissionValidator permissionValidator;
+    private final RoleService roleService;
+    private final VOBuilder voBuilder;
+    private final UserValidator userValidator;
+    private final RoleValidator roleValidator;
+    private final BoardValidator boardValidator;
+    private final UserRoleService userRoleService;
+    private final BoardPosterService boardPosterService;
+    private final PermissionHandler permissionHandler;
+    private final PermissionService permissionService;
+    private final PermissionValidator permissionValidator;
 
     @Override
     public ResponseEntity<ResultFormat> getRoleDetailList(){

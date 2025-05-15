@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -21,6 +22,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void set(String key, String value) {
+
         redisTemplate.opsForValue().set(key, value);
     }
 
@@ -91,6 +93,48 @@ public class RedisServiceImpl implements RedisService {
             int newValue = Integer.parseInt(value) - i;
             redisTemplate.opsForValue().set(key, String.valueOf(newValue));
         }
+    }
+
+    @Override
+    public void zAdd(String key, String value, double score) {
+
+        redisTemplate.opsForZSet().add(key, value, score);
+    }
+
+    @Override
+    public void expire(String key, long timeout, TimeUnit unit) {
+
+        redisTemplate.expire(key, timeout, unit);
+    }
+
+    @Override
+    public void zRemove(String key, String value) {
+
+        redisTemplate.opsForZSet().remove(key, value);
+    }
+
+    @Override
+    public void zScore(String key, String value) {
+
+        redisTemplate.opsForZSet().score(key, value);
+    }
+
+    @Override
+    public Long zCard(String key) {
+
+        return redisTemplate.opsForZSet().size(key);
+    }
+
+    @Override
+    public void zRemRangeByRank(String key, long start, long end) {
+
+        redisTemplate.opsForZSet().removeRange(key, start, end);
+    }
+
+    @Override
+    public Set<String> zRange(String key, long start, long end) {
+
+        return redisTemplate.opsForZSet().range(key, start, end);
     }
 
 }

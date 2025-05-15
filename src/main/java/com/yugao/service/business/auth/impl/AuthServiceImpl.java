@@ -21,33 +21,22 @@ import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.vo.auth.NewAccessTokenVO;
 import com.yugao.vo.auth.TokenInfoVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MailClientUtil mailClient;
-
-    @Autowired
-    private TokenHandler tokenHandler;
-
-    @Autowired
-    private CaptchaValidator captchaValidator;
-
-    @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
-    private EmailBuilder emailBuilder;
-
-    @Autowired
-    private CaptchaService captchaService;
+    private final UserService userService;
+    private final MailClientUtil mailClient;
+    private final TokenHandler tokenHandler;
+    private final CaptchaValidator captchaValidator;
+    private final UserValidator userValidator;
+    private final EmailBuilder emailBuilder;
+    private final CaptchaService captchaService;
 
 
     @Override
@@ -58,15 +47,15 @@ public class AuthServiceImpl implements AuthService {
         captchaValidator.validateAndClearGraphCaptchaVerifiedFlag(RedisKeyConstants.LOGIN, userRegisterDTO.getSymbol());
         User loginUser = userValidator.validateLoginCredentials(userRegisterDTO);
         // userValidator.validateIfIsBlocked(loginUser); // 目前status标志位已经不能用来验证是否验证过邮箱 这里的值要重新考虑
-        tokenHandler.invalidateExistingToken(loginUser.getId());
-        TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser);
+//        tokenHandler.invalidateExistingToken(loginUser.getId());
+        TokenInfoVO tokenInfoVO = tokenHandler.generateAndStoreToken(loginUser, userRegisterDTO.getSymbol());
         return ResultResponse.success(tokenInfoVO);
     }
 
     @Override
     public ResponseEntity<ResultFormat> refreshAccessToken(RefreshTokenDTO refreshTokenDTO) {
-//        System.out.println("refreshToken =================== " + refreshTokenDTO.getRefreshToken());
-        NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshTokenDTO.getRefreshToken());
+
+        NewAccessTokenVO newAccessTokenVO = tokenHandler.refreshAccessToken(refreshTokenDTO);
         return ResultResponse.success(newAccessTokenVO);
     }
 

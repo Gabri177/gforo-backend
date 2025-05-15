@@ -11,6 +11,7 @@ import com.yugao.service.base.RedisService;
 import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.util.captcha.VerificationUtil;
 import com.yugao.vo.captcha.CaptchaGraphVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CaptchaServiceImpl implements CaptchaService {
 
     @Value("${captcha.sixDigVerifyCodeExpireTimeMinutes}")
@@ -30,8 +32,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Value("${captcha.verified-expire-time-minutes}")
     private Long captchaVerifiedExpireTimeMinutes;
 
-    @Autowired
-    private RedisService redisService;
+    private final RedisService redisService;
 
     // 判断是否通过验证码
     public boolean verifyGraphCaptcha(String captchaId, String captchaCode) {

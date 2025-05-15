@@ -9,12 +9,14 @@ import com.yugao.domain.user.User;
 import com.yugao.service.business.post.LikeService;
 import com.yugao.service.data.*;
 import com.yugao.service.handler.PermissionHandler;
+import com.yugao.service.handler.UserHandler;
 import com.yugao.vo.auth.AccessControlVO;
 import com.yugao.vo.auth.RoleDetailItemVO;
 import com.yugao.vo.board.BoardInfosItemVO;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
 import com.yugao.vo.user.SimpleUserVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,37 +25,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class VOBuilder {
 
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private PermissionService permissionService;
-
-    @Autowired
-    private RolePermissionService rolePermissionService;
-
-    @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
-    private BoardPosterService boardPosterService;
-
-    @Autowired
-    private PermissionHandler permissionHandler;
-
-    @Autowired
-    private LikeService likeService;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
+    private final RoleService roleService;
+    private final PermissionService permissionService;
+    private final RolePermissionService rolePermissionService;
+    private final UserRoleService userRoleService;
+    private final BoardPosterService boardPosterService;
+    private final PermissionHandler permissionHandler;
+    private final LikeService likeService;
+    private final UserHandler userHandler;
 
 
     public BoardInfosItemVO buildBoardInfosItemVO(Board board) {
@@ -80,7 +64,8 @@ public class VOBuilder {
         BeanUtils.copyProperties(post, simpleDiscussPostVO);
         currentPageItemVO.setDiscussPosts(simpleDiscussPostVO);
 
-        User user = userService.getUserById(post.getUserId());
+        //111111111111111111111
+        User user = userHandler.getUser(post.getUserId());
         SimpleUserVO userInfoVO = UserConverter.toSimpleVO(user);
         currentPageItemVO.setUser(userInfoVO);
         //System.out.println("用户简单信息: " + userInfoVO);

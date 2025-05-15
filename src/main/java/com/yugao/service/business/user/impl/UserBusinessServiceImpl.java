@@ -22,6 +22,8 @@ import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.business.post.LikeService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
+import com.yugao.service.handler.TokenHandler;
+import com.yugao.service.handler.UserHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
@@ -35,6 +37,7 @@ import com.yugao.vo.user.SimpleUserVO;
 import com.yugao.vo.user.UserCommentsItemVO;
 import com.yugao.vo.user.UserCommentsVO;
 import com.yugao.vo.user.UserInfoVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,43 +50,22 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserBusinessServiceImpl implements UserBusinessService {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MailClientUtil mailClient;
-
-    @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
-    private EmailRateLimiter emailRateLimiter;
-
-    @Autowired
-    private EmailBuilder emailBuilder;
-
-    @Autowired
-    private DiscussPostService discussPostService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private CaptchaValidator captchaValidator;
-
-    @Autowired
-    private CaptchaService captchaService;
-
-    @Autowired
-    private UserTokenService userTokenService;
-
-    @Autowired
-    private VOBuilder voBuilder;
-
-    @Autowired
-    private LikeService likeService;
+    private final UserService userService;
+    private final MailClientUtil mailClient;
+    private final UserValidator userValidator;
+    private final EmailRateLimiter emailRateLimiter;
+    private final EmailBuilder emailBuilder;
+    private final DiscussPostService discussPostService;
+    private final CommentService commentService;
+    private final CaptchaValidator captchaValidator;
+    private final CaptchaService captchaService;
+    private final VOBuilder voBuilder;
+    private final LikeService likeService;
+    private final UserHandler userHandler;
+    private final TokenHandler tokenHandler;
 
 
     @Override
@@ -94,7 +76,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             curUserId = userId;
         User userDomain = userValidator.validateUserIdExists(curUserId);
         UserInfoVO userInfoVO;
-        if (SecurityUtils.mustGetLoginUserId().equals(curUserId))
+        if (SecurityUtils.mustGetLoginUserId().equals(userId))
             userInfoVO = UserConverter.toUserInfoVO(userDomain, false);
         else
             userInfoVO = UserConverter.toUserInfoVO(userDomain, true);
@@ -116,6 +98,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         if (!userService.updatePassword(userId, PasswordUtil.encode(newRawPassword)))
             throw new BusinessException(ResultCodeEnum.USER_PASSWORD_UPDATE_ERROR);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
@@ -126,6 +109,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         User userDomain = userValidator.validateUserIdExists(userId);
         if(!userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO))
             throw new BusinessException(ResultCodeEnum.USER_PROFILE_UPDATE_ERROR);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
@@ -171,6 +155,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userValidator.validateUsernameChangeInterval(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCodeEnum.USER_USERNAME_UPDATE_ERROR);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
@@ -244,7 +229,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> getPostsByUserId(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
 
-        User tarUser = userService.getUserById(userId);
+        // 1111111111111111111111111
+        User tarUser = userHandler.getUser(userId);
         if (tarUser == null)
             userId = SecurityUtils.mustGetLoginUserId();
 
@@ -276,14 +262,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public ResponseEntity<ResultFormat> logout() {
+    public ResponseEntity<ResultFormat> logout(String deviceId) {
 
         Long userId = SecurityUtils.mustGetLoginUserId();
-        Boolean isLogout = userTokenService.deleteUserTokenByUserId(userId);
-        System.out.println("isLogout: " + isLogout);
-        if (!isLogout) {
-            throw new BusinessException(ResultCodeEnum.LOGOUT_WITHOUT_LOGIN);
-        }
+//        Boolean isLogout = userTokenService.deleteUserTokenByUserId(userId);
+        tokenHandler.forceLogout(userId, deviceId);
         return ResultResponse.success(null);
     }
 }

@@ -7,6 +7,7 @@ public final class RedisKeyConstants {
     private RedisKeyConstants() {}
 
     public static final String SPLIT = ":";
+    public static final String USER = "user";
     // 使用场景
     public static final String LOGIN = "login";
     public static final String REGISTER = "register";
@@ -23,28 +24,35 @@ public final class RedisKeyConstants {
     private static final String SIX_DIGIT_CAPTCHA = "six_digit_captcha";
     private static final String SIX_DIGIT_CAPTCHA_VERIFIED = "six_digit_captcha_verify";
 
-    // 访问令牌 (Access Token) 相关
-    private static final String ACCESS_TOKEN = "access_token";
+    // 访问令牌相关
+    private static final String USER_SESSION = "user_session";
 
     // 请求账号激活邮件
     private static final String REQUEST_ACCOUNT_ACTIVATION_EMAIL = "request_account_activation_email";
 
+    // User信息的缓存
+    public static final String USER_INFO = "user";
+
     // 点赞相关
     private static final String LIKE = "like";
+
+
+
 
     // 图形验证码
     public static String buildGraphCaptchaKey(String captchaId) {
         return GRAPH_CAPTCHA + SPLIT + captchaId;
     }
 
+
     // 图形验证码验证通过: captcha_verified: + scene + symbol
     public static String buildGraphCaptchaVerifiedKey(String scene, String symbol) {
         return GRAPH_CAPTCHA_VERIFIED + SPLIT + scene + SPLIT + symbol;
     }
 
-    public static String buildUserIdAccessTokenKey(Long userId) {
-
-        return ACCESS_TOKEN + SPLIT + userId;
+    // 用户会话
+    public static String buildUserSessionKey(Long userId) {
+        return USER_SESSION + SPLIT + userId;
     }
 
     public static String buildSixDigitCaptchaKey(String scene, String symbol) {
@@ -73,6 +81,10 @@ public final class RedisKeyConstants {
     // 用来计算针对某个对象总的点赞数
     public static String buildLikeKeyWithTargetId(Long targetId, LikeTypeEnum likeType) {
         return LIKE + SPLIT + likeType.getValue() + SPLIT + targetId;
+    }
+
+    public static String buildUserCacheKey(Long userId) {
+        return USER_INFO + SPLIT + userId;
     }
 
 }

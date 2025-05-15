@@ -8,6 +8,7 @@ import com.yugao.service.business.board.BoardBusinessService;
 import com.yugao.service.data.BoardService;
 import com.yugao.vo.board.BoardInfosItemVO;
 import com.yugao.vo.board.BoardInfosVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BoardBusinessServiceImpl implements BoardBusinessService {
 
-    @Autowired
-    private BoardService boardService;
-
-    @Autowired
-    private VOBuilder VOBuilder;
+    private final BoardService boardService;
+    private final VOBuilder VOBuilder;
 
     @Override
     public ResponseEntity<ResultFormat> getBoardInfoList() {
