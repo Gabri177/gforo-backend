@@ -8,10 +8,8 @@ import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
-import com.yugao.service.data.UserService;
 import com.yugao.service.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

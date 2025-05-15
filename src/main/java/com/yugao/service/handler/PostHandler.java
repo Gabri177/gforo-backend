@@ -16,7 +16,6 @@ import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.user.SimpleUserVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

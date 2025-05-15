@@ -16,7 +16,6 @@ import com.yugao.service.validator.CommentValidator;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.comment.CommentLocationVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

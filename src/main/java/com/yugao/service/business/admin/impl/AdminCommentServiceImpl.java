@@ -13,7 +13,6 @@ import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;

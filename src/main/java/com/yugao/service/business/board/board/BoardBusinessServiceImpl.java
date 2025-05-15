@@ -9,7 +9,6 @@ import com.yugao.service.data.BoardService;
 import com.yugao.vo.board.BoardInfosItemVO;
 import com.yugao.vo.board.BoardInfosVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

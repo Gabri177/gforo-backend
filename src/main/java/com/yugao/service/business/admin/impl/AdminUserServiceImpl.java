@@ -18,7 +18,6 @@ import com.yugao.vo.admin.DetailUserInfoPageVO;
 import com.yugao.vo.admin.DetailedUserInfoVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

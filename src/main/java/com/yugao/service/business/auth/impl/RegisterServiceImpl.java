@@ -21,7 +21,6 @@ import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.util.mail.MailClientUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

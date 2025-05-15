@@ -19,8 +19,7 @@ public class CommentController {
 
     @Autowired
     CommentBusinessService commentBusinessService;
-    @Autowired
-    private UserBusinessService userBusinessService;
+
 
     @PreAuthorize("hasAnyAuthority('comment:publish:topost')")
     @PostMapping("/topost")

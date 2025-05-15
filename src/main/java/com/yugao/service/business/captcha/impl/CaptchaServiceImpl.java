@@ -12,7 +12,6 @@ import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.util.captcha.VerificationUtil;
 import com.yugao.vo.captcha.CaptchaGraphVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

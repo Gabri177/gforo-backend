@@ -5,9 +5,7 @@ import com.yugao.service.data.PermissionService;
 import com.yugao.service.data.RolePermissionService;
 import com.yugao.service.data.RoleService;
 import com.yugao.service.data.UserRoleService;
-import jdk.jfr.Registered;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

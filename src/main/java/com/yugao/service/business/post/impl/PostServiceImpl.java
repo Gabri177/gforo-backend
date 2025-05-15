@@ -19,7 +19,6 @@ import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
 import com.yugao.vo.post.PostPageVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

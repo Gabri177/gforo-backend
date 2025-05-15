@@ -4,10 +4,8 @@ import com.yugao.domain.permission.Role;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.service.data.RoleService;
-import com.yugao.service.handler.PermissionHandler;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
