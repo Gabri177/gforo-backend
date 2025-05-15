@@ -2,12 +2,13 @@ package com.yugao.constants;
 
 import com.yugao.enums.LikeTypeEnum;
 
+import java.time.LocalDate;
+
 public final class RedisKeyConstants {
 
     private RedisKeyConstants() {}
 
     public static final String SPLIT = ":";
-    public static final String USER = "user";
     // 使用场景
     public static final String LOGIN = "login";
     public static final String REGISTER = "register";
@@ -26,6 +27,12 @@ public final class RedisKeyConstants {
 
     // 访问令牌相关
     private static final String USER_SESSION = "user_session";
+
+    // 统计相关
+    public static final String ONLINE_USER = "online_user";
+    public static final String SYSTEM_PV_TOTAL = "system_pv_total";
+    private static final String SYSTEM_PV = "system_pv";
+    private static final String SYSTEM_UV = "system_uv";
 
     // 请求账号激活邮件
     private static final String REQUEST_ACCOUNT_ACTIVATION_EMAIL = "request_account_activation_email";
@@ -85,6 +92,14 @@ public final class RedisKeyConstants {
 
     public static String buildUserCacheKey(Long userId) {
         return USER_INFO + SPLIT + userId;
+    }
+
+    public static String buildSystemPvKey(LocalDate date) {
+        return SYSTEM_PV + SPLIT + date.toString();
+    }
+
+    public static String buildSystemUvKey(LocalDate date) {
+        return SYSTEM_UV + SPLIT + date.toString();
     }
 
 }

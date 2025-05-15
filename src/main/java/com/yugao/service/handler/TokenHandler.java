@@ -22,6 +22,7 @@ public class TokenHandler {
 
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
+    private final OnlineUserHandler onlineUserHandler;
 
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
@@ -110,6 +111,9 @@ public class TokenHandler {
             if (session.getAccessToken().equals(accessToken) &&
                     session.getDeviceId().equals(deviceId) &&
             session.getAccessExpireTimestamp() > System.currentTimeMillis()) {
+
+                onlineUserHandler.recordOnline(userId);
+                System.out.println("在线用户: " + userId);
                 return true;
             }
         }

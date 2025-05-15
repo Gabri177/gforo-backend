@@ -14,6 +14,7 @@ import com.yugao.service.data.BoardService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.handler.PostHandler;
+import com.yugao.service.handler.VisitStatisticsHandler;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.CurrentPageVO;
@@ -35,10 +36,12 @@ public class PostServiceImpl implements PostService {
     private final DiscussPostService discussPostService;
     private final BoardService boardService;
     private final VOBuilder VOBuilder;
+    private final VisitStatisticsHandler visitStatisticsHandler;
 
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
 
+        visitStatisticsHandler.recordVisit(SecurityUtils.getLoginUserId());
 //        System.out.println("getPostDetail: " + postId + " " + currentPage);
         PostPageVO postPageVO = new PostPageVO();
         postPageVO.setOriginalPost(postHandler.getOriginalPostDetail(postId));
@@ -96,6 +99,7 @@ public class PostServiceImpl implements PostService {
                                                  Integer pageSize,
                                                  Integer orderMode) {
 
+        visitStatisticsHandler.recordVisit(SecurityUtils.getLoginUserId());
         // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
         Long totalRows = discussPostService.getDiscussPostRows(userId, boardId);

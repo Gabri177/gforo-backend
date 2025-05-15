@@ -39,5 +39,13 @@ public interface RedisService {
 
     Set<String> zRange(String key, long start, long end);
 
+    void sAdd(String key, String value);
+
+    Long sCard(String key);
+
+    Set<String> sMembers(String key);
+
+    void sRemove(String key, String value);
+
 }
 

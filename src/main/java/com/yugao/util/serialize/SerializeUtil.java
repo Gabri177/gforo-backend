@@ -18,7 +18,7 @@ public class SerializeUtil {
 
     public static <T> T fromJson(String json, Class<T> clazz) {
         try {
-            System.out.println("json = " + json);
+//            System.out.println("json = " + json);
             return objectMapper.readValue(json, clazz);
         } catch (Exception e) {
             throw new BusinessException(ResultCodeEnum.DESERIALIZATION_ERROR);

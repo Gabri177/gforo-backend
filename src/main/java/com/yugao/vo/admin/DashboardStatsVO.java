@@ -7,8 +7,8 @@ public class DashboardStatsVO {
     private Long totalUsers;
     private Long totalPosts;
     private Long totalComments;
-    private Integer activeUsersToday;
-    private Integer visitToday;
+    private Long activeUsers;
+    private Long visitToday;
     private Integer newPostsToday;
     private Integer newCommentsToday;
     private Double userGrowthPercent;

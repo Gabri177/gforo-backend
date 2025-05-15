@@ -31,6 +31,7 @@ public class RedisServiceImpl implements RedisService {
         return redisTemplate.opsForValue().get(key);
     }
 
+
     @Override
     public void set(String key, String value, long timeout, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, value, timeout, unit);
@@ -135,6 +136,30 @@ public class RedisServiceImpl implements RedisService {
     public Set<String> zRange(String key, long start, long end) {
 
         return redisTemplate.opsForZSet().range(key, start, end);
+    }
+
+    @Override
+    public void sAdd(String key, String value) {
+
+        redisTemplate.opsForSet().add(key, value);
+    }
+
+    @Override
+    public Long sCard(String key) {
+
+        return redisTemplate.opsForSet().size(key);
+    }
+
+    @Override
+    public Set<String> sMembers(String key) {
+
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    @Override
+    public void sRemove(String key, String value) {
+
+        redisTemplate.opsForSet().remove(key, value);
     }
 
 }

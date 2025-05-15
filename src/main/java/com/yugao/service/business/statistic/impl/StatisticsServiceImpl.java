@@ -6,6 +6,9 @@ import com.yugao.service.business.statistic.StatisticsService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
+import com.yugao.service.handler.OnlineUserHandler;
+import com.yugao.service.handler.TokenHandler;
+import com.yugao.service.handler.VisitStatisticsHandler;
 import com.yugao.vo.admin.DashboardStatsVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final UserService userService;
     private final DiscussPostService discussPostService;
     private final CommentService commentService;
+    private final OnlineUserHandler onlineUserHandler;
+    private final VisitStatisticsHandler visitStatisticsHandler;
 
     @Override
     public ResponseEntity<ResultFormat> getDashboardStats() {
@@ -26,8 +31,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         vo.setTotalUsers(userService.getUserCount());
         vo.setTotalPosts(discussPostService.getDiscussPostCount());
         vo.setTotalComments(commentService.getCommentCountByPostId(0L));
-//        vo.setActiveUsersToday();
-//        vo.setVisitToday();
+        vo.setActiveUsers(onlineUserHandler.getOnlineCount());
+        vo.setVisitToday(visitStatisticsHandler.getTodayPv());
         vo.setNewPostsToday(discussPostService.getTodayDiscussPostCount());
         vo.setNewCommentsToday(commentService.getTodayCommentCount());
         vo.setUserGrowthPercent(userService.getMonthGrowthRate());

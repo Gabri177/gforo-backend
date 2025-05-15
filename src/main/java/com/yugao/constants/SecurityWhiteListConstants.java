@@ -11,6 +11,7 @@ public final class SecurityWhiteListConstants {
             "api/board/**",
             "/api/post/detail/*", // 未登录状态下放行帖子查看的接口
             "/api/post/board/*", // 未登录状态下放行帖子查看的接口
-            "/api/layout"
+            "/api/layout",
+            "/api/statistics",
     };
 }
