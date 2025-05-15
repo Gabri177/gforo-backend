@@ -120,7 +120,6 @@ public class PostServiceImpl implements PostService {
         if (!postList.isEmpty()) {
             for (DiscussPost post : postList) {
                 CurrentPageItemVO currentPageItemVO = VOBuilder.buildCurrentPageItemVO(post);
-
                 discussPostListVOList.add(currentPageItemVO);
             }
         }

@@ -31,4 +31,6 @@ public class UserInfoVO {
     private String nickname;
 
     private AccessControlVO accessControl;
+
+    private Integer getLikeCount;
 }

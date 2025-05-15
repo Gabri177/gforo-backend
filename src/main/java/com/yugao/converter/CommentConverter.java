@@ -38,7 +38,11 @@ public class CommentConverter {
         return comment;
     }
 
-    public static CommentVO toCommentVO(Comment comment, SimpleUserVO targetUserInfo, SimpleUserVO author) {
+    public static CommentVO toCommentVO(Comment comment,
+                                        SimpleUserVO targetUserInfo,
+                                        SimpleUserVO author,
+                                        Integer likeCount,
+                                        Boolean isLike) {
         CommentVO vo = new CommentVO();
         vo.setId(comment.getId());
         vo.setContent(comment.getContent());
@@ -46,6 +50,8 @@ public class CommentConverter {
         vo.setPostId(comment.getPostId());
         vo.setTargetUserInfo(targetUserInfo);
         vo.setAuthor(author);
+        vo.setLikeCount(likeCount);
+        vo.setIsLike(isLike);
         return vo;
     }
 }

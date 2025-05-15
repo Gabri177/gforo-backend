@@ -19,5 +19,9 @@ public interface RedisService {
     void setObjectTemmporarilyByMinutes(String key, Object value, long timeoutByMinutes);
 
     <T> T getObject(String key, Class<T> clazz);
+
+    void increment(String key, int i);
+
+    void decrement(String key, int i);
 }
 

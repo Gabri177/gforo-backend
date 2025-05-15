@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ResultFormat> handleBusinessException(BusinessException e) {
         System.out.println("BusinessException: " + e.getMessage());
+        e.printStackTrace();
         return ResultResponse.error(e.getResultCode());
     }
     // 系统异常处理

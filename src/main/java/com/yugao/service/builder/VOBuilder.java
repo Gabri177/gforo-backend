@@ -6,6 +6,7 @@ import com.yugao.domain.board.Board;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.permission.Role;
 import com.yugao.domain.user.User;
+import com.yugao.service.business.post.LikeService;
 import com.yugao.service.data.*;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.vo.auth.AccessControlVO;
@@ -51,6 +52,8 @@ public class VOBuilder {
     @Autowired
     private PermissionHandler permissionHandler;
 
+    @Autowired
+    private LikeService likeService;
 
 
     public BoardInfosItemVO buildBoardInfosItemVO(Board board) {
@@ -86,8 +89,7 @@ public class VOBuilder {
         //System.out.println("查找 (" + post.getTitle() + ") postId为: " + post.getId() + " 的评论数量: " + postCommentCount);
         currentPageItemVO.setCommentCount(postCommentCount);
 
-//                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
-//                map.put("likeCount", likeCount);
+        currentPageItemVO.setLikeCount(likeService.countLikePost(post.getId()));
         // 还没有封装点赞数量
 
         return currentPageItemVO;

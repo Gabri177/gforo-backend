@@ -8,9 +8,11 @@ import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
+import com.yugao.service.business.post.LikeService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
+import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.user.SimpleUserVO;
@@ -32,6 +34,9 @@ public class PostHandler {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     private SimpleUserVO getAuthorInfo(Long userId) {
 
@@ -80,10 +85,6 @@ public class PostHandler {
         for (Comment comment : commentList) {
             SimpleUserVO targetUserInfo = null;
             SimpleUserVO author = UserConverter.toSimpleVO(userMap.get(comment.getUserId()));
-//            vo.setId(comment.getId());
-//            vo.setContent(comment.getContent());
-//            vo.setCreateTime(comment.getCreateTime());
-//            vo.setAuthor(UserConverter.toSimpleVO(userMap.get(comment.getUserId())));
 
             if (comment.getTargetId() != 0L) {
                 User targetUser = targetUserMap.get(comment.getTargetId());
@@ -94,7 +95,9 @@ public class PostHandler {
             CommentVO vo = CommentConverter.toCommentVO(
                     comment,
                     targetUserInfo,
-                    author
+                    author,
+                    likeService.countLikeComment(comment.getId()),
+                    likeService.checkLikeComment(comment.getId())
             );
             commentVOList.add(vo);
         }
@@ -112,15 +115,18 @@ public class PostHandler {
     }
 
     public PostDetailVO getOriginalPostDetail(Long postId) {
-//        System.out.println("getOriginalPostDetail: " + postId);
         DiscussPost originalPost = discussPostService.getDiscussPostById(postId);
         if (originalPost == null)
             throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
-
         SimpleUserVO author = getAuthorInfo(originalPost.getUserId());
         List<CommentVO> replies = buildComments(postId);
+        Integer likeCount = likeService.countLikePost(originalPost.getId());
 
-        return PostConverter.toPostDetailVO(originalPost, author, replies);
+        return PostConverter.toPostDetailVO(originalPost,
+                author,
+                replies,
+                likeCount,
+                likeService.checkLikePost(originalPost.getId()));
     }
 
     public List<PostDetailVO> getCommentPostDetailList(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -136,17 +142,26 @@ public class PostHandler {
 
         List<PostDetailVO> postDetailVOList = new ArrayList<>();
         for (Comment comment : commentList) {
-            PostDetailVO postDetailVO = new PostDetailVO();
-            postDetailVO.setId(comment.getId());
-            postDetailVO.setContent(comment.getContent());
-            postDetailVO.setCreateTime(comment.getCreateTime());
+//            PostDetailVO postDetailVO= new PostDetailVO();
+//            postDetailVO.setId(comment.getId());
+//            postDetailVO.setContent(comment.getContent());
+//            postDetailVO.setCreateTime(comment.getCreateTime());
+//            postDetailVO.setLikeCount(likeService.countLikeComment(comment.getId()));
+//            postDetailVO.setIsLike(likeService.checkLikeComment(comment.getId()));
+//
+//            User user = userMap.get(comment.getUserId());
+//            postDetailVO.setAuthor(UserConverter.toSimpleVO(user));
+//
+//            List<CommentVO> replies = buildCommentsForPostComments(comment.getId());
+//            postDetailVO.setReplies(replies);
 
-            User user = userMap.get(comment.getUserId());
-            postDetailVO.setAuthor(UserConverter.toSimpleVO(user));
-
-            List<CommentVO> replies = buildCommentsForPostComments(comment.getId());
-            postDetailVO.setReplies(replies);
-
+            PostDetailVO postDetailVO = PostConverter.toPostDetailVO(
+                    comment,
+                    UserConverter.toSimpleVO(userMap.get(comment.getUserId())),
+                    buildCommentsForPostComments(comment.getId()),
+                    likeService.countLikeComment(comment.getId()),
+                    likeService.checkLikeComment(comment.getId())
+            );
             postDetailVOList.add(postDetailVO);
         }
         return postDetailVOList;

@@ -1,5 +1,6 @@
 package com.yugao.converter;
 
+import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
@@ -12,7 +13,9 @@ public class PostConverter {
 
     public static PostDetailVO toPostDetailVO(DiscussPost discussPost,
                                               SimpleUserVO auther,
-                                              List<CommentVO> replies) {
+                                              List<CommentVO> replies,
+                                              Integer likeCount,
+                                              Boolean isLike) {
 
         PostDetailVO vo = new PostDetailVO();
         vo.setId(discussPost.getId());
@@ -21,8 +24,27 @@ public class PostConverter {
         vo.setCreateTime(discussPost.getCreateTime());
         vo.setAuthor(auther);
         vo.setReplies(replies);
+        vo.setLikeCount(likeCount);
+        vo.setIsLike(isLike);
         return vo;
+    }
 
+    public static PostDetailVO toPostDetailVO(Comment comment,
+                                              SimpleUserVO auther,
+                                              List<CommentVO> replies,
+                                              Integer likeCount,
+                                              Boolean isLike) {
+
+        PostDetailVO vo = new PostDetailVO();
+        vo.setId(comment.getId());
+        vo.setTitle(null);
+        vo.setContent(comment.getContent());
+        vo.setCreateTime(comment.getCreateTime());
+        vo.setAuthor(auther);
+        vo.setReplies(replies);
+        vo.setLikeCount(likeCount);
+        vo.setIsLike(isLike);
+        return vo;
     }
 
     public static SimpleDiscussPostVO toSimpleDiscussPostVO(DiscussPost discussPost) {

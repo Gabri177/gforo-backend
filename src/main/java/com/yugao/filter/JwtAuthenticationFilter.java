@@ -54,12 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (Arrays.stream(SecurityWhiteListConstants.URLS).anyMatch(pattern -> antPathMatcher.match(pattern, path))) {
+        String token = request.getHeader("Authorization");
+        if (Arrays.stream(SecurityWhiteListConstants.URLS)
+                .anyMatch(pattern -> antPathMatcher.match(pattern, path)) && (
+                        token == null || !token.startsWith("Bearer ")
+                )) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.replace("Bearer ", "");
             String userId = jwtUtil.getUserIdWithToken(token);
@@ -81,7 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             permissionCodes
                     );
                     // BeanUtils.copyProperties(user, loginUser);
-//                    System.out.println("loginUser: " + loginUser);
+                    System.out.println("loginUser: " + loginUser);
                     // 将用户信息存入 SecurityContext 否则 Security 会认为用户未登录 并栏截请求
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());

@@ -19,6 +19,7 @@ import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.service.business.post.LikeService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
 import com.yugao.service.limiter.EmailRateLimiter;
@@ -82,6 +83,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Autowired
     private VOBuilder voBuilder;
 
+    @Autowired
+    private LikeService likeService;
+
 
     @Override
     public ResponseEntity<ResultFormat> getUserInfo(Long userId) {
@@ -98,6 +102,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userInfoVO.setPostCount(discussPostService.getDiscussPostRows(curUserId, 0L));
         userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
         userInfoVO.setAccessControl(voBuilder.buildAccessControlVO(curUserId));
+        userInfoVO.setGetLikeCount(likeService.countUserGetLikes(curUserId));
 //        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);
     }
@@ -223,7 +228,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
                     CommentConverter.toCommentVO(
                             comment,
                             targetUserInfo,
-                            UserConverter.toSimpleVO(authorMap.get(comment.getUserId()))
+                            UserConverter.toSimpleVO(authorMap.get(comment.getUserId())),
+                            likeService.countLikeComment(comment.getId()),
+                            likeService.checkLikeComment(comment.getId())
                     )
             );
             userCommentsItemVOs.add(userCommentsItemVO);

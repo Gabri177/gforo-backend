@@ -11,7 +11,7 @@ public class CurrentPageItemVO {
     private SimpleUserVO user;
 
     // 如果以后要加点赞数、评论数，在这里加字段
-    private Long likeCount;
+    private Integer likeCount;
 
     private Long commentCount;
 }

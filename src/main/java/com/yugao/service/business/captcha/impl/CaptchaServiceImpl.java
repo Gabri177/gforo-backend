@@ -75,7 +75,9 @@ public class CaptchaServiceImpl implements CaptchaService {
         // 存储验证码验证状态，设置配置中的分钟数量为有效期
         redisService.setTemporarilyByMinutes(RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()),
                 "true", captchaVerifiedExpireTimeMinutes);
-        System.out.println(dto.getScene() + " " + dto.getSymbol() + "等待用户登录");
+        System.out.println("验证码验证成功");
+        System.out.println("scene = " + dto.getScene() + ", symbol = " + dto.getSymbol());
+        System.out.println(RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()));
 
 //        System.out.println("Captcha correct :" +  RedisKeyConstants.buildGraphCaptchaVerifiedKey(dto.getScene(), dto.getSymbol()));
         return ResultResponse.success(null);

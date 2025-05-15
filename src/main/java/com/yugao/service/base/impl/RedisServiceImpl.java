@@ -71,4 +71,26 @@ public class RedisServiceImpl implements RedisService {
         }
     }
 
+    @Override
+    public void increment(String key, int i) {
+        String value = redisTemplate.opsForValue().get(key);
+        if (value == null) {
+            redisTemplate.opsForValue().set(key, String.valueOf(i));
+        } else {
+            int newValue = Integer.parseInt(value) + i;
+            redisTemplate.opsForValue().set(key, String.valueOf(newValue));
+        }
+    }
+
+    @Override
+    public void decrement(String key, int i) {
+        String value = redisTemplate.opsForValue().get(key);
+        if (value == null) {
+            redisTemplate.opsForValue().set(key, String.valueOf(-i));
+        } else {
+            int newValue = Integer.parseInt(value) - i;
+            redisTemplate.opsForValue().set(key, String.valueOf(newValue));
+        }
+    }
+
 }

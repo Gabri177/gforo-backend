@@ -25,6 +25,9 @@ public class CaptchaValidator {
 
     public void validateAndClearGraphCaptchaVerifiedFlag(String scene, String symbol) {
 
+        System.out.println("验证图形验证码是否通过验证");
+        System.out.println("scene = " + scene + ", symbol = " + symbol);
+        System.out.println(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol));
         boolean opr = redisService.hasKey(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol)) &&
                 "true".equals(redisService.get(RedisKeyConstants.buildGraphCaptchaVerifiedKey(scene, symbol)));
         if (!opr) {

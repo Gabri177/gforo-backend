@@ -67,6 +67,8 @@ public enum ResultCodeEnum {
     ROLE_NAME_EXISTS(40051, "Role name already exists"),
     PERMISSION_NOT_EXISTS(40052, "Permission not exists"),
     ROLE_LEVEL_NOT_ENOUGH(40053, "You cannot assign a role with a lower level than your own"),
+    INVALID_LIKE_TYPE(40054, "Invalid like type"),
+    INVALID_BOOLEAN_ENUM(70005, "Invalid boolean enum"),
 
 
     // 系统异常
