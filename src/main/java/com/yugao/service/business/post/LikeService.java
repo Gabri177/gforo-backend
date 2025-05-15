@@ -1,6 +1,5 @@
 package com.yugao.service.business.post;
 
-import com.yugao.enums.BooleanEnum;
 import com.yugao.result.ResultFormat;
 import org.springframework.http.ResponseEntity;
 

@@ -24,7 +24,6 @@ import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
-import com.yugao.service.validator.CommentValidator;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;

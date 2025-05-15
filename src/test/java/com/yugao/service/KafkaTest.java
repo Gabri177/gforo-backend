@@ -1,6 +1,5 @@
 package com.yugao.service;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

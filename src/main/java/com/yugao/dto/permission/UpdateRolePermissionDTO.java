@@ -3,7 +3,6 @@ package com.yugao.dto.permission;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.util.List;
 

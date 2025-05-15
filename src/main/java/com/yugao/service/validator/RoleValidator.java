@@ -1,7 +1,6 @@
 package com.yugao.service.validator;
 
 import com.yugao.domain.permission.Role;
-import com.yugao.domain.user.User;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.service.data.RoleService;

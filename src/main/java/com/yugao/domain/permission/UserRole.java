@@ -1,7 +1,6 @@
 package com.yugao.domain.permission;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yugao.enums.RoleEnum;
 import lombok.Data;
 
 @Data

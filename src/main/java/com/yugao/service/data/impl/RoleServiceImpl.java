@@ -9,8 +9,6 @@ import com.yugao.mapper.permission.RoleMapper;
 import com.yugao.service.data.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 import java.util.List;
 
 @Service

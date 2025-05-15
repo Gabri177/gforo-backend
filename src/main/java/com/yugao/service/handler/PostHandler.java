@@ -12,7 +12,6 @@ import com.yugao.service.business.post.LikeService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;
-import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.user.SimpleUserVO;
