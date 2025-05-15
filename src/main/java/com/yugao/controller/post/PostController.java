@@ -5,6 +5,7 @@ import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.PostService;
 import com.yugao.validation.ValidationGroups;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
+@RequiredArgsConstructor
 public class PostController {
 
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
 
     @GetMapping("/detail/{postId}")
     public ResponseEntity<ResultFormat> getPostDetail(

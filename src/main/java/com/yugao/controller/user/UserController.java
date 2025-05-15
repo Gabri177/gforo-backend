@@ -7,6 +7,7 @@ import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.user.UserBusinessService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserBusinessService userBusinessService;
+    private final UserBusinessService userBusinessService;
 
     @PreAuthorize("hasAnyAuthority('user:info:own')")
     @GetMapping("/info")

@@ -3,6 +3,7 @@ package com.yugao.controller.admin;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.admin.AdminCommentService;
 import com.yugao.service.business.post.CommentBusinessService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/comment")
+@RequiredArgsConstructor
 public class AdminCommentController {
 
-    @Autowired
-    private AdminCommentService adminCommentService;
+    private final AdminCommentService adminCommentService;
 
     // 当boardId为0时，表示查询所有的评论  默认查询所有针对帖子的评论
     @PreAuthorize("hasAnyAuthority('comment:info:any', 'comment:info:board')")

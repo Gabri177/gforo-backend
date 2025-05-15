@@ -3,6 +3,7 @@ package com.yugao.controller.captcha;
 import com.yugao.dto.captcha.GraphCaptchaDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.captcha.CaptchaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -11,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/captcha")
+@RequiredArgsConstructor
 public class CaptchaController {
 
-    @Autowired
-    private CaptchaService captchaService;
+    private final CaptchaService captchaService;
 
     /**
      * 获取验证码

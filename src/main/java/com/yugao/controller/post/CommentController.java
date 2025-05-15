@@ -7,6 +7,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.CommentBusinessService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.validation.ValidationGroups;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
+@RequiredArgsConstructor
 public class CommentController {
 
-    @Autowired
-    CommentBusinessService commentBusinessService;
+    private final CommentBusinessService commentBusinessService;
 
 
     @PreAuthorize("hasAnyAuthority('comment:publish:topost')")

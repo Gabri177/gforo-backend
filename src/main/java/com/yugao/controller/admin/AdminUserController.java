@@ -3,6 +3,7 @@ package com.yugao.controller.admin;
 import com.yugao.dto.admin.ForceChangePasswordDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.admin.AdminUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/user")
+@RequiredArgsConstructor
 public class AdminUserController {
 
     // 用户管理
@@ -22,8 +24,7 @@ public class AdminUserController {
     // 6. 用户修改密码
     // 9. 用户修改角色
 
-    @Autowired
-    private AdminUserService adminUserService;
+    private final AdminUserService adminUserService;
 
     // 只显示最高身份的用户比当前用户最高身份低的用户
     @PreAuthorize("hasAnyAuthority('user:info:any')")

@@ -4,6 +4,7 @@ import com.yugao.dto.admin.AddCarouselDTO;
 import com.yugao.dto.admin.UpdateCarouselDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.layout.LayoutService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/layout")
+@RequiredArgsConstructor
 public class LayoutController {
 
-    @Autowired
-    private LayoutService layoutService;
+    private final LayoutService layoutService;
 
     @GetMapping
     public ResponseEntity<ResultFormat> getCarousel(){

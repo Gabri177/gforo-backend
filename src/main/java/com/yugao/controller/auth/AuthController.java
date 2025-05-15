@@ -7,6 +7,7 @@ import com.yugao.dto.auth.UserForgetPasswordResetDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.auth.AuthService;
 import com.yugao.validation.ValidationGroups;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * 验证是否通过验证 并登录
