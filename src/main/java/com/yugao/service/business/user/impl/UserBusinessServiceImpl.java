@@ -14,8 +14,11 @@ import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
+import com.yugao.netty.registry.ChannelRegistry;
+import com.yugao.netty.util.WsUtil;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.security.LoginUser;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
@@ -66,13 +69,20 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private final UserHandler userHandler;
     private final TokenHandler tokenHandler;
 
+    private final WsUtil wsUtil;
+
 
     @Override
     public ResponseEntity<ResultFormat> getUserInfo(Long userId) {
 
+
         Long curUserId = SecurityUtils.mustGetLoginUserId();
         if (userId != null && !userId.equals(curUserId))
             curUserId = userId;
+
+        wsUtil.sendMsg(curUserId.toString(), "getUserInfo", "这是个测试");
+
+
         User userDomain = userValidator.validateUserIdExists(curUserId);
         UserInfoVO userInfoVO;
         if (SecurityUtils.mustGetLoginUserId().equals(userId))

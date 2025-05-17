@@ -48,6 +48,7 @@ public class TokenHandler {
             if (session.getDeviceId().equals(deviceId) && session.getRefreshToken().equals(refreshToken)) {
 
                 if (session.getRefreshExpireTimestamp() < System.currentTimeMillis()) {
+                    onlineUserHandler.recordOffline(Long.parseLong(userId));
                     redisService.zRemove(key, json);
                     throw new BusinessException(ResultCodeEnum.REFRESHMENT_EXPIRED);
                 }
@@ -102,7 +103,10 @@ public class TokenHandler {
     // 验证用户访问令牌
     public boolean verifyUserAccessToken(String accessToken, String deviceId) {
 
-        Long userId = Long.parseLong(jwtUtil.getUserIdWithToken(accessToken));
+        String res = jwtUtil.getUserIdWithToken(accessToken);
+        if (res == null)
+            return false;
+        Long userId = Long.parseLong(res);
         String key = RedisKeyConstants.buildUserSessionKey(userId);
         Set<String> sessions = redisService.zRange(key, 0, -1);
 
@@ -132,4 +136,18 @@ public class TokenHandler {
             }
         }
     }
+
+    public Boolean isUserDeviceSessionExist(Long userId, String deviceId) {
+
+        String key = RedisKeyConstants.buildUserSessionKey(userId);
+        Set<String> sessions = redisService.zRange(key, 0, -1);
+        for (String json : sessions) {
+            DeviceSession session = SerializeUtil.fromJson(json, DeviceSession.class);
+            if (session.getDeviceId().equals(deviceId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

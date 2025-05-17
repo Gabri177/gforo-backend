@@ -20,15 +20,17 @@ public class LoginUser implements UserDetails {
     private Boolean isSuperAdmin;
     private Boolean isAdmin;
     private Integer userLevel;
+    private String deviceId;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public LoginUser(Long userId, String username, String password, Integer userLevel, List<String> perms) {
+    public LoginUser(Long userId, String username, String password, Integer userLevel, String deviceId, List<String> perms) {
         this.id = userId;
         this.username = username;
         this.password = password;
         this.userLevel = userLevel;
         this.isSuperAdmin = userLevel == 0;
         this.isAdmin = userLevel == 1;
+        this.deviceId = deviceId;
         this.authorities = perms.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

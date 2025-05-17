@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null && token.startsWith("Bearer ") && deviceId != null) {
             token = token.replace("Bearer ", "");
             String userId = jwtUtil.getUserIdWithToken(token);
             if (userId != null) {
@@ -77,6 +77,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             user.getUsername(),
                             user.getPassword(),
                             userLevel,
+                            deviceId,
                             permissionCodes
                     );
                     // BeanUtils.copyProperties(user, loginUser);
