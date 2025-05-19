@@ -71,6 +71,9 @@ public enum ResultCodeEnum {
     INVALID_BOOLEAN_ENUM(70005, "Invalid boolean enum"),
     SERIALIZATION_ERROR(70006, "Serialization error"),
     DESERIALIZATION_ERROR(70007, "Deserialization error"),
+    INVALID_NOTIFICATION_TYPE(70008, "Invalid notification type"),
+    NOTIFICATION_NOT_FOUND(70009, "Notification not found"),
+    NOTIFICATION_ENTITY_TYPE_NOT_FOUND(70010, "Notification entity type not found"),
 
 
     // 系统异常

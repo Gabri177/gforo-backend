@@ -1,9 +1,8 @@
 package com.yugao.controller.like;
 
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.post.LikeService;
+import com.yugao.service.business.like.LikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,6 +1,7 @@
 package com.yugao.netty.handler;
 
 import com.yugao.enums.ResultCodeEnum;
+import com.yugao.service.business.session.SessionService;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
 import com.yugao.netty.registry.ChannelRegistry;
@@ -30,6 +31,7 @@ public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullH
     private final ChannelRegistry channelRegistry;
     private final TokenHandler tokenHandler;
     private final JwtUtil jwtUtil;
+    private final SessionService sessionService;
 
 
     @Override
@@ -56,7 +58,7 @@ public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullH
             sendResponse(ctx, ResultCodeEnum.ACCESSION_UNAUTHORIZED, HttpResponseStatus.UNAUTHORIZED);
             return;
             // Unauthorized
-        } else if (!tokenHandler.isUserDeviceSessionExist(Long.parseLong(userId), deviceId)){
+        } else if (!sessionService.isDeviceSessionExist(Long.parseLong(userId), deviceId)){
             sendResponse(ctx, ResultCodeEnum.REFRESHMENT_EXPIRED, HttpResponseStatus.UNAUTHORIZED);
             return;
         }
@@ -69,6 +71,7 @@ public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullH
             channelRegistry.remove(userId, deviceId);
         }
         channelRegistry.register(userId, deviceId, ctx.channel());
+        System.out.println("🔵 连接成功，注册信息：" + userId + "::" + deviceId);
         // TODO：你可以在这里做 token 验证、用户绑定、记录 userId-channel 映射等操作
 
 

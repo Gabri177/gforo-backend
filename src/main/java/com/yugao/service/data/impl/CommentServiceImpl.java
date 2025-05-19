@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,18 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.selectList(queryWrapper);
     }
 
+    @Override
+    public List<Comment> findCommentsByIds(List<Long> commentIds) {
+
+        if (commentIds == null || commentIds.isEmpty())
+            return Collections.emptyList();
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);
+        queryWrapper.in(Comment::getId, commentIds);
+        return commentMapper.selectList(queryWrapper);
+    }
+
     /**
      * 查询评论状态为正常的 针对帖子的评论信息
      * @param postId
@@ -156,7 +169,7 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findCommentListByPostIds(List<Long> postIds, Long current, Integer limit, Boolean isAsc) {
 
         if (postIds == null || postIds.isEmpty())
-            return null;
+            return Collections.emptyList();
 
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ne(Comment::getStatus, StatusEnum.DELETED);

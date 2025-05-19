@@ -1,4 +1,4 @@
-package com.yugao.vo.admin;
+package com.yugao.vo.statistics;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.yugao.service.business.user.impl;
 
+import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.CommentConverter;
 import com.yugao.converter.PostConverter;
@@ -14,23 +15,20 @@ import com.yugao.dto.user.UserInfoUpdateDTO;
 import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.netty.registry.ChannelRegistry;
-import com.yugao.netty.util.WsUtil;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.security.LoginUser;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
-import com.yugao.service.business.post.LikeService;
+import com.yugao.service.business.like.LikeService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.*;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.handler.UserHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
 import com.yugao.service.validator.UserValidator;
-import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.post.CurrentPageItemVO;
@@ -56,7 +54,6 @@ import java.util.stream.Collectors;
 public class UserBusinessServiceImpl implements UserBusinessService {
 
     private final UserService userService;
-    private final MailClientUtil mailClient;
     private final UserValidator userValidator;
     private final EmailRateLimiter emailRateLimiter;
     private final EmailBuilder emailBuilder;
@@ -68,8 +65,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private final LikeService likeService;
     private final UserHandler userHandler;
     private final TokenHandler tokenHandler;
-
-    private final WsUtil wsUtil;
+    private final EventHandler eventHandler;
 
 
     @Override
@@ -80,12 +76,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         if (userId != null && !userId.equals(curUserId))
             curUserId = userId;
 
-        wsUtil.sendMsg(curUserId.toString(), "getUserInfo", "这是个测试");
-
 
         User userDomain = userValidator.validateUserIdExists(curUserId);
+
         UserInfoVO userInfoVO;
-        if (SecurityUtils.mustGetLoginUserId().equals(userId))
+        if (SecurityUtils.mustGetLoginUserId().equals(userId) || userId == null)
             userInfoVO = UserConverter.toUserInfoVO(userDomain, false);
         else
             userInfoVO = UserConverter.toUserInfoVO(userDomain, true);
@@ -93,13 +88,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
         userInfoVO.setAccessControl(voBuilder.buildAccessControlVO(curUserId));
         userInfoVO.setGetLikeCount(likeService.countUserGetLikes(curUserId));
-//        System.out.println(userInfoVO);
         return ResultResponse.success(userInfoVO);
     }
 
     @Override
     public ResponseEntity<ResultFormat> changePassword(UserChangePasswordDTO userChangePasswordDTO) {
-//        System.out.println(userChangePasswordDTO);
 
         Long userId = SecurityUtils.mustGetLoginUserId();
         User userDomain = userValidator.validateUserIdExists(userId);
@@ -107,6 +100,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         String newRawPassword = userChangePasswordDTO.getNewPassword();
         if (!userService.updatePassword(userId, PasswordUtil.encode(newRawPassword)))
             throw new BusinessException(ResultCodeEnum.USER_PASSWORD_UPDATE_ERROR);
+        // 更新缓存
         userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
@@ -118,6 +112,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         User userDomain = userValidator.validateUserIdExists(userId);
         if(!userService.updateUserProfile(userDomain.getId(), userInfoUpdateDTO))
             throw new BusinessException(ResultCodeEnum.USER_PROFILE_UPDATE_ERROR);
+        // 更新缓存
         userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
@@ -125,20 +120,23 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> sendVerifyEmail(UserVerifyEmailDTO userVerifyEmailDTO) {
 
-//        System.out.println("userVerifyEmailDTO = " + userVerifyEmailDTO);
         Long currentUserId = SecurityUtils.mustGetLoginUserId();
         userValidator.validateEmailChangeInterval(currentUserId);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
+        userValidator.validateEmailExists(userVerifyEmailDTO.getEmail());
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.CHANGE_EMAIL,
                 userVerifyEmailDTO.getEmail());
         System.out.println("code = " + code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
-        mailClient.sendHtmlMail(
+        // 将事件发送到Kafka 异步消费
+        eventHandler.sendHtmlEmail(
                 userVerifyEmailDTO.getEmail(),
                 "GForo: Change Email",
-                html
+                html,
+                KafkaEventType.CHANGE_EMAIL
         );
+
         return ResultResponse.success(null);
     }
 
@@ -154,6 +152,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userValidator.validateUserIdExists(currentUserId);
         if (!userService.updateEmail(currentUserId, activeAccountDTO.getEmail()))
             throw new BusinessException(ResultCodeEnum.USER_EMAIL_UPDATE_ERROR);
+        // 更新缓存
+        userHandler.updateUserCache(currentUserId);
+
         return ResultResponse.success(null);
     }
 
@@ -164,6 +165,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userValidator.validateUsernameChangeInterval(userId);
         if (!userService.updateUsername(userId, userChangeUsernameDTO.getUsername()))
             throw new BusinessException(ResultCodeEnum.USER_USERNAME_UPDATE_ERROR);
+        // 更新缓存
         userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
@@ -238,7 +240,6 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public ResponseEntity<ResultFormat> getPostsByUserId(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
 
-        // 1111111111111111111111111
         User tarUser = userHandler.getUser(userId);
         if (tarUser == null)
             userId = SecurityUtils.mustGetLoginUserId();

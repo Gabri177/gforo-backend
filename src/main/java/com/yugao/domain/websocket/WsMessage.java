@@ -1,9 +1,10 @@
-package com.yugao.dto.websocket;
+package com.yugao.domain.websocket;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class WsMessageDTO {
+public class WsMessage {
 
     private String type;
     private String content;

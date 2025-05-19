@@ -23,4 +23,7 @@ public class CommentToCommentDTO {
 
     @NotNull(message = "PostId cannot be null")
     private Long postId;
+
+    @NotNull(message = "toCommentUserId cannot be null")
+    private Long toCommentUserId;
 }

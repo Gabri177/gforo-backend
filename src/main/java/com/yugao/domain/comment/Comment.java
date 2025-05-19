@@ -50,6 +50,5 @@ public class Comment {
 
     private Date createTime;
 
-    // 目前没有用到
     private Long postId;
 }

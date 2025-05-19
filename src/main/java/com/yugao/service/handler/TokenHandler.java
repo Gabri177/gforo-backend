@@ -6,9 +6,9 @@ import com.yugao.domain.user.User;
 import com.yugao.dto.auth.RefreshTokenDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.service.base.RedisService;
+import com.yugao.netty.registry.ChannelRegistry;
+import com.yugao.service.business.session.SessionService;
 import com.yugao.util.security.JwtUtil;
-import com.yugao.util.serialize.SerializeUtil;
 import com.yugao.vo.auth.NewAccessTokenVO;
 import com.yugao.vo.auth.TokenInfoVO;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ import java.util.Set;
 public class TokenHandler {
 
     private final JwtUtil jwtUtil;
-    private final RedisService redisService;
     private final OnlineUserHandler onlineUserHandler;
+    private final SessionService sessionService;
 
     @Value("${jwt.refreshTokenExpiredMillis}")
     private long refreshTokenExpireTimeMillis;
@@ -40,23 +40,22 @@ public class TokenHandler {
         if (userId == null) {
             throw new BusinessException(ResultCodeEnum.REFRESHMENT_UNAUTHORIZED);
         }
-        String key = RedisKeyConstants.buildUserSessionKey(Long.parseLong(userId));
-        Set<String> sessions = redisService.zRange(key, 0, -1);
+        Long userIdLong = Long.parseLong(userId);
+        String key = RedisKeyConstants.buildUserSessionKey(userIdLong);
+        Set<DeviceSession> sessions = sessionService.getSessions(userIdLong);
 
-        for (String json : sessions) {
-            DeviceSession session = SerializeUtil.fromJson(json, DeviceSession.class);
+        for (DeviceSession session : sessions) {
             if (session.getDeviceId().equals(deviceId) && session.getRefreshToken().equals(refreshToken)) {
 
                 if (session.getRefreshExpireTimestamp() < System.currentTimeMillis()) {
-                    onlineUserHandler.recordOffline(Long.parseLong(userId));
-                    redisService.zRemove(key, json);
+                    sessionService.removeSession(userIdLong, session);
                     throw new BusinessException(ResultCodeEnum.REFRESHMENT_EXPIRED);
                 }
 
                 String newAccessToken = jwtUtil.generateAccessToken(userId);
                 session.setAccessToken(newAccessToken);
                 session.setAccessExpireTimestamp(System.currentTimeMillis() + accessTokenExpireTimeMillis);
-                redisService.zAdd(key, SerializeUtil.toJson(session), session.getLoginTimestamp());
+                sessionService.updateSession(userIdLong, session);
 
                 NewAccessTokenVO newAccessTokenVO = new NewAccessTokenVO();
                 newAccessTokenVO.setNewAccessToken(newAccessToken);
@@ -85,12 +84,8 @@ public class TokenHandler {
         deviceSession.setAccessExpireTimestamp(accessExpireAt);
         deviceSession.setRefreshExpireTimestamp(refreshExpireAt);
 
-        String key = RedisKeyConstants.buildUserSessionKey(loginUser.getId());
-        redisService.zAdd(key, SerializeUtil.toJson(deviceSession), now);
-
-        long sessionCount = redisService.zCard(key);
-        if (sessionCount > 3)
-            redisService.zRemRangeByRank(key, 0, sessionCount - 3);
+        sessionService.updateSession(loginUser.getId(), deviceSession);
+        sessionService.keepSessionMax(loginUser.getId(), 3);
 
         // 返回token
         TokenInfoVO tokenInfoVO = new TokenInfoVO();
@@ -107,11 +102,9 @@ public class TokenHandler {
         if (res == null)
             return false;
         Long userId = Long.parseLong(res);
-        String key = RedisKeyConstants.buildUserSessionKey(userId);
-        Set<String> sessions = redisService.zRange(key, 0, -1);
+        Set<DeviceSession> sessions = sessionService.getSessions(userId);
 
-        for (String json : sessions) {
-            DeviceSession session = SerializeUtil.fromJson(json, DeviceSession.class);
+        for (DeviceSession session : sessions) {
             if (session.getAccessToken().equals(accessToken) &&
                     session.getDeviceId().equals(deviceId) &&
             session.getAccessExpireTimestamp() > System.currentTimeMillis()) {
@@ -126,28 +119,12 @@ public class TokenHandler {
 
     public void forceLogout(Long userId, String deviceId){
 
-        String key = RedisKeyConstants.buildUserSessionKey(userId);
-        Set<String> sessions = redisService.zRange(key, 0, -1);
-        for (String json : sessions) {
-            DeviceSession session = SerializeUtil.fromJson(json, DeviceSession.class);
+        Set<DeviceSession> sessions = sessionService.getSessions(userId);
+        for (DeviceSession session : sessions) {
             if (session.getDeviceId().equals(deviceId)) {
-                redisService.zRemove(key, json);
+                sessionService.removeSession(userId, session);
                 break;
             }
         }
     }
-
-    public Boolean isUserDeviceSessionExist(Long userId, String deviceId) {
-
-        String key = RedisKeyConstants.buildUserSessionKey(userId);
-        Set<String> sessions = redisService.zRange(key, 0, -1);
-        for (String json : sessions) {
-            DeviceSession session = SerializeUtil.fromJson(json, DeviceSession.class);
-            if (session.getDeviceId().equals(deviceId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

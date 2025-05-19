@@ -1,6 +1,7 @@
 package com.yugao.service.limiter;
 
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.enums.BooleanEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.base.RedisService;
@@ -21,13 +22,14 @@ public class EmailRateLimiter {
     private void setEmailActivationIntervalByMinutes(String email) {
         redisService.setTemporarilyByMinutes(
                 RedisKeyConstants.buildEmailActivationIntervalKey(email),
-                "true",
+                BooleanEnum.TRUE.getValue(),
                 emailRequestIntervalTimeMinutes);
     }
     // 判断请求激活的时间标志是否过期
     private boolean verifyEmailActivationInterval(String email) {
         return redisService.hasKey(RedisKeyConstants.buildEmailActivationIntervalKey(email)) &&
-                "true".equals(redisService.get(RedisKeyConstants.buildEmailActivationIntervalKey(email)));
+                BooleanEnum.TRUE.getValue()
+                        .equals(redisService.get(RedisKeyConstants.buildEmailActivationIntervalKey(email)));
     }
     // 删除邮箱激活请求的时间标志
     private void deleteEmailActivationInterval(String email) {

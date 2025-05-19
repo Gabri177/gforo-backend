@@ -6,6 +6,7 @@ import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.enums.StatusEnum;
 import com.yugao.vo.comment.CommentVO;
+import com.yugao.vo.comment.SimpleCommentVO;
 import com.yugao.vo.user.SimpleUserVO;
 
 import java.util.Date;
@@ -36,6 +37,14 @@ public class CommentConverter {
         comment.setCreateTime(new Date());
         comment.setPostId(dto.getPostId());
         return comment;
+    }
+
+    public static SimpleCommentVO toSimpleCommentVO(Comment comment){
+        SimpleCommentVO vo = new SimpleCommentVO();
+        vo.setId(comment.getId());
+        vo.setContent(comment.getContent());
+        vo.setPostId(comment.getPostId());
+        return vo;
     }
 
     public static CommentVO toCommentVO(Comment comment,

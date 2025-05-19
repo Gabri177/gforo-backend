@@ -6,7 +6,7 @@ import com.yugao.domain.board.Board;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.permission.Role;
 import com.yugao.domain.user.User;
-import com.yugao.service.business.post.LikeService;
+import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.*;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.handler.UserHandler;

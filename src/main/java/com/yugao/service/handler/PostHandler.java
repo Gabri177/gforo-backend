@@ -8,7 +8,7 @@ import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.service.business.post.LikeService;
+import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
 import com.yugao.service.data.UserService;

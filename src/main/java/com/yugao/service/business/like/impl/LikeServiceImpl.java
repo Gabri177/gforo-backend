@@ -1,18 +1,17 @@
-package com.yugao.service.business.post.impl;
+package com.yugao.service.business.like.impl;
 
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
-import com.yugao.enums.BooleanEnum;
-import com.yugao.enums.LikeTypeEnum;
-import com.yugao.enums.ResultCodeEnum;
+import com.yugao.enums.*;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.base.RedisService;
-import com.yugao.service.business.post.LikeService;
+import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.CommentService;
 import com.yugao.service.data.DiscussPostService;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +24,7 @@ public class LikeServiceImpl implements LikeService {
     private final RedisService redisService;
     private final DiscussPostService discussPostService;
     private final CommentService commentService;
+    private final EventHandler eventHandler;
 
     private void incrPostLike(Long postId){
         String key = RedisKeyConstants.buildLikeKeyWithTargetId(postId, LikeTypeEnum.POST);
@@ -77,10 +77,24 @@ public class LikeServiceImpl implements LikeService {
             redisService.delete(key);
             decrPostLike(postId);
             decrUserLike(targetUserId);
+//            Notification not = notificationService.get(
+//                    userId,
+//                    targetUserId,
+//                    postId,
+//                    NotificationEntityTypeEnum.POST,
+//                    NotificationTypeEnum.LIKE
+//            );
+//            if (not != null)
+//                eventProducer.send(
+//                        KafkaTopicConstants.NOTIFICATION_LIKE,
+//                        Event.create(KafkaEventType.DISLIKE_POST, "Notification", "null", not)
+//                );
         } else {
             redisService.set(key, BooleanEnum.TRUE.getValue());
             incrPostLike(postId);
             incrUserLike(targetUserId);
+            // 通知用户
+            eventHandler.notifyLike(targetUserId, postId, true);
         }
 
         return ResultResponse.success(null);
@@ -110,6 +124,8 @@ public class LikeServiceImpl implements LikeService {
             redisService.set(key, BooleanEnum.TRUE.getValue());
             incrCommentLike(commentId);
             incrUserLike(targetUserId);
+            // 通知用户
+            eventHandler.notifyLike(targetUserId, commentId, false);
         }
         return ResultResponse.success(null);
     }

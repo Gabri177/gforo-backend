@@ -1,14 +1,12 @@
-package com.yugao.controller.post;
+package com.yugao.controller.comment;
 
 import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.result.ResultFormat;
-import com.yugao.service.business.post.CommentBusinessService;
-import com.yugao.service.business.user.UserBusinessService;
+import com.yugao.service.business.comment.CommentBusinessService;
 import com.yugao.validation.ValidationGroups;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;

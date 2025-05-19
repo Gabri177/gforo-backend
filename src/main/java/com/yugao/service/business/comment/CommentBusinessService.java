@@ -1,4 +1,4 @@
-package com.yugao.service.business.post;
+package com.yugao.service.business.comment;
 
 import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;

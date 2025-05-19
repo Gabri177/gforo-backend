@@ -1,5 +1,6 @@
 package com.yugao.service.business.auth.impl;
 
+import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.user.User;
@@ -17,9 +18,9 @@ import com.yugao.service.business.auth.RegisterService;
 import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.data.UserRoleService;
 import com.yugao.service.data.UserService;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
 import com.yugao.service.validator.CaptchaValidator;
-import com.yugao.util.mail.MailClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +36,11 @@ public class RegisterServiceImpl implements RegisterService {
     private final UserService userService;
     private final RedisService redisService;
     private final EmailBuilder emailBuilder;
-    private final MailClientUtil mailClient;
     private final EmailRateLimiter emailRateLimiter;
     private final CaptchaValidator captchaValidator;
     private final CaptchaService captchaService;
     private final UserRoleService userRoleService;
+    private final EventHandler eventHandler;
 
 
     @Override
@@ -66,12 +67,21 @@ public class RegisterServiceImpl implements RegisterService {
                 userDomain,
                 emailRequestExpireTimeMinutes
         );
+
+        // 构建邮件内容
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.ACTIVATE_ACCOUNT ,
                 userDomain.getEmail());
         String link = emailBuilder.buildActivationLink(userDomain.getEmail(), code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code, link);
-        mailClient.sendHtmlMail(userDomain.getEmail(), "GForo: Active Account", html);
+
+        // 将事件发送到Kafka 异步消费
+        eventHandler.sendHtmlEmail(
+                userDomain.getEmail(),
+                "GForo: Active Account",
+                html,
+                KafkaEventType.REGISTER_ACCOUNT);
+
         return ResultResponse.success(null);
     }
 

@@ -37,6 +37,7 @@ public class CaptchaValidator {
     }
 
     public void validateSixDigitCaptcha(String scene, String symbol, String code) {
+        System.out.println("验证数字验证码是否通过验证" + scene + ", symbol = " + symbol + ", code = " + code);
         String redisSixDigitCaptcha = redisService.get(RedisKeyConstants.buildSixDigitCaptchaKey(scene, symbol));
         System.out.println("redisSixDigitCaptcha = " + redisSixDigitCaptcha);
         boolean res = code.equals(redisSixDigitCaptcha);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -35,6 +36,10 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
     @Override
     public List<DiscussPost> getDiscussPostsByIds(List<Long> ids) {
+
+        if(ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         LambdaQueryWrapper<DiscussPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.ne(DiscussPost::getStatus, StatusEnum.DELETED);

@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    // TODO: 这个应该是返回比用户等级低的用户总数 或者重新创建一个函数专门用来统计有等级限制情况下的用户数量
     @Override
     public Long getUserCount() {
 

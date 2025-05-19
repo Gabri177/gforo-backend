@@ -1,4 +1,4 @@
-package com.yugao.service.business.post;
+package com.yugao.service.business.like;
 
 import com.yugao.result.ResultFormat;
 import org.springframework.http.ResponseEntity;

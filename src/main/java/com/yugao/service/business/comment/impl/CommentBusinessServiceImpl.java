@@ -1,17 +1,17 @@
-package com.yugao.service.business.post.impl;
+package com.yugao.service.business.comment.impl;
 
 import com.yugao.converter.CommentConverter;
 import com.yugao.domain.comment.Comment;
 import com.yugao.dto.comment.CommentToCommentDTO;
 import com.yugao.dto.comment.CommentToPostDTO;
 import com.yugao.dto.comment.CommonContentDTO;
-import com.yugao.enums.CommentEntityTypeEnum;
+import com.yugao.enums.*;
 import com.yugao.exception.BusinessException;
-import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
-import com.yugao.service.business.post.CommentBusinessService;
+import com.yugao.service.business.comment.CommentBusinessService;
 import com.yugao.service.data.CommentService;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.service.validator.CommentValidator;
 import com.yugao.util.security.SecurityUtils;
 import com.yugao.vo.comment.CommentLocationVO;
@@ -30,6 +30,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
 
     private final CommentService commentService;
     private final CommentValidator commentValidator;
+    private final EventHandler eventHandler;
 
     @Override
     public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO) {
@@ -39,6 +40,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         commentValidator.check(newComment);
 //        System.out.println("addCommentToPost: " + newComment);
         commentService.addComment(newComment);
+
+        eventHandler.notifyComment(commentToPostDTO.getToPostUserId(), newComment, true);
+
         return ResultResponse.success(null);
     }
 
@@ -50,6 +54,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         commentValidator.check(newComment);
 //        System.out.println("addCommentToComment: " + newComment);
         commentService.addComment(newComment);
+
+        eventHandler.notifyComment(commentToCommentDTO.getToCommentUserId(), newComment, false);
+
         return ResultResponse.success(null);
     }
 
@@ -89,6 +96,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
          * 最好按照时间进行比较排序
          * 这个后面修改 是counts 的 filter 的逻辑比较问题 应该用 Date 而不是 id
          */
+        // TODO: 此外这里是基于新评论是数据库自增 所以当并发情况下可能存在问题 最好按照时间进行比较排序
         CommentLocationVO commentLocationVO = new CommentLocationVO();
         commentLocationVO.setIsPostFloor(false);
         Comment curComment = commentValidator.checkId(commentId);

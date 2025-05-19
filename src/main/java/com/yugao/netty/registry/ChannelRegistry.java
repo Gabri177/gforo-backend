@@ -33,7 +33,10 @@ public class ChannelRegistry {
     public void remove(String userId, String roomId) {
         ConcurrentHashMap<String, Channel> roomMap = userRoomChannelMap.get(userId);
         if (roomMap != null) {
+            Channel ch = getChannel(userId, roomId);
             roomMap.remove(roomId);
+            if (ch != null && ch.isActive())
+                ch.close();
             // 如果该用户没有房间了，清除外层 map（可选）
             if (roomMap.isEmpty()) {
                 userRoomChannelMap.remove(userId, roomMap);
@@ -56,5 +59,11 @@ public class ChannelRegistry {
     public List<Channel> getUserChannels(String userId) {
         ConcurrentHashMap<String, Channel> roomMap = userRoomChannelMap.get(userId);
         return roomMap != null ? new ArrayList<>(roomMap.values()) : Collections.emptyList();
+    }
+
+    public List<Channel> getAllChannels() {
+        return userRoomChannelMap.values().stream()
+                .flatMap(roomMap -> roomMap.values().stream())
+                .collect(Collectors.toList());
     }
 }

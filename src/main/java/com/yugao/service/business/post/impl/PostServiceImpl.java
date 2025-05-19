@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
         Long userId = SecurityUtils.mustGetLoginUserId();
         if (!boardService.isExistBoard(newDiscussPostDTO.getBoardId()))
             throw new BusinessException(ResultCodeEnum.BOARD_NOT_FOUND);
-        DiscussPost newDiscussPost = DiscussPostConverter.newDiscussPostDTOtoDiscussPost(newDiscussPostDTO, userId);
+        DiscussPost newDiscussPost = DiscussPostConverter.toDiscussPost(newDiscussPostDTO, userId);
         discussPostService.addDiscussPost(newDiscussPost);
         return ResultResponse.success(null);
     }

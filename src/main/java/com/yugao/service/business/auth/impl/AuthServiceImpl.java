@@ -1,5 +1,6 @@
 package com.yugao.service.business.auth.impl;
 
+import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.user.User;
 import com.yugao.dto.auth.RefreshTokenDTO;
@@ -14,7 +15,7 @@ import com.yugao.service.business.auth.AuthService;
 import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.data.UserService;
 import com.yugao.service.builder.EmailBuilder;
-import com.yugao.util.mail.MailClientUtil;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.service.handler.TokenHandler;
 import com.yugao.service.validator.CaptchaValidator;
@@ -30,12 +31,12 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
-    private final MailClientUtil mailClient;
     private final TokenHandler tokenHandler;
     private final CaptchaValidator captchaValidator;
     private final UserValidator userValidator;
     private final EmailBuilder emailBuilder;
     private final CaptchaService captchaService;
+    private final EventHandler eventHandler;
 
 
     @Override
@@ -64,15 +65,19 @@ public class AuthServiceImpl implements AuthService {
         captchaValidator.validateAndClearGraphCaptchaVerifiedFlag(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getSymbol());
+
+        // 构造邮件内容
         User user = userService.getUserByEmail(userForgetPasswordDTO.getEmail());
         if (user == null)
             throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.FORGET_PASSWORD,
                 userForgetPasswordDTO.getEmail());
-//        System.out.println("reset password code =================== " + code);
         String html = emailBuilder.buildSixCodeVerifyHtml(code);
-        mailClient.sendHtmlMail(user.getEmail(), "GForo: Reset Password", html);
+
+        // 将邮件发送的事件放入Kafka队列
+        eventHandler.sendHtmlEmail(user.getEmail(), "GForo: Reset Password", html,
+                KafkaEventType.FORGET_PASSWORD);
         return ResultResponse.success(null);
     }
 
