@@ -7,18 +7,13 @@ import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.user.User;
-import com.yugao.domain.websocket.WsMessage;
-import com.yugao.netty.registry.ChannelRegistry;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.data.NotificationService;
-import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.serialize.SerializeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor

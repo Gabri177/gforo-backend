@@ -1,6 +1,5 @@
 package com.yugao.service.business.notification.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.converter.CommentConverter;
 import com.yugao.converter.DiscussPostConverter;
@@ -12,8 +11,6 @@ import com.yugao.dto.notification.AdminAddNotificationDTO;
 import com.yugao.dto.notification.AdminUpdateNotificationDTO;
 import com.yugao.enums.NotificationEntityTypeEnum;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.mapper.notification.NotificationMapper;
-import com.yugao.mapper.notification.NotificationReadMapper;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.notification.NotificationBusinessService;

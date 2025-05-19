@@ -6,7 +6,6 @@ import com.yugao.domain.user.User;
 import com.yugao.dto.auth.RefreshTokenDTO;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.netty.registry.ChannelRegistry;
 import com.yugao.service.business.session.SessionService;
 import com.yugao.util.security.JwtUtil;
 import com.yugao.vo.auth.NewAccessTokenVO;

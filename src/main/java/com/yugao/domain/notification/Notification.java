@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.yugao.enums.NotificationEntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 import com.yugao.enums.StatusEnum;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;

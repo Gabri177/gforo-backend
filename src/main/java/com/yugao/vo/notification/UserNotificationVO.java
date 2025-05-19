@@ -1,7 +1,6 @@
 package com.yugao.vo.notification;
 
 import com.yugao.enums.NotificationEntityTypeEnum;
-import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.comment.SimpleCommentVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
 import com.yugao.vo.user.SimpleUserVO;

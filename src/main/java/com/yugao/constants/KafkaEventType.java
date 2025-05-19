@@ -1,6 +1,5 @@
 package com.yugao.constants;
 
-import org.apache.kafka.common.protocol.types.Field;
 
 public final class KafkaEventType {
 

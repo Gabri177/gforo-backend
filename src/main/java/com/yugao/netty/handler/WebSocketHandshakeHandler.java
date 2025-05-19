@@ -29,7 +29,6 @@ import java.util.Optional;
 public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final ChannelRegistry channelRegistry;
-    private final TokenHandler tokenHandler;
     private final JwtUtil jwtUtil;
     private final SessionService sessionService;
 

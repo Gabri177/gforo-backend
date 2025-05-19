@@ -1,6 +1,5 @@
 package com.yugao.domain.websocket;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
