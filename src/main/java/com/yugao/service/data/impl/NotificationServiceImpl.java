@@ -60,7 +60,7 @@ public class NotificationServiceImpl implements NotificationService {
         queryWrapper.eq(Notification::getTargetId, not.getTargetId());
         queryWrapper.eq(Notification::getEntityId, not.getEntityId());
         queryWrapper.eq(Notification::getEntityType, not.getEntityType());
-        queryWrapper.eq(Notification::getType, not.getType());
+        queryWrapper.ne(Notification::getType, NotificationTypeEnum.SYSTEM);
         queryWrapper.ne(Notification::getStatus, StatusEnum.DELETED);
 
         Long count = notificationMapper.selectCount(queryWrapper);
