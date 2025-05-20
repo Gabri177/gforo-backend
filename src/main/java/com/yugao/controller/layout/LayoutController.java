@@ -24,8 +24,8 @@ public class LayoutController {
         return layoutService.getAllCarousels();
     }
 
-    @PreAuthorize("principal.isSuperAdmin")
-    @PostMapping("/carousel")
+    @PreAuthorize("hasAnyAuthority('carousel:update:any')")
+    @PutMapping("/carousel")
     public ResponseEntity<ResultFormat> updateCarousel(
             @Validated @RequestBody UpdateCarouselDTO updateCarouselDTO
             ){
@@ -33,8 +33,8 @@ public class LayoutController {
         return layoutService.updateCarousel(updateCarouselDTO);
     }
 
-    @PreAuthorize("principal.isSuperAdmin")
-    @PutMapping("/carousel")
+    @PreAuthorize("hasAnyAuthority('carousel:add:any')")
+    @PostMapping("/carousel")
     public ResponseEntity<ResultFormat> addCarousel(
             @Validated @RequestBody AddCarouselDTO addCarouselDTO
     ){
@@ -42,7 +42,7 @@ public class LayoutController {
         return layoutService.addCarousel(addCarouselDTO);
     }
 
-    @PreAuthorize("principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('carousel:delete:any')")
     @DeleteMapping("/carousel/{id}")
     public ResponseEntity<ResultFormat> deleteCarousel(
             @PathVariable(value = "id") Long id

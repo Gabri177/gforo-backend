@@ -14,6 +14,7 @@ public class AdminCommentController {
 
     private final AdminCommentService adminCommentService;
 
+    // TODO:这个可能没有意义
     // 当boardId为0时，表示查询所有的评论  默认查询所有针对帖子的评论
     @PreAuthorize("hasAnyAuthority('comment:info:any', 'comment:info:board')")
     @GetMapping("/info/{boardId}")

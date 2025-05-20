@@ -75,6 +75,7 @@ public class UserController {
         return userBusinessService.logout(deviceId);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:comments')")
     @GetMapping("/comments")
     public ResponseEntity<ResultFormat> getComments(
             @RequestParam(name="currentPage", defaultValue = "1") Integer currentPage,
@@ -85,6 +86,7 @@ public class UserController {
         return userBusinessService.getCommentsByUserId(currentPage, pageSize, isAsc);
     }
 
+    @PreAuthorize("hasAnyAuthority('user:posts')")
     @GetMapping("/posts")
     public ResponseEntity<ResultFormat> getPosts(
             @RequestParam(name="userId", required = false) Long userId,

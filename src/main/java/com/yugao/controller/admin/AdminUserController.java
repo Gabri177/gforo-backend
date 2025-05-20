@@ -39,7 +39,7 @@ public class AdminUserController {
     }
 
     // 超级管理员可以更改任意用户的密码
-    @PreAuthorize("hasAnyAuthority('user:password:change:any') && principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('user:password:change:any')")
     @PutMapping("/change-password/{userId}")
     public ResponseEntity<ResultFormat> changePassword(
             @PathVariable("userId") Long userId,
@@ -68,7 +68,7 @@ public class AdminUserController {
     }
 
     // 删除任意的用户 超级管理员的权利
-    @PreAuthorize("hasAnyAuthority('user:delete:any') && principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('user:delete:any')")
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ResultFormat> deleteUser(
             @PathVariable("userId") Long userId
@@ -77,7 +77,7 @@ public class AdminUserController {
     }
 
     // 登出任意的用户 超级管理员的权利
-    @PreAuthorize("hasAnyAuthority('user:logout:any') && principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('user:logout:any')")
     @DeleteMapping("/logout/{userId}")
     public ResponseEntity<ResultFormat> logout(
             @PathVariable("userId") Long userId

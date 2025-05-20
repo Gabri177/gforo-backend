@@ -18,7 +18,7 @@ public class AdminNotificationController {
     private final NotificationBusinessService notificationBusinessService;
 
     @GetMapping
-    @PreAuthorize("principal.isAdmin || principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('sys-notification:info:any')")
     public ResponseEntity<ResultFormat> getNotification(
             @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
@@ -29,7 +29,7 @@ public class AdminNotificationController {
     }
 
     @PostMapping
-    @PreAuthorize("principal.isAdmin || principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('sys-notification:publish:any')")
     public ResponseEntity<ResultFormat> publishNotification(
             @Validated @RequestBody AdminAddNotificationDTO dto
             ){
@@ -42,7 +42,7 @@ public class AdminNotificationController {
     // 中所有对应id的条目都要删除
     // TODO: 如果发布者更改了通知内容 中所有对应id的条目都要删除
     @PutMapping
-    @PreAuthorize("principal.isAdmin || principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('sys-notification:modify:any')")
     public ResponseEntity<ResultFormat> modifyNotification(
             @Validated @RequestBody AdminUpdateNotificationDTO dto
             ){
@@ -51,7 +51,7 @@ public class AdminNotificationController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("principal.isAdmin || principal.isSuperAdmin")
+    @PreAuthorize("hasAnyAuthority('sys-notification:delete:any')")
     public ResponseEntity<ResultFormat> deleteNotification(
             @PathVariable("id") Long id
     ){
