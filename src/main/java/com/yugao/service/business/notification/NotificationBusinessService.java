@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface NotificationBusinessService {
 
+    ResponseEntity<ResultFormat> isUnreadNotification();
+
     ResponseEntity<ResultFormat> getNotification(Integer currentPage, Integer pageSize, Boolean isAsc);
 
     ResponseEntity<ResultFormat> publishNotification(AdminAddNotificationDTO dto);

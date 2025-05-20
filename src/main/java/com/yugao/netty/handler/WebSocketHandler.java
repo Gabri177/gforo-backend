@@ -1,6 +1,7 @@
 package com.yugao.netty.handler;
 
 import com.yugao.domain.websocket.WsMessage;
+import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.registry.ChannelRegistry;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.business.session.SessionService;
@@ -43,12 +44,12 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
 
         switch (type) {
             case "ping":
-                System.out.println("收到心跳：" + text);
-                wsUtil.sendMsg(userId, "pong", null);
+//                System.out.println("收到心跳：" + text);
+                wsUtil.sendMsg(userId, WsMessageTypeEnum.HEARTBEAT, null);
                 break;
             case "chat":
-                System.out.println("收到消息：" + text);
-                wsUtil.sendMsg(userId, "chat", message);
+                System.out.println("收到消息 chat：" + text);
+                wsUtil.sendMsg(userId, WsMessageTypeEnum.CHAT, message);
                 break;
             default:
                 System.out.println("未识别的消息类型: " + type);

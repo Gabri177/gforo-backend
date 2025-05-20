@@ -14,6 +14,11 @@ public class NotificationController {
 
     private final NotificationBusinessService notificationBusinessService;
 
+    @GetMapping("/is-unread")
+    public ResponseEntity<ResultFormat> isUnreadNotification(){
+        return notificationBusinessService.isUnreadNotification();
+    }
+
     @PreAuthorize("hasAnyAuthority('notification:all:own')")
     @GetMapping
     public ResponseEntity<ResultFormat> getAllMyNotification(

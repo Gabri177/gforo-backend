@@ -13,6 +13,7 @@ import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.post.DiscussPostService;
 import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.PermissionHandler;
+import com.yugao.service.handler.UserHandler;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.security.PasswordUtil;
 import com.yugao.util.security.SecurityUtils;
@@ -35,6 +36,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final CommentService commentService;
     private final VOBuilder voBuilder;
     private final PermissionHandler permissionHandler;
+    private final UserHandler userHandler;
 
 
     @Override
@@ -58,10 +60,6 @@ public class AdminUserServiceImpl implements AdminUserService {
         detailUserInfoPageVO.setCurrentPage(currentPage);
         detailUserInfoPageVO.setLimit(pageSize);
         detailUserInfoPageVO.setTotalRows(userService.getUserCountWithLowerLevel(userId, roleLevel));
-        System.out.println("当前用户ID: " + currentId);
-        System.out.println("当前用户等级: " + roleLevel);
-        System.out.println("比当前用户身份低的用户数量: " + detailUserInfoPageVO.getTotalRows());
-        System.out.println("用户ids" + detailedUserInfoVOS.stream().map(DetailedUserInfoVO::getId).toList());
         detailUserInfoPageVO.setUserInfoList(detailedUserInfoVOS);
         return ResultResponse.success(detailUserInfoPageVO);
     }
@@ -81,6 +79,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         User domain = userValidator.validateUserIdExists(userId);
         userService.updateStatus(userId, StatusEnum.NORMAL);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
@@ -89,6 +88,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         User domain = userValidator.validateUserIdExists(userId);
         userService.updateStatus(userId, StatusEnum.DISABLED);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
@@ -97,12 +97,14 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         User domain = userValidator.validateUserIdExists(userId);
         userService.updateStatus(userId, StatusEnum.DELETED);
+        userHandler.updateUserCache(userId);
         return ResultResponse.success(null);
     }
 
     @Override
     public ResponseEntity<ResultFormat> logout(Long userId) {
 
+        // TODO: 这里需要删除用户的session
         // 逻辑改变
         return ResultResponse.success(null);
     }

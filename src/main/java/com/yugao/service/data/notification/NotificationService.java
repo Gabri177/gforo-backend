@@ -10,6 +10,10 @@ public interface NotificationService {
 
     Long getNotificationCount(Long targetId);
 
+    Long getReadNotificationCount(Long targetId);
+
+    Long getUnreadNotificationCount(Long targetId);
+
     Notification getNotificationById(Long id);
 
     List<Notification> getAllNotifications(Long targetId);

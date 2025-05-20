@@ -7,6 +7,7 @@ import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.user.User;
+import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.data.notification.NotificationService;
 import com.yugao.util.mail.MailClientUtil;
@@ -37,13 +38,13 @@ public class EventConsumer {
             case KafkaEventType.LIKE_COMMENT:
                 System.out.println("收到点赞评论的通知 通知UserId: " + not.getTargetId());
                 wsUtil.sendMsg(
-                        not.getTargetId().toString(),"LIKE_COMMENT", "你有新的评论被点赞了");
+                        not.getTargetId().toString(),WsMessageTypeEnum.LIKE_COMMENT, "你有新的评论被点赞了");
                 notificationService.addNotification(not);
                 break;
             case KafkaEventType.LIKE_POST:
                 System.out.println("收到点赞帖子的通知 通知UserId: " + not.getTargetId());
                 wsUtil.sendMsg(
-                        not.getTargetId().toString(),"LIKE_POST", "你有新的帖子被点赞了");
+                        not.getTargetId().toString(),WsMessageTypeEnum.LIKE_POST, "你有新的帖子被点赞了");
                 notificationService.addNotification(not);
                 break;
 //            case KafkaEventType.DISLIKE_POST:
@@ -65,13 +66,13 @@ public class EventConsumer {
             case KafkaEventType.COMMENT_TO_POST:
                 System.out.println("收到回复帖子的通知 通知UserId: " + not.getTargetId());
                 wsUtil.sendMsg(
-                        not.getTargetId().toString(), "COMMENT_POST", "你的帖子被回复了");
+                        not.getTargetId().toString(), WsMessageTypeEnum.COMMENT_POST, "你的帖子被回复了");
                 notificationService.addNotification(not);
                 break;
             case KafkaEventType.COMMENT_TO_COMMENT:
                 System.out.println("收到回复评论的通知 通知UserId: " + not.getTargetId());
                 wsUtil.sendMsg(
-                        not.getTargetId().toString(), "COMMENT_COMMENT", "你的评论被回复了");
+                        not.getTargetId().toString(), WsMessageTypeEnum.COMMENT_COMMENT, "你的评论被回复了");
                 notificationService.addNotification(not);
                 break;
         }
@@ -95,7 +96,7 @@ public class EventConsumer {
             return;
         System.out.println("用户的实体被有权限的人删除 通知UserId: " + not.getTargetId());
         wsUtil.sendMsg(
-                not.getTargetId().toString(), "DELETE_MESSAGE", "你的内容被删除了");
+                not.getTargetId().toString(), WsMessageTypeEnum.DELETE_ENTITY, "你的内容被删除了");
         notificationService.addNotification(not);
     }
 
@@ -105,7 +106,7 @@ public class EventConsumer {
         Notification not = event.getPayloadAs(Notification.class, objectMapper);
         if (not == null)
             return;
-        wsUtil.sendMsgToAll("SYSTEM_MESSAGE", SerializeUtil.toJson(not));
+        wsUtil.sendMsgToAll(WsMessageTypeEnum.SYSTEM, SerializeUtil.toJson(not));
 
     }
 
@@ -130,6 +131,6 @@ public class EventConsumer {
             return;
         System.out.println("刷新用户信息 通知UserId: " + user.getId());
         wsUtil.sendMsg(
-                user.getId().toString(), "REFRESH_USER_INFO", "你的信息被修改了");
+                user.getId().toString(), WsMessageTypeEnum.REFRESH_USER_INFO, "你的信息被修改了");
     }
 }

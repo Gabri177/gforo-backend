@@ -34,6 +34,15 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
     private final VOBuilder voBuilder;
 
     @Override
+    public ResponseEntity<ResultFormat> isUnreadNotification() {
+        Long userId = SecurityUtils.mustGetLoginUserId();
+        if (notificationService.getUnreadNotificationCount(userId) > 0) {
+            return ResultResponse.success(null);
+        }
+        return ResultResponse.error(ResultCodeEnum.NO_UNREAD_NOTIFICATIONS);
+    }
+
+    @Override
     public ResponseEntity<ResultFormat> getNotification(Integer currentPage, Integer pageSize, Boolean isAsc) {
 
         Long totalRows = notificationService.getNotificationCount(0L);
@@ -67,6 +76,8 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
 
         Notification notification = NotificationConverter.toNotification(dto);
         notificationService.updateNotification(notification);
+        notificationReadService.deleteByNotificationId(notification.getId());
+        eventHandler.notifySystem(notification);
         return ResultResponse.success(null);
     }
 
@@ -85,13 +96,6 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
                 .stream()
                 .map(NotificationConverter::toUserNotificationVO)
                 .toList();
-        /// //////////////////////////////////
-
-        System.out.println("userId = " + userId);
-        System.out.println("allIds = " + res.stream().map(UserNotificationVO::getId).toList());
-
-
-        /// //////////////////////////////////
         res = voBuilder.assembleUserNotificationListVO(res, userId);
         return ResultResponse.success(
                 UserNotificationPageVO.builder()
@@ -110,18 +114,12 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
                 .stream()
                 .map(NotificationConverter::toUserNotificationVO)
                 .toList();
-
-        /// //////////////////////////////
-        System.out.println("userId = " + userId);
-        System.out.println("unReadIds = " + res.stream().map(UserNotificationVO::getId).toList());
-
-        /// /////////////////////////////
         res = voBuilder.assembleUserNotificationListVO(res, userId);
         return ResultResponse.success(
                 UserNotificationPageVO.builder()
                         .currentPage(currentPage)
                         .pageSize(pageSize)
-                        .totalRows(notificationService.getNotificationCount(userId))
+                        .totalRows(notificationService.getUnreadNotificationCount(userId))
                         .notificationList(res)
                         .build()
         );
@@ -139,7 +137,7 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
                 UserNotificationPageVO.builder()
                         .currentPage(currentPage)
                         .pageSize(pageSize)
-                        .totalRows(notificationService.getNotificationCount(userId))
+                        .totalRows(notificationService.getReadNotificationCount(userId))
                         .notificationList(res)
                         .build()
         );

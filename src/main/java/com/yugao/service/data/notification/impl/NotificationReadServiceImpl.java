@@ -55,4 +55,12 @@ public class NotificationReadServiceImpl implements NotificationReadService {
         if (total != notificationReads.size())
             throw new BusinessException(ResultCodeEnum.SQL_UPDATING_ERROR);
     }
+
+    @Override
+    public void deleteByNotificationId(Long notificationId) {
+
+        LambdaQueryWrapper<NotificationRead> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(NotificationRead::getNotificationId, notificationId);
+        notificationReadMapper.delete(queryWrapper);
+    }
 }

@@ -2,12 +2,14 @@ package com.yugao.service.handler;
 
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.KafkaTopicConstants;
+import com.yugao.converter.NotificationConverter;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.user.User;
+import com.yugao.dto.notification.AdminAddNotificationDTO;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.enums.NotificationEntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
@@ -34,7 +36,10 @@ public class EventHandler {
         // 创建通知对象
         Notification not = new Notification();
         not.setSenderId(currentUserId);
-        not.setType(NotificationTypeEnum.COMMENT);
+        if (comment.getEntityType() == CommentEntityTypeEnum.POST)
+            not.setType(NotificationTypeEnum.COMMENT_POST);
+        else
+            not.setType(NotificationTypeEnum.COMMENT_COMMENT);
         not.setTargetId(toUserId);
         not.setEntityType(NotificationEntityTypeEnum.COMMENT);
         not.setEntityId(comment.getId());

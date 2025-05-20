@@ -13,4 +13,6 @@ public interface NotificationReadService {
     void add(NotificationRead notificationRead);
 
     void add(List<NotificationRead> notificationReads);
+
+    void deleteByNotificationId(Long notificationId);
 }

@@ -76,6 +76,7 @@ public enum ResultCodeEnum {
     NOTIFICATION_ENTITY_TYPE_NOT_FOUND(70010, "Notification entity type not found"),
     BUILDIN_ROLE_NOT_MODIFIABLE(70011, "Built-in role cannot be modified"),
     PARAMETER_ERROR(70012, "Parameter error"),
+    NO_UNREAD_NOTIFICATIONS(70013, "You have unread notifications"),
 
 
     // 系统异常

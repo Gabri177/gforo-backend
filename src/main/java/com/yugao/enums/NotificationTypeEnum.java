@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NotificationTypeEnum implements IEnum<Integer> {
 
-    COMMENT(1, "评论"),
+    COMMENT_COMMENT(0, "评论评论"),
+    COMMENT_POST(1, "帖子评论"),
     LIKE(2, "点赞"),
     FOLLOW(3, "关注"),
     MESSAGE(4, "私信"),

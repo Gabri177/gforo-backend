@@ -41,4 +41,28 @@ public interface NotificationMapper extends BaseMapper<Notification> {
             @Param("targetId") Long targetId
     );
 
+    @Select("""
+    SELECT COUNT(*)
+    FROM notification n
+    INNER JOIN notification_read r
+        ON n.id = r.notification_id
+    WHERE r.user_id = #{targetId}
+      AND n.status = 1
+    """)
+    Long getReadNotificationCount(@Param("targetId") Long targetId);
+
+
+    @Select("""
+    SELECT COUNT(*)
+    FROM notification n
+    LEFT JOIN notification_read r
+        ON n.id = r.notification_id AND r.user_id = #{targetId}
+    WHERE r.notification_id IS NULL
+      AND (
+        (n.target_id = #{targetId} AND n.status = 1)
+        OR (n.type = 5 AND n.status = 1)
+      )
+    """)
+    Long getUnreadNotificationCount(@Param("targetId") Long targetId);
+
 }

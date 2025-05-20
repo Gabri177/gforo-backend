@@ -31,6 +31,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public Long getReadNotificationCount(Long targetId) {
+
+        return notificationMapper.getReadNotificationCount(targetId);
+    }
+
+    @Override
+    public Long getUnreadNotificationCount(Long targetId) {
+
+        return notificationMapper.getUnreadNotificationCount(targetId);
+    }
+
+    @Override
     public Notification getNotificationById(Long id) {
 
         Notification notification = notificationMapper.selectById(id);
