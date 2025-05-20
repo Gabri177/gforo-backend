@@ -3,6 +3,7 @@ package com.yugao.controller.statistic;
 
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.statistic.StatisticsService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +21,15 @@ public class StatisticsController {
     @GetMapping
     public ResponseEntity<ResultFormat> getDashboardStats() {
         return statisticsService.getDashboardStats();
+    }
+
+    @GetMapping("/weekly-activity")
+    public ResponseEntity<ResultFormat> getWeeklyActivity() {
+        return statisticsService.getLast7DaysActivity();
+    }
+
+    @GetMapping("/monthly-registration")
+    public ResponseEntity<ResultFormat> getMonthlyRegistration() {
+        return statisticsService.getMonthlyRegistrationAndActiveStats();
     }
 }

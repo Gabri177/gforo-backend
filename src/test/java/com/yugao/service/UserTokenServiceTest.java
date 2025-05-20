@@ -1,6 +1,6 @@
 package com.yugao.service;
 
-import com.yugao.service.data.UserTokenService;
+import com.yugao.service.data.auth.UserTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

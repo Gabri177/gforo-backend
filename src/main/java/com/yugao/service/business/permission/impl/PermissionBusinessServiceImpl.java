@@ -14,7 +14,8 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.permission.PermissionBusinessService;
-import com.yugao.service.data.*;
+import com.yugao.service.data.permission.*;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.validator.BoardValidator;
 import com.yugao.service.validator.PermissionValidator;
@@ -44,6 +45,8 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
     private final PermissionHandler permissionHandler;
     private final PermissionService permissionService;
     private final PermissionValidator permissionValidator;
+    private final RolePermissionService rolePermissionService;
+    private final EventHandler eventHandler;
 
     @Override
     public ResponseEntity<ResultFormat> getRoleDetailList(){
@@ -96,6 +99,7 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
                     .toList()
             );
         }
+        eventHandler.notifyRefreshUserInfo(updateUserRoleDTO.getUserId());
         return ResultResponse.success(null);
     }
 
@@ -126,6 +130,17 @@ public class PermissionBusinessServiceImpl implements PermissionBusinessService 
         Role role = RoleConverter.toRole(addNewRoleDTO);
         roleService.addRole(role);
         permissionHandler.updateRolePermission(role.getId(), addNewRoleDTO.getPermissionIds());
+        return ResultResponse.success(null);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> deleteRole(Long id) {
+
+        Role role = roleValidator.checkRoleId(id);
+        roleValidator.checkLevel(role.getLevel());
+        rolePermissionService.deleteRolePermissionsByRoleId(role.getId());
+        userRoleService.deleteUserRolesByRoleId(role.getId());
+        roleService.deleteRoleById(role.getId());
         return ResultResponse.success(null);
     }
 

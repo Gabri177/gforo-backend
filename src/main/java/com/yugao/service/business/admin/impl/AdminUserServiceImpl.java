@@ -9,7 +9,9 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.admin.AdminUserService;
-import com.yugao.service.data.*;
+import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.validator.UserValidator;
 import com.yugao.util.security.PasswordUtil;
@@ -55,7 +57,11 @@ public class AdminUserServiceImpl implements AdminUserService {
                         .toList();
         detailUserInfoPageVO.setCurrentPage(currentPage);
         detailUserInfoPageVO.setLimit(pageSize);
-        detailUserInfoPageVO.setTotalRows(userService.getUserCount());
+        detailUserInfoPageVO.setTotalRows(userService.getUserCountWithLowerLevel(userId, roleLevel));
+        System.out.println("当前用户ID: " + currentId);
+        System.out.println("当前用户等级: " + roleLevel);
+        System.out.println("比当前用户身份低的用户数量: " + detailUserInfoPageVO.getTotalRows());
+        System.out.println("用户ids" + detailedUserInfoVOS.stream().map(DetailedUserInfoVO::getId).toList());
         detailUserInfoPageVO.setUserInfoList(detailedUserInfoVOS);
         return ResultResponse.success(detailUserInfoPageVO);
     }

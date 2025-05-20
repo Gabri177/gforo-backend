@@ -3,7 +3,7 @@ package com.yugao.service.validator;
 import com.yugao.domain.board.Board;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
-import com.yugao.service.data.BoardService;
+import com.yugao.service.data.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

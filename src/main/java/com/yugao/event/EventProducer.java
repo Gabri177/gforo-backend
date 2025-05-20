@@ -15,4 +15,8 @@ public class EventProducer {
         kafkaTemplate.send(topic, event);
     }
 
+    public void send(String topic, String key, Event<?> event) {
+        kafkaTemplate.send(topic, key, event);
+    }
+
 }

@@ -6,6 +6,8 @@ import com.yugao.domain.comment.Comment;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
+import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.user.User;
 import com.yugao.enums.CommentEntityTypeEnum;
 import com.yugao.enums.NotificationEntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class EventHandler {
 
     private final EventProducer eventProducer;
+    private final UserHandler userHandler;
 
     public void notifyComment(Long toUserId, Comment comment, Boolean isPost){
 
@@ -93,6 +96,45 @@ public class EventHandler {
                         "null",
                         not
                 )
+        );
+    }
+
+    public void notifyDelete(Long toUserId, Class<?> clazz, Object obj){
+
+        Long currentUserId = SecurityUtils.mustGetLoginUserId();
+
+        if (currentUserId.equals(toUserId))
+            return;
+        Notification not = new Notification();
+        not.setSenderId(currentUserId);
+        not.setType(NotificationTypeEnum.ADMIN);
+        not.setTargetId(toUserId);
+        not.setEntityType(NotificationEntityTypeEnum.NULL);
+        not.setStatus(StatusEnum.NORMAL);
+        if (clazz == Comment.class){
+            not.setTitle("Your comment has been deleted");
+            Comment cmt = (Comment) obj;
+            not.setContent("Your comment with content: '" + cmt.getContent()+ "' has been deleted by admin");
+        } else if (clazz == DiscussPost.class){
+            not.setTitle("Your post has been deleted");
+            DiscussPost post = (DiscussPost) obj;
+            not.setContent("Your post with title: '" + post.getTitle()+ "' has been deleted by admin");
+        } else {
+            return ;
+        }
+        // 发送删除事件
+        eventProducer.send(
+                KafkaTopicConstants.NOTIFICATION_DELETE,
+                Event.create(KafkaEventType.DELETE, "Notification", "null", not)
+        );
+
+    }
+
+    public void notifyRefreshUserInfo(Long userId){
+        User user = userHandler.getUser(userId);
+        eventProducer.send(
+                KafkaTopicConstants.REFRESH,
+                Event.create(KafkaEventType.REFRESH_USER_INFO, "Notification", "null", user)
         );
     }
 

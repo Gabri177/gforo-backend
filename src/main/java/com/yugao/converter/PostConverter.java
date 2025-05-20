@@ -26,6 +26,7 @@ public class PostConverter {
         vo.setReplies(replies);
         vo.setLikeCount(likeCount);
         vo.setIsLike(isLike);
+        vo.setType(discussPost.getType());
         return vo;
     }
 

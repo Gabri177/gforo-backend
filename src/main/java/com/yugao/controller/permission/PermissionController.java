@@ -55,8 +55,10 @@ public class PermissionController {
     }
 
     @PreAuthorize("principal.isSuperAdmin || principal.isAdmin")
-    @DeleteMapping("/role")
-    public ResponseEntity<ResultFormat> deleteRole(){
-        return null;
+    @DeleteMapping("/role/{id}")
+    public ResponseEntity<ResultFormat> deleteRole(
+            @PathVariable("id") Long id
+    ){
+        return permissionBusinessService.deleteRole(id);
     }
 }

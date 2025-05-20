@@ -13,7 +13,9 @@ public enum NotificationTypeEnum implements IEnum<Integer> {
     LIKE(2, "点赞"),
     FOLLOW(3, "关注"),
     MESSAGE(4, "私信"),
-    SYSTEM(5, "系统通知");
+    SYSTEM(5, "系统通知"),
+    ADMIN(6, "管理员通知");
+
 
     private final Integer value;
     private final String description;

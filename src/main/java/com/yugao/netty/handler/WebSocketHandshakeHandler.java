@@ -2,7 +2,6 @@ package com.yugao.netty.handler;
 
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.business.session.SessionService;
-import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.security.JwtUtil;
 import com.yugao.netty.registry.ChannelRegistry;
 import io.netty.buffer.Unpooled;

@@ -3,7 +3,7 @@ package com.yugao.service.handler;
 import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.user.User;
 import com.yugao.service.base.RedisService;
-import com.yugao.service.data.UserService;
+import com.yugao.service.data.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

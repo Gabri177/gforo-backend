@@ -15,16 +15,26 @@ import java.util.stream.Collectors;
 public class OnlineUserHandler {
 
     private final RedisService redisService;
-    private static final String KEY = RedisKeyConstants.ONLINE_USER;
     private final UserHandler userHandler;
+    private static final String KEY = RedisKeyConstants.ONLINE_USER;
+    private static final String DAILY_ACTIVE_KEY = RedisKeyConstants.DAILY_ACTIVE_USER;
+    private static final String MONTHLY_ACTIVE_KEY = RedisKeyConstants.MONTHLY_ACTIVE_USER;
 
 
     public void recordOnline(Long userId) {
         redisService.sAdd(KEY, userId.toString());
         redisService.expire(KEY, 3, TimeUnit.MINUTES); // 可调
+
+        // 记录日活
+        redisService.sAdd(DAILY_ACTIVE_KEY, userId.toString());
+        redisService.expire(DAILY_ACTIVE_KEY, 36, TimeUnit.HOURS);
+        // 记录月活
+        redisService.sAdd(MONTHLY_ACTIVE_KEY, userId.toString());
+        redisService.expire(MONTHLY_ACTIVE_KEY, 40, TimeUnit.DAYS);
     }
 
     public void recordOffline(Long userId) {
+
         redisService.sRemove(KEY, userId.toString());
     }
 

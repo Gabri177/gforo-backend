@@ -1,10 +1,10 @@
 package com.yugao.service.handler;
 
 import com.yugao.domain.permission.RolePermission;
-import com.yugao.service.data.PermissionService;
-import com.yugao.service.data.RolePermissionService;
-import com.yugao.service.data.RoleService;
-import com.yugao.service.data.UserRoleService;
+import com.yugao.service.data.permission.PermissionService;
+import com.yugao.service.data.permission.RolePermissionService;
+import com.yugao.service.data.permission.RoleService;
+import com.yugao.service.data.permission.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

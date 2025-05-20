@@ -1,18 +1,28 @@
 package com.yugao.service.builder;
 
+import com.yugao.converter.CommentConverter;
+import com.yugao.converter.DiscussPostConverter;
 import com.yugao.converter.PermissionConverter;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.board.Board;
+import com.yugao.domain.notification.NotificationRead;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.permission.Role;
 import com.yugao.domain.user.User;
+import com.yugao.enums.NotificationEntityTypeEnum;
 import com.yugao.service.business.like.LikeService;
-import com.yugao.service.data.*;
+import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.data.notification.NotificationReadService;
+import com.yugao.service.data.permission.*;
+import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.PermissionHandler;
 import com.yugao.service.handler.UserHandler;
 import com.yugao.vo.auth.AccessControlVO;
 import com.yugao.vo.auth.RoleDetailItemVO;
 import com.yugao.vo.board.BoardInfosItemVO;
+import com.yugao.vo.comment.SimpleCommentVO;
+import com.yugao.vo.notification.UserNotificationVO;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
 import com.yugao.vo.user.SimpleUserVO;
@@ -20,8 +30,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -37,6 +49,8 @@ public class VOBuilder {
     private final PermissionHandler permissionHandler;
     private final LikeService likeService;
     private final UserHandler userHandler;
+    private final UserService userService;
+    private final NotificationReadService notificationReadService;
 
 
     public BoardInfosItemVO buildBoardInfosItemVO(Board board) {
@@ -97,6 +111,7 @@ public class VOBuilder {
         roleDetailItemVO.setStatus(role.getStatus());
         roleDetailItemVO.setCreateTime(role.getCreateTime());
         roleDetailItemVO.setLevel(role.getLevel());
+        roleDetailItemVO.setBuildin(role.getBuildin());
         roleDetailItemVO.setPermissions(
                 permissionService.getPermissionsByIds(
                                 rolePermissionService.getPermissionIdsByRoleId(role.getId()))
@@ -105,6 +120,77 @@ public class VOBuilder {
                         .collect(Collectors.toList())
         );
         return roleDetailItemVO;
+    }
+
+    public List<UserNotificationVO> assembleUserNotificationListVO(List<UserNotificationVO> res, Long userId) {
+
+        // 获取是否已读
+        List<Long> readIds = notificationReadService.getByUserId(userId)
+                .stream()
+                .map(NotificationRead::getNotificationId)
+                .toList();
+//        System.out.println("已读的通知列表为" + readIds);
+        // 获取作者信息
+        List<Long> authorIds = res.stream()
+                .map(UserNotificationVO::getSenderId)
+                .distinct()
+                .toList();
+        Map<Long, SimpleUserVO> authorMap = userService.getUsersByIds(authorIds)
+                .stream()
+                .map(UserConverter::toSimpleVO)
+                .collect(Collectors.toMap(SimpleUserVO::getId, Function.identity()));
+        // 获取实体信息
+        // 获取实体类型是comment的commentId的list
+//        System.out.println("组装实体类型是comment的commentId的list");
+        Map<Long, SimpleCommentVO> commentMap = commentService.findCommentsByIds(
+                        res.stream()
+                                .filter(notification -> notification.getEntityType() == NotificationEntityTypeEnum.COMMENT)
+                                .map(UserNotificationVO::getEntityId)
+                                .distinct()
+                                .toList()
+                )
+                .stream()
+                .map(CommentConverter::toSimpleCommentVO)
+                .collect(Collectors.toMap(SimpleCommentVO::getId, Function.identity()));
+
+        // 获取实体类型是post的postId的list
+
+        // 1）通知中直接是帖子的 entityId
+        List<Long> postIdsFromNotification = res.stream()
+                .filter(notification -> notification.getEntityType() == NotificationEntityTypeEnum.POST)
+                .map(UserNotificationVO::getEntityId)
+                .toList();
+        // 2）评论中关联的 postId
+        List<Long> postIdsFromComments = commentMap.values().stream()
+                .map(SimpleCommentVO::getPostId)
+                .toList();
+        // 合并并去重
+        Set<Long> allPostIds = Stream.concat(postIdsFromNotification.stream(), postIdsFromComments.stream())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+//        System.out.println("组装实体类型是post的postId的list");
+        Map<Long, SimpleDiscussPostVO> postMap = discussPostService.getDiscussPostsByIds(new ArrayList<>(allPostIds))
+                .stream()
+                .map(DiscussPostConverter::toSimpleDiscussPostVO)
+                .collect(Collectors.toMap(SimpleDiscussPostVO::getId, Function.identity()));
+        // 装配已读以及作者信息
+//        System.out.println("装配已读以及作者信息");
+        res.forEach(notification -> {
+            notification.setIsRead(readIds.contains(notification.getId()));
+            notification.setAuthor(authorMap.get(notification.getSenderId()));
+            if (notification.getEntityType() == NotificationEntityTypeEnum.COMMENT) {
+                notification.setComment(commentMap.get(notification.getEntityId()));
+                notification.setPost(postMap.get(
+                        Optional.ofNullable(commentMap.get(notification.getEntityId()))
+                                .map(SimpleCommentVO::getPostId)
+                                .orElse(null)
+                        )
+                );
+            } else if (notification.getEntityType() == NotificationEntityTypeEnum.POST) {
+                notification.setPost(postMap.get(notification.getEntityId()));
+            }
+        });
+        return res;
     }
 
 }

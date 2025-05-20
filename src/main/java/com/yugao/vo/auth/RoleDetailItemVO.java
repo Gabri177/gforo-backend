@@ -21,5 +21,7 @@ public class RoleDetailItemVO {
 
     private Integer level;
 
+    private Integer buildin; // 是否内置角色 0:否 1:是
+
     private List<SimplePermissionVO> permissions;
 }

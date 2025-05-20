@@ -30,7 +30,7 @@ public class DiscussPost {
 
     private String content;
 
-    private Integer type; // 帖子类型，0-普通，1-置顶 2-精华
+    private Integer type; // 帖子类型，0-普通，1-置顶 2-精华 3-置顶 + 精华
 
     private StatusEnum status; // 帖子状态，0-正常, 1-删除
 

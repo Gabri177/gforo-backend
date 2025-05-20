@@ -33,6 +33,8 @@ public final class RedisKeyConstants {
     public static final String SYSTEM_PV_TOTAL = "system_pv_total";
     private static final String SYSTEM_PV = "system_pv";
     private static final String SYSTEM_UV = "system_uv";
+    public static final String DAILY_ACTIVE_USER = "daily_active_user";
+    public static final String MONTHLY_ACTIVE_USER = "monthly_active_user";
 
     // 请求账号激活邮件
     private static final String REQUEST_ACCOUNT_ACTIVATION_EMAIL = "request_account_activation_email";
@@ -42,8 +44,6 @@ public final class RedisKeyConstants {
 
     // 点赞相关
     private static final String LIKE = "like";
-
-
 
 
     // 图形验证码

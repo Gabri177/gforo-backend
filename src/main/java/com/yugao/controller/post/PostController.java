@@ -65,4 +65,14 @@ public class PostController {
         System.out.println("updatePost: " + commonContentDTO);
         return postService.updatePost(commonContentDTO);
     }
+
+    @PreAuthorize("hasAnyAuthority('post:change-type:board', 'post:change-type:any')")
+    @PutMapping("/change-type/{postId}/{type}")
+    public ResponseEntity<ResultFormat> changePostType(
+            @PathVariable Long postId,
+            @PathVariable Integer type
+            ){
+        System.out.println("changePostType: " + postId + " " + type);
+        return postService.changePostType(postId, type);
+    }
 }

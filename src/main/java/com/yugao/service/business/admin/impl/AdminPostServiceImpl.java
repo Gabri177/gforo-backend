@@ -7,8 +7,9 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.security.LoginUser;
 import com.yugao.service.business.admin.AdminPostService;
-import com.yugao.service.data.BoardPosterService;
-import com.yugao.service.data.DiscussPostService;
+import com.yugao.service.data.permission.BoardPosterService;
+import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class AdminPostServiceImpl implements AdminPostService {
 
     private final DiscussPostService discussPostService;
     private final BoardPosterService boardPosterService;
+    private final EventHandler eventHandler;
 
     @Override
     public ResponseEntity<ResultFormat> deletePost(Long postId) {
@@ -38,6 +40,7 @@ public class AdminPostServiceImpl implements AdminPostService {
                 throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         }
         discussPostService.deleteDiscussPost(postId);
+        eventHandler.notifyDelete(post.getUserId(), DiscussPost.class, post);
         return ResultResponse.success(null);
     }
 }

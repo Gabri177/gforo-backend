@@ -8,9 +8,10 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.security.LoginUser;
 import com.yugao.service.business.admin.AdminCommentService;
-import com.yugao.service.data.BoardPosterService;
-import com.yugao.service.data.CommentService;
-import com.yugao.service.data.DiscussPostService;
+import com.yugao.service.data.permission.BoardPosterService;
+import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     private final CommentService commentService;
     private final DiscussPostService discussPostService;
     private final BoardPosterService boardPosterService;
+    private final EventHandler eventHandler;
 
     @Override
     public ResponseEntity<ResultFormat> getCommentList(Long boardId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -42,16 +44,19 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     public ResponseEntity<ResultFormat> deleteComment(Long commentId) {
 
         LoginUser loginuser = SecurityUtils.getLoginUser();
+        Comment comment = commentService.findCommentById(commentId);
+        if (comment == null)
+            throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
         if (loginuser == null)
             throw new BusinessException(ResultCodeEnum.USER_NOT_LOGIN);
         if (loginuser.hasAuthority("comment:delete:board") && !loginuser.hasAuthority("comment:delete:any")){
-            Comment comment = commentService.findCommentById(commentId);
             DiscussPost post = discussPostService.getDiscussPostById(comment.getPostId());
             List<Long> userBoardIds = boardPosterService.getBoardIdsByUserId(loginuser.getId());
             if (!userBoardIds.contains(post.getBoardId()))
                 throw new BusinessException(ResultCodeEnum.NO_PERMISSION);
         }
         commentService.deleteComment(commentId);
+        eventHandler.notifyDelete(comment.getUserId(), Comment.class, comment);
         return ResultResponse.success(null);
     }
 }

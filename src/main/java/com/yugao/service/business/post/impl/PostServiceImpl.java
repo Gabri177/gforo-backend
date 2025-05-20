@@ -8,11 +8,13 @@ import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
+import com.yugao.security.LoginUser;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.post.PostService;
-import com.yugao.service.data.BoardService;
-import com.yugao.service.data.CommentService;
-import com.yugao.service.data.DiscussPostService;
+import com.yugao.service.data.permission.BoardPosterService;
+import com.yugao.service.data.board.BoardService;
+import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.data.post.DiscussPostService;
 import com.yugao.service.handler.PostHandler;
 import com.yugao.service.handler.VisitStatisticsHandler;
 import com.yugao.util.security.SecurityUtils;
@@ -37,6 +39,7 @@ public class PostServiceImpl implements PostService {
     private final BoardService boardService;
     private final VOBuilder VOBuilder;
     private final VisitStatisticsHandler visitStatisticsHandler;
+    private final BoardPosterService boardPosterService;
 
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -127,5 +130,29 @@ public class PostServiceImpl implements PostService {
 
 
         return ResultResponse.success(currentPageVO);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> changePostType(Long postId, Integer type) {
+
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        DiscussPost post = discussPostService.getDiscussPostById(postId);
+        if (post == null)
+            throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
+        if (loginUser == null)
+            throw new BusinessException(ResultCodeEnum.USER_NOT_LOGIN);
+        if (loginUser.hasAuthority("post:change-type:board") &&
+                !loginUser.hasAuthority("post:change-type:any")) {
+            List<Long> postIds = boardPosterService.getBoardIdsByUserId(loginUser.getId());
+            System.out.println("postIds: " + postIds);
+            System.out.println("post.getBoardId(): " + post.getBoardId());
+            if (!postIds.contains(post.getBoardId()))
+                throw new BusinessException(ResultCodeEnum.NO_PERMISSION);
+        }
+        if (type == 0 || type == 1 || type == 2 || type == 3)
+            discussPostService.updateType(postId, type);
+        else
+            throw new BusinessException(ResultCodeEnum.PARAMETER_ERROR);
+        return ResultResponse.success(null);
     }
 }

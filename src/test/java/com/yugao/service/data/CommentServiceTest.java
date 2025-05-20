@@ -1,5 +1,7 @@
 package com.yugao.service.data;
 
+import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.data.post.DiscussPostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

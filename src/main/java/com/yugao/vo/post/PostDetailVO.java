@@ -18,4 +18,5 @@ public class PostDetailVO {
     private Boolean isLike;
     private SimpleUserVO author; // 作者（简略版用户信息）
     private List<CommentVO> replies; // 回复列表
+    private Integer type; // 帖子类型，0-普通，1-置顶 2-精华
 }

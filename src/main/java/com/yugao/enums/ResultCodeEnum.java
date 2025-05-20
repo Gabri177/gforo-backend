@@ -74,6 +74,8 @@ public enum ResultCodeEnum {
     INVALID_NOTIFICATION_TYPE(70008, "Invalid notification type"),
     NOTIFICATION_NOT_FOUND(70009, "Notification not found"),
     NOTIFICATION_ENTITY_TYPE_NOT_FOUND(70010, "Notification entity type not found"),
+    BUILDIN_ROLE_NOT_MODIFIABLE(70011, "Built-in role cannot be modified"),
+    PARAMETER_ERROR(70012, "Parameter error"),
 
 
     // 系统异常

@@ -10,7 +10,7 @@ import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.comment.CommentBusinessService;
-import com.yugao.service.data.CommentService;
+import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.service.validator.CommentValidator;
 import com.yugao.util.security.SecurityUtils;

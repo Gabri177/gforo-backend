@@ -14,4 +14,6 @@ public interface PermissionBusinessService {
     ResponseEntity<ResultFormat> updateRolePermission(UpdateRolePermissionDTO updateRolePermissionDTO);
 
     ResponseEntity<ResultFormat> addNewRole(AddNewRoleDTO addNewRoleDTO);
+
+    ResponseEntity<ResultFormat> deleteRole(Long id);
 }

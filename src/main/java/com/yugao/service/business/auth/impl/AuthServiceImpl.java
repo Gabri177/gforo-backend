@@ -13,7 +13,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.auth.AuthService;
 import com.yugao.service.business.captcha.CaptchaService;
-import com.yugao.service.data.UserService;
+import com.yugao.service.data.user.UserService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.PasswordUtil;

@@ -6,7 +6,7 @@ import com.yugao.dto.admin.UpdateCarouselDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.layout.LayoutService;
-import com.yugao.service.data.CarouselService;
+import com.yugao.service.data.layout.CarouselService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

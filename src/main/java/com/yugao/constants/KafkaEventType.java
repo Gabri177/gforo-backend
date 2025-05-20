@@ -14,4 +14,6 @@ public final class KafkaEventType {
     public static final String REGISTER_ACCOUNT = "register_account";
     public static final String CHANGE_EMAIL = "change_email";
     public static final String SYSTEM_MESSAGE = "system_message";
+    public static final String DELETE = "delete";
+    public static final String REFRESH_USER_INFO = "refresh_user_info";
 }

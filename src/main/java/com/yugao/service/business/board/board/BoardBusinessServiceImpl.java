@@ -5,7 +5,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.board.BoardBusinessService;
-import com.yugao.service.data.BoardService;
+import com.yugao.service.data.board.BoardService;
 import com.yugao.vo.board.BoardInfosItemVO;
 import com.yugao.vo.board.BoardInfosVO;
 import lombok.RequiredArgsConstructor;

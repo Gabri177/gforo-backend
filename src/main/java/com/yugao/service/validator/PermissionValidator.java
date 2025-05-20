@@ -3,7 +3,7 @@ package com.yugao.service.validator;
 import com.yugao.domain.permission.Permission;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
-import com.yugao.service.data.PermissionService;
+import com.yugao.service.data.permission.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

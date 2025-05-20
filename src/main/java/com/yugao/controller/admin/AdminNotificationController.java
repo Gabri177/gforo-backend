@@ -40,6 +40,7 @@ public class AdminNotificationController {
     // 这里考虑要不要这个接口
     // 逻辑上来看 如果发布者更改了通知内容 那么“notification_read"
     // 中所有对应id的条目都要删除
+    // TODO: 如果发布者更改了通知内容 中所有对应id的条目都要删除
     @PutMapping
     @PreAuthorize("principal.isAdmin || principal.isSuperAdmin")
     public ResponseEntity<ResultFormat> modifyNotification(

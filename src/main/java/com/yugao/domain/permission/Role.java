@@ -30,4 +30,6 @@ public class Role {
     private Date createTime;
 
     private Integer level;
+
+    private Integer buildin; // 是否内置角色 0:否 1:是
 }

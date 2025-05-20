@@ -6,7 +6,7 @@ import com.yugao.dto.auth.UserRegisterDTO;
 import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
-import com.yugao.service.data.UserService;
+import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.UserHandler;
 import com.yugao.util.security.PasswordUtil;
 import lombok.RequiredArgsConstructor;

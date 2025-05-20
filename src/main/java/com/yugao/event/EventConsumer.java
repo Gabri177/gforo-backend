@@ -8,7 +8,7 @@ import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.user.User;
 import com.yugao.netty.util.WsUtil;
-import com.yugao.service.data.NotificationService;
+import com.yugao.service.data.notification.NotificationService;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.serialize.SerializeUtil;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +87,18 @@ public class EventConsumer {
         System.out.println("Received event: " + event);
     }
 
+    @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_DELETE)
+    public void handleNotificationDelete(Event<Notification> event){
+        System.out.println("Received event: " + event);
+        Notification not = event.getPayloadAs(Notification.class, objectMapper);
+        if (not == null)
+            return;
+        System.out.println("用户的实体被有权限的人删除 通知UserId: " + not.getTargetId());
+        wsUtil.sendMsg(
+                not.getTargetId().toString(), "DELETE_MESSAGE", "你的内容被删除了");
+        notificationService.addNotification(not);
+    }
+
     @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_SYSTEM)
     public void handleNotificationSystem(Event<Notification> event){
         System.out.println("Received notifycation system event");
@@ -108,5 +120,16 @@ public class EventConsumer {
                 email.getContent()
         );
         System.out.println("消费者： 发送验证邮件成功");
+    }
+
+    @KafkaListener(topics = KafkaTopicConstants.REFRESH)
+    public void handleRefresh(Event<User> event){
+        System.out.println("Received event: " + event);
+        User user = event.getPayloadAs(User.class, objectMapper);
+        if (user == null)
+            return;
+        System.out.println("刷新用户信息 通知UserId: " + user.getId());
+        wsUtil.sendMsg(
+                user.getId().toString(), "REFRESH_USER_INFO", "你的信息被修改了");
     }
 }

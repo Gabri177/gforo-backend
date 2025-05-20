@@ -3,7 +3,8 @@ package com.yugao.service.validator;
 import com.yugao.domain.permission.Role;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
-import com.yugao.service.data.RoleService;
+import com.yugao.security.LoginUser;
+import com.yugao.service.data.permission.RoleService;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,15 @@ public class RoleValidator {
             throw new BusinessException(ResultCodeEnum.ROLE_NOT_EXISTS);
     }
 
-    public void checkRoleId (Long roleId) {
+    public Role checkRoleId (Long roleId) {
 
+        LoginUser loginUser = SecurityUtils.getLoginUser();
         Role role = roleService.getRoleById(roleId);
+        if (loginUser.getIsAdmin() && role.getBuildin() == 1)
+            throw new BusinessException(ResultCodeEnum.BUILDIN_ROLE_NOT_MODIFIABLE);
         if (role == null)
             throw new BusinessException(ResultCodeEnum.ROLE_NOT_EXISTS);
+        return role;
     }
 
     public void checkRoleName(String roleName){
