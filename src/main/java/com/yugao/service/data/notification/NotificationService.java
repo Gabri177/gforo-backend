@@ -16,9 +16,9 @@ public interface NotificationService {
 
     List<Notification> getAllNotifications(Long targetId, Integer currentPage, Integer pageSize, Boolean isAsc);
 
-    List<Notification> getReadNotifications(Long targetId, Integer currentPage, Integer pageSize, Boolean isAsc);
+    List<Notification> getReadNotifications(Long targetId, Integer currentPage, Integer pageSize);
 
-    List<Notification> getUnreadNotifications(Long targetId, Integer currentPage, Integer pageSize, Boolean isAsc);
+    List<Notification> getUnreadNotifications(Long targetId, Integer currentPage, Integer pageSize);
 
     void addNotification(Notification notification);
 

@@ -6,7 +6,6 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.post.PostService;
 import com.yugao.validation.ValidationGroups;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;

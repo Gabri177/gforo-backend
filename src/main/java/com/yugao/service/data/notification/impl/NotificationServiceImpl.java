@@ -62,20 +62,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getReadNotifications(Long targetId, Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public List<Notification> getReadNotifications(Long targetId, Integer currentPage, Integer pageSize) {
 
         Page<Notification> page = new Page<>(currentPage, pageSize);
-        String order = isAsc ? "ASC" : "DESC";
-        List<Notification> list = notificationMapper.getReadNotifications(page, targetId, order);
+        List<Notification> list = notificationMapper.getReadNotifications(page, targetId);
         return list;
     }
 
     @Override
-    public List<Notification> getUnreadNotifications(Long targetId, Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public List<Notification> getUnreadNotifications(Long targetId, Integer currentPage, Integer pageSize) {
 
         Page<Notification> page = new Page<>(currentPage, pageSize);
-        String order = isAsc ? "ASC" : "DESC";
-        List<Notification> list = notificationMapper.getUnreadNotifications(page, targetId, order);
+        List<Notification> list = notificationMapper.getUnreadNotifications(page, targetId);
         return list;
     }
 

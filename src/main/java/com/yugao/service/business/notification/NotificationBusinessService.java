@@ -17,9 +17,9 @@ public interface NotificationBusinessService {
 
     ResponseEntity<ResultFormat> getAllMyNotification(Integer currentPage, Integer pageSize, Boolean isAsc);
 
-    ResponseEntity<ResultFormat> getMyUnreadNotification(Integer currentPage, Integer pageSize, Boolean isAsc);
+    ResponseEntity<ResultFormat> getMyUnreadNotification(Integer currentPage, Integer pageSize);
 
-    ResponseEntity<ResultFormat> getMyReadNotification(Integer currentPage, Integer pageSize, Boolean isAsc);
+    ResponseEntity<ResultFormat> getMyReadNotification(Integer currentPage, Integer pageSize);
 
     ResponseEntity<ResultFormat> readNotification(Long id);
 

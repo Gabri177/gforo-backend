@@ -105,9 +105,9 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
     }
 
     @Override
-    public ResponseEntity<ResultFormat> getMyUnreadNotification(Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public ResponseEntity<ResultFormat> getMyUnreadNotification(Integer currentPage, Integer pageSize) {
         Long userId = SecurityUtils.mustGetLoginUserId();
-        List<UserNotificationVO> res = notificationService.getUnreadNotifications(userId, currentPage, pageSize, isAsc)
+        List<UserNotificationVO> res = notificationService.getUnreadNotifications(userId, currentPage, pageSize)
                 .stream()
                 .map(NotificationConverter::toUserNotificationVO)
                 .toList();
@@ -129,9 +129,9 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
     }
 
     @Override
-    public ResponseEntity<ResultFormat> getMyReadNotification(Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public ResponseEntity<ResultFormat> getMyReadNotification(Integer currentPage, Integer pageSize) {
         Long userId = SecurityUtils.mustGetLoginUserId();
-        List<UserNotificationVO> res = notificationService.getReadNotifications(userId, currentPage, pageSize, isAsc)
+        List<UserNotificationVO> res = notificationService.getReadNotifications(userId, currentPage, pageSize)
                 .stream()
                 .map(NotificationConverter::toUserNotificationVO)
                 .toList();

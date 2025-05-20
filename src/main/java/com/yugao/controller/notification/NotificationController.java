@@ -28,25 +28,23 @@ public class NotificationController {
     @GetMapping("/unread")
     public ResponseEntity<ResultFormat> getMyUnreadNotification(
             @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(value = "isAsc", defaultValue = "false") Boolean isAsc
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ){
 
         System.out.println("currentPage = " + currentPage +
-                ", pageSize = " + pageSize + ", isAsc = " + isAsc);
-        return notificationBusinessService.getMyUnreadNotification(currentPage, pageSize, isAsc);
+                ", pageSize = " + pageSize );
+        return notificationBusinessService.getMyUnreadNotification(currentPage, pageSize);
     }
 
     @GetMapping("/read")
     public ResponseEntity<ResultFormat> getMyReadNotification(
             @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(value = "isAsc", defaultValue = "false") Boolean isAsc
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ){
 
         System.out.println("currentPage = " + currentPage +
-                ", pageSize = " + pageSize + ", isAsc = " + isAsc);
-        return notificationBusinessService.getMyReadNotification(currentPage, pageSize, isAsc);
+                ", pageSize = " + pageSize);
+        return notificationBusinessService.getMyReadNotification(currentPage, pageSize);
     }
 
 
