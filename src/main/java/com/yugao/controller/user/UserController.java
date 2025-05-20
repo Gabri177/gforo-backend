@@ -8,7 +8,6 @@ import com.yugao.dto.auth.UserVerifyEmailDTO;
 import com.yugao.result.ResultFormat;
 import com.yugao.service.business.user.UserBusinessService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;

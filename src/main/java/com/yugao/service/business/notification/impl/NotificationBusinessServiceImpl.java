@@ -1,6 +1,5 @@
 package com.yugao.service.business.notification.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.converter.NotificationConverter;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.notification.NotificationRead;

@@ -1,6 +1,5 @@
 package com.yugao.service.handler;
 
-import com.yugao.constants.RedisKeyConstants;
 import com.yugao.domain.auth.DeviceSession;
 import com.yugao.domain.user.User;
 import com.yugao.dto.auth.RefreshTokenDTO;
