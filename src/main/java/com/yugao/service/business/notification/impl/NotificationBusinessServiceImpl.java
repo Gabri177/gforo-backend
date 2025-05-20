@@ -38,7 +38,7 @@ public class NotificationBusinessServiceImpl implements NotificationBusinessServ
     public ResponseEntity<ResultFormat> getNotification(Integer currentPage, Integer pageSize, Boolean isAsc) {
 
         Long totalRows = notificationService.getNotificationCount(0L);
-        Page<Notification> page = new Page<>(currentPage, pageSize);
+//        Page<Notification> page = new Page<>(currentPage, pageSize);
         List<AdminNotificationVO> res = notificationService.getAllNotifications(0L, currentPage, pageSize, isAsc)
                 .stream()
                 .map(NotificationConverter::toAdminNotificationVO)

@@ -40,7 +40,7 @@ public class TokenHandler {
             throw new BusinessException(ResultCodeEnum.REFRESHMENT_UNAUTHORIZED);
         }
         Long userIdLong = Long.parseLong(userId);
-        String key = RedisKeyConstants.buildUserSessionKey(userIdLong);
+//        String key = RedisKeyConstants.buildUserSessionKey(userIdLong);
         Set<DeviceSession> sessions = sessionService.getSessions(userIdLong);
 
         for (DeviceSession session : sessions) {
