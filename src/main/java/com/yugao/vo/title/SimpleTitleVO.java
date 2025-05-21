@@ -1,6 +1,5 @@
 package com.yugao.vo.title;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data

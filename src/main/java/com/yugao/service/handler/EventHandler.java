@@ -27,7 +27,7 @@ public class EventHandler {
     private final UserHandler userHandler;
     private final TitleService titleService;
 
-    public void notifyComment(Long toUserId, Comment comment, Boolean isPost){
+    public void notifyComment(Long toUserId, Comment comment){
 
         System.out.println("发送评论通知" + comment);
         Long currentUserId = SecurityUtils.mustGetLoginUserId();

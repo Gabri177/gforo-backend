@@ -2,7 +2,6 @@ package com.yugao.converter;
 
 import com.yugao.domain.title.Title;
 import com.yugao.dto.title.AddTitleDTO;
-import com.yugao.dto.title.UpdateTitleDTO;
 import com.yugao.enums.TitleConditionTypeEnum;
 import com.yugao.vo.title.SimpleTitleVO;
 import com.yugao.vo.title.TitleVO;

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.yugao.exception.BusinessException;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

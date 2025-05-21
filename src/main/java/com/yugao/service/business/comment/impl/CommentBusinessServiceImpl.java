@@ -46,7 +46,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         // TODO: 可能要优化
         titleBusinessService.addExp(currentUserId, 1, "评论帖子", EntityTypeEnum.COMMENT, newComment.getId());
 
-        eventHandler.notifyComment(commentToPostDTO.getToPostUserId(), newComment, true);
+        eventHandler.notifyComment(commentToPostDTO.getToPostUserId(), newComment);
 
         return ResultResponse.success(null);
     }
@@ -63,7 +63,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         // TODO: 可能要优化
         titleBusinessService.addExp(currentUserId, 1, "评论评论", EntityTypeEnum.COMMENT, newComment.getId());
 
-        eventHandler.notifyComment(commentToCommentDTO.getToCommentUserId(), newComment, false);
+        eventHandler.notifyComment(commentToCommentDTO.getToCommentUserId(), newComment);
 
         return ResultResponse.success(null);
     }
