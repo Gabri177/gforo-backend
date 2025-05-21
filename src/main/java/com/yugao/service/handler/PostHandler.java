@@ -2,18 +2,22 @@ package com.yugao.service.handler;
 
 import com.yugao.converter.CommentConverter;
 import com.yugao.converter.PostConverter;
+import com.yugao.converter.TitleConverter;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.title.Title;
 import com.yugao.domain.user.User;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.data.title.TitleService;
 import com.yugao.service.data.user.UserService;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
+import com.yugao.vo.title.SimpleTitleVO;
 import com.yugao.vo.user.SimpleUserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,10 +35,10 @@ public class PostHandler {
     private final UserService userService;
     private final LikeService likeService;
     private final UserHandler userHandler;
+    private final TitleService titleService;
 
     private SimpleUserVO getAuthorInfo(Long userId) {
 
-        // 111111111111111111111
         User user = userHandler.getUser(userId);
         return UserConverter.toSimpleVO(user);
     }
@@ -117,11 +121,14 @@ public class PostHandler {
         List<CommentVO> replies = buildComments(postId);
         Integer likeCount = likeService.countLikePost(originalPost.getId());
 
+        Title authorTitle = titleService.findTitleByUserId(originalPost.getUserId());
+        SimpleTitleVO authorTitleVO = TitleConverter.toSimpleTitleVO(authorTitle);
         return PostConverter.toPostDetailVO(originalPost,
                 author,
                 replies,
                 likeCount,
-                likeService.checkLikePost(originalPost.getId()));
+                likeService.checkLikePost(originalPost.getId()),
+                authorTitleVO);
     }
 
     public List<PostDetailVO> getCommentPostDetailList(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -137,25 +144,17 @@ public class PostHandler {
 
         List<PostDetailVO> postDetailVOList = new ArrayList<>();
         for (Comment comment : commentList) {
-//            PostDetailVO postDetailVO= new PostDetailVO();
-//            postDetailVO.setId(comment.getId());
-//            postDetailVO.setContent(comment.getContent());
-//            postDetailVO.setCreateTime(comment.getCreateTime());
-//            postDetailVO.setLikeCount(likeService.countLikeComment(comment.getId()));
-//            postDetailVO.setIsLike(likeService.checkLikeComment(comment.getId()));
-//
-//            User user = userMap.get(comment.getUserId());
-//            postDetailVO.setAuthor(UserConverter.toSimpleVO(user));
-//
-//            List<CommentVO> replies = buildCommentsForPostComments(comment.getId());
-//            postDetailVO.setReplies(replies);
+
+            Title authorTitle = titleService.findTitleByUserId(comment.getUserId());
+            SimpleTitleVO authorTitleVO = TitleConverter.toSimpleTitleVO(authorTitle);
 
             PostDetailVO postDetailVO = PostConverter.toPostDetailVO(
                     comment,
                     UserConverter.toSimpleVO(userMap.get(comment.getUserId())),
                     buildCommentsForPostComments(comment.getId()),
                     likeService.countLikeComment(comment.getId()),
-                    likeService.checkLikeComment(comment.getId())
+                    likeService.checkLikeComment(comment.getId()),
+                    authorTitleVO
             );
             postDetailVOList.add(postDetailVO);
         }

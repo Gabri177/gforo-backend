@@ -1,7 +1,7 @@
 package com.yugao.domain.notification;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 import com.yugao.enums.StatusEnum;
 import lombok.Data;
@@ -40,5 +40,5 @@ public class Notification {
 
     private Long entityId; // 关联的实体ID
 
-    private NotificationEntityTypeEnum entityType; // 关联的实体类型
+    private EntityTypeEnum entityType; // 关联的实体类型
 }

@@ -11,6 +11,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.result.ResultResponse;
 import com.yugao.service.business.comment.CommentBusinessService;
 import com.yugao.service.data.comment.CommentService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.service.validator.CommentValidator;
 import com.yugao.util.security.SecurityUtils;
@@ -31,6 +32,7 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     private final CommentService commentService;
     private final CommentValidator commentValidator;
     private final EventHandler eventHandler;
+    private final TitleBusinessService titleBusinessService;
 
     @Override
     public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO) {
@@ -40,6 +42,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         commentValidator.check(newComment);
 //        System.out.println("addCommentToPost: " + newComment);
         commentService.addComment(newComment);
+
+        // TODO: 可能要优化
+        titleBusinessService.addExp(currentUserId, 1, "评论帖子", EntityTypeEnum.COMMENT, newComment.getId());
 
         eventHandler.notifyComment(commentToPostDTO.getToPostUserId(), newComment, true);
 
@@ -54,6 +59,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         commentValidator.check(newComment);
 //        System.out.println("addCommentToComment: " + newComment);
         commentService.addComment(newComment);
+
+        // TODO: 可能要优化
+        titleBusinessService.addExp(currentUserId, 1, "评论评论", EntityTypeEnum.COMMENT, newComment.getId());
 
         eventHandler.notifyComment(commentToCommentDTO.getToCommentUserId(), newComment, false);
 
@@ -70,6 +78,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
         if (!comment.getUserId().equals(currentUserId))
             throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         commentService.deleteComment(commentId);
+
+        // TODO: 可能要优化
+        titleBusinessService.subtractExp(currentUserId, 1, "删除评论", EntityTypeEnum.COMMENT, commentId);
         return ResultResponse.success(null);
     }
 

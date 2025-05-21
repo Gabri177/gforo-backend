@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum NotificationEntityTypeEnum implements IEnum<Integer> {
+public enum EntityTypeEnum implements IEnum<Integer> {
     NULL(0, "无"),
     POST(1, "帖子"),
-    COMMENT(2, "评论");
+    COMMENT(2, "评论"),
+    TITLE(3, "称号"),;
 
     private final Integer value;
     private final String description;
@@ -25,13 +26,13 @@ public enum NotificationEntityTypeEnum implements IEnum<Integer> {
     }
 
     @JsonCreator
-    public static NotificationEntityTypeEnum fromValue(Integer value) {
-        for (NotificationEntityTypeEnum type : NotificationEntityTypeEnum.values()) {
+    public static EntityTypeEnum fromValue(Integer value) {
+        for (EntityTypeEnum type : EntityTypeEnum.values()) {
             if (type.getValue().equals(value)) {
                 return type;
             }
         }
-        throw new BusinessException(ResultCodeEnum.NOTIFICATION_ENTITY_TYPE_NOT_FOUND);
+        throw new BusinessException(ResultCodeEnum.ENTITY_TYPE_NOT_FOUND);
     }
 
 }

@@ -4,6 +4,7 @@ import com.yugao.converter.DiscussPostConverter;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
@@ -15,6 +16,7 @@ import com.yugao.service.data.permission.BoardPosterService;
 import com.yugao.service.data.board.BoardService;
 import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.handler.PostHandler;
 import com.yugao.service.handler.VisitStatisticsHandler;
 import com.yugao.util.security.SecurityUtils;
@@ -40,6 +42,7 @@ public class PostServiceImpl implements PostService {
     private final VOBuilder VOBuilder;
     private final VisitStatisticsHandler visitStatisticsHandler;
     private final BoardPosterService boardPosterService;
+    private final TitleBusinessService titleBusinessService;
 
     @Override
     public ResponseEntity<ResultFormat> getPostDetail(Long postId, Long currentPage, Integer pageSize, Boolean isAsc) {
@@ -64,6 +67,8 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException(ResultCodeEnum.BOARD_NOT_FOUND);
         DiscussPost newDiscussPost = DiscussPostConverter.toDiscussPost(newDiscussPostDTO, userId);
         discussPostService.addDiscussPost(newDiscussPost);
+        // TODO： 可能要优化
+        titleBusinessService.addExp(userId, 3, "发布帖子", EntityTypeEnum.POST, newDiscussPost.getId());
         return ResultResponse.success(null);
     }
 
@@ -77,6 +82,8 @@ public class PostServiceImpl implements PostService {
         if (!userId.equals(post.getUserId()))
             throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         discussPostService.deleteDiscussPost(postId);
+        // TODO： 可能要优化
+        titleBusinessService.subtractExp(userId, 3, "删除帖子", EntityTypeEnum.POST, postId);
         return ResultResponse.success(null);
     }
 

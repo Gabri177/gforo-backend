@@ -3,15 +3,19 @@ package com.yugao.event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.KafkaTopicConstants;
+import com.yugao.converter.TitleConverter;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
+import com.yugao.domain.title.Title;
 import com.yugao.domain.user.User;
 import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.data.notification.NotificationService;
+import com.yugao.service.data.title.TitleService;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.serialize.SerializeUtil;
+import com.yugao.vo.title.SimpleTitleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -24,6 +28,7 @@ public class EventConsumer {
     private final ObjectMapper objectMapper;
     private final WsUtil wsUtil;
     private final NotificationService notificationService;
+    private final TitleService titleService;
 
     // TODO: 下面除了邮件发送是正确的其他的逻辑还要再次修改
 
@@ -132,5 +137,26 @@ public class EventConsumer {
         System.out.println("刷新用户信息 通知UserId: " + user.getId());
         wsUtil.sendMsg(
                 user.getId().toString(), WsMessageTypeEnum.REFRESH_USER_INFO, "你的信息被修改了");
+    }
+
+    @KafkaListener(topics = KafkaTopicConstants.POP_UP_HINT)
+    public void handleNewTitle(Event<?> event){
+        switch (event.getEventType()){
+            case KafkaEventType.NEW_TITLE:
+                System.out.println("Received event: " + event);
+                Notification not = event.getPayloadAs(Notification.class, objectMapper);
+                Long toUserId = not.getTargetId();
+                Title t = titleService.getTitleById(not.getEntityId());
+                if (t == null)
+                    return;
+                SimpleTitleVO title = TitleConverter.toSimpleTitleVO(t);
+                System.out.println("用户获得新称号 通知UserId: " + toUserId);
+                wsUtil.sendMsg(
+                        toUserId.toString(), WsMessageTypeEnum.NEW_TITLE, SerializeUtil.toJson(title));
+                notificationService.addNotification(not);
+                break;
+            default:
+                break;
+        }
     }
 }

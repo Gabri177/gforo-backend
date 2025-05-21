@@ -40,13 +40,13 @@ public class AdminUserServiceImpl implements AdminUserService {
 
 
     @Override
-    public ResponseEntity<ResultFormat>getUserInfo(Long userId, Integer currentPage, Integer pageSize, Boolean isAsc) {
+    public ResponseEntity<ResultFormat>getUserInfo(Integer currentPage, Integer pageSize, Boolean isAsc) {
 
         Long currentId = SecurityUtils.mustGetLoginUserId();
         Integer roleLevel = permissionHandler.getUserRoleLevel(currentId);
         DetailUserInfoPageVO detailUserInfoPageVO = new DetailUserInfoPageVO();
         List<DetailedUserInfoVO> detailedUserInfoVOS =
-                userService.getUsers(userId, currentPage, pageSize, roleLevel)
+                userService.getUsers(currentId, currentPage, pageSize, roleLevel)
                         .stream()
                         .map((item) -> {
                             DetailedUserInfoVO detailedUserInfoVO = new DetailedUserInfoVO();
@@ -59,8 +59,34 @@ public class AdminUserServiceImpl implements AdminUserService {
                         .toList();
         detailUserInfoPageVO.setCurrentPage(currentPage);
         detailUserInfoPageVO.setLimit(pageSize);
-        detailUserInfoPageVO.setTotalRows(userService.getUserCountWithLowerLevel(userId, roleLevel));
+        detailUserInfoPageVO.setTotalRows(userService.getUserCountWithLowerLevel(currentId, roleLevel));
         detailUserInfoPageVO.setUserInfoList(detailedUserInfoVOS);
+        return ResultResponse.success(detailUserInfoPageVO);
+    }
+
+    @Override
+    public ResponseEntity<ResultFormat> getUserList(Integer currentPage, Integer pageSize, Boolean isAsc, String username) {
+        Long currentId = SecurityUtils.mustGetLoginUserId();
+        Integer roleLevel = permissionHandler.getUserRoleLevel(currentId);
+        DetailUserInfoPageVO detailUserInfoPageVO = new DetailUserInfoPageVO();
+        List<DetailedUserInfoVO> detailedUserInfoVOS =
+                userService.getUsers(currentId, username, currentPage, pageSize, roleLevel)
+                        .stream()
+                        .map((item) -> {
+                            DetailedUserInfoVO detailedUserInfoVO = new DetailedUserInfoVO();
+                            BeanUtils.copyProperties(item, detailedUserInfoVO);
+                            detailedUserInfoVO.setPostCount(discussPostService.getDiscussPostRows(item.getId(), 0L));
+                            detailedUserInfoVO.setCommentCount(commentService.getCommentCountByUserId(item.getId()));
+                            detailedUserInfoVO.setAccessControl(voBuilder.buildAccessControlVO(item.getId()));
+                            return detailedUserInfoVO;
+                        })
+                        .toList();
+        System.out.println("users = " + detailedUserInfoVOS.stream().map(DetailedUserInfoVO::getId).toList());
+        detailUserInfoPageVO.setCurrentPage(currentPage);
+        detailUserInfoPageVO.setLimit(pageSize);
+        detailUserInfoPageVO.setTotalRows(userService.getUserCountWithLowerLevel(currentId, roleLevel, username));
+        detailUserInfoPageVO.setUserInfoList(detailedUserInfoVOS);
+
         return ResultResponse.success(detailUserInfoPageVO);
     }
 

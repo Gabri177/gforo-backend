@@ -34,7 +34,9 @@ public class User {
 
     private String email;
 
-    private Integer type; // 这个变量还没有用到 0-普通用户 1 2 目前默认初始化为0
+    private Integer expPoints;
+
+    private Long titleId;
 
     private StatusEnum status;
 
@@ -61,7 +63,7 @@ public class User {
         user.setId(-1L);
         user.setUsername("Ghost" + randomStr);
         user.setEmail("GhostEmail" + randomStr + "@example.com");
-        user.setType(0);
+        user.setExpPoints(0);
         user.setStatus(StatusEnum.NORMAL);
         user.setHeaderUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnpG1ZOxWU7_lCGM2Szc9IUKX9s0vkUDGnng&s");
         user.setCreateTime(new Date());

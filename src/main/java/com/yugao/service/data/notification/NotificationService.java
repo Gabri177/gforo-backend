@@ -1,7 +1,7 @@
 package com.yugao.service.data.notification;
 
 import com.yugao.domain.notification.Notification;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 
 import java.util.List;
@@ -33,12 +33,12 @@ public interface NotificationService {
     Notification get(Long senderId,
             Long receiverId,
             Long entityId,
-            NotificationEntityTypeEnum entityType,
+            EntityTypeEnum entityType,
             NotificationTypeEnum type);
     void delete(Long senderId,
                 Long receiverId,
                 Long entityId,
-                NotificationEntityTypeEnum entityType,
+                EntityTypeEnum entityType,
                 NotificationTypeEnum type);
 
 }

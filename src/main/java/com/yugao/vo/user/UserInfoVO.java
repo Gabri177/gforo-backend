@@ -2,6 +2,7 @@ package com.yugao.vo.user;
 
 import com.yugao.enums.StatusEnum;
 import com.yugao.vo.auth.AccessControlVO;
+import com.yugao.vo.title.SimpleTitleVO;
 import lombok.Data;
 
 import java.util.Date;
@@ -32,4 +33,6 @@ public class UserInfoVO {
     private AccessControlVO accessControl;
 
     private Integer getLikeCount;
+
+    private SimpleTitleVO title;
 }

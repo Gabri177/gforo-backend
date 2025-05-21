@@ -14,7 +14,8 @@ public enum WsMessageTypeEnum {
     REFRESH_USER_INFO( "REFRESH_USER_INFO", "刷新用户信息"),
     SYSTEM( "SYSTEM", "系统消息"),
     HEARTBEAT( "pong", "心跳"),
-    CHAT( "CHAT", "聊天"),;
+    CHAT( "CHAT", "聊天"),
+    NEW_TITLE( "NEW_TITLE", "新称号"),;
 
     private final String code;
     private final String description;

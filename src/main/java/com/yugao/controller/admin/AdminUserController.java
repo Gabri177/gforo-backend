@@ -27,15 +27,26 @@ public class AdminUserController {
 
     // 只显示最高身份的用户比当前用户最高身份低的用户
     @PreAuthorize("hasAnyAuthority('user:info:any')")
-    @GetMapping("/info/{userId}")
+    @GetMapping("/info")
     public ResponseEntity<ResultFormat> getUserInfo(
-            @PathVariable("userId") Long userId,
             @RequestParam(defaultValue = "1", name = "currentPage", required = false) Integer currentPage,
             @RequestParam(defaultValue = "10", name = "pageSize", required = false) Integer pageSize,
             @RequestParam(defaultValue = "true", name = "isAsc", required = false) Boolean isAsc
     ) {
-        return adminUserService.getUserInfo(userId, currentPage, pageSize, isAsc);
+        return adminUserService.getUserInfo(currentPage, pageSize, isAsc);
     }
+
+    @GetMapping("/info/username-like")
+    public ResponseEntity<?> getUserList(
+            @RequestParam(required = false, defaultValue = "1") Integer currentPage,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "true") Boolean isAsc,
+            @RequestParam(required = false) String username
+    ) {
+        System.out.println("getUserList");
+        return adminUserService.getUserList(currentPage, pageSize, isAsc, username);
+    }
+
 
     // 超级管理员可以更改任意用户的密码
     @PreAuthorize("hasAnyAuthority('user:password:change:any')")

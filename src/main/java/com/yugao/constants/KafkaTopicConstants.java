@@ -10,5 +10,6 @@ public final class KafkaTopicConstants {
     public static final String SEND_VERIFICATION_EMAIL = "send-verification-email";
     public static final String NOTIFICATION_DELETE = "notification-delete";
     public static final String REFRESH = "refresh";
+    public static final String POP_UP_HINT = "pop-up-hint";
 
 }

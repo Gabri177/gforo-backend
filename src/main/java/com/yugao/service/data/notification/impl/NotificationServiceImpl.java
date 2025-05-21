@@ -3,7 +3,7 @@ package com.yugao.service.data.notification.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yugao.domain.notification.Notification;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.enums.StatusEnum;
@@ -127,7 +127,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification get(Long senderId, Long receiverId, Long entityId, NotificationEntityTypeEnum entityType, NotificationTypeEnum type) {
+    public Notification get(Long senderId, Long receiverId, Long entityId, EntityTypeEnum entityType, NotificationTypeEnum type) {
 
         LambdaQueryWrapper<Notification> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Notification::getSenderId, senderId);
@@ -141,7 +141,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void delete(Long senderId, Long receiverId,
-                       Long entityId, NotificationEntityTypeEnum entityType,
+                       Long entityId, EntityTypeEnum entityType,
                        NotificationTypeEnum type) {
 
         Notification not = get(senderId, receiverId, entityId, entityType, type);

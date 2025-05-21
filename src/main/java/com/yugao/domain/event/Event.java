@@ -36,7 +36,7 @@ public class Event<T> {
                 .build();
     }
 
-    public T getPayloadAs(Class<T> clazz, ObjectMapper mapper) {
+    public <R> R getPayloadAs(Class<R> clazz, ObjectMapper mapper) {
         return mapper.convertValue(payload, clazz);
     }
 

@@ -16,7 +16,10 @@ import com.yugao.service.base.RedisService;
 import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.business.auth.RegisterService;
 import com.yugao.service.business.captcha.CaptchaService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.data.permission.UserRoleService;
+import com.yugao.service.data.title.TitleService;
+import com.yugao.service.data.title.UserTitleService;
 import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.service.limiter.EmailRateLimiter;
@@ -31,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
 
+    private final TitleBusinessService titleBusinessService;
+    private final TitleService titleService;
+    private final UserTitleService userTitleService;
     @Value("${email.active-account.request-expire-time-minutes}")
     private Long emailRequestExpireTimeMinutes;
     private final UserService userService;
@@ -105,6 +111,8 @@ public class RegisterServiceImpl implements RegisterService {
         userService.addUser(user);
         // 给用户分配角色
         userRoleService.addUserRole(new UserRole(user.getId(), RoleEnum.ROLE_USER.getCode()));
+        // 刷新用户title
+        titleBusinessService.refreshUserExpTitle(user.getId());
         return ResultResponse.success(null);
     }
 }

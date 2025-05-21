@@ -9,7 +9,7 @@ import com.yugao.domain.notification.NotificationRead;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.permission.Role;
 import com.yugao.domain.user.User;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.notification.NotificationReadService;
@@ -144,7 +144,7 @@ public class VOBuilder {
 //        System.out.println("组装实体类型是comment的commentId的list");
         Map<Long, SimpleCommentVO> commentMap = commentService.findCommentsByIds(
                         res.stream()
-                                .filter(notification -> notification.getEntityType() == NotificationEntityTypeEnum.COMMENT)
+                                .filter(notification -> notification.getEntityType() == EntityTypeEnum.COMMENT)
                                 .map(UserNotificationVO::getEntityId)
                                 .distinct()
                                 .toList()
@@ -157,7 +157,7 @@ public class VOBuilder {
 
         // 1）通知中直接是帖子的 entityId
         List<Long> postIdsFromNotification = res.stream()
-                .filter(notification -> notification.getEntityType() == NotificationEntityTypeEnum.POST)
+                .filter(notification -> notification.getEntityType() == EntityTypeEnum.POST)
                 .map(UserNotificationVO::getEntityId)
                 .toList();
         // 2）评论中关联的 postId
@@ -178,7 +178,7 @@ public class VOBuilder {
         res.forEach(notification -> {
             notification.setIsRead(readIds.contains(notification.getId()));
             notification.setAuthor(authorMap.get(notification.getSenderId()));
-            if (notification.getEntityType() == NotificationEntityTypeEnum.COMMENT) {
+            if (notification.getEntityType() == EntityTypeEnum.COMMENT) {
                 notification.setComment(commentMap.get(notification.getEntityId()));
                 notification.setPost(postMap.get(
                         Optional.ofNullable(commentMap.get(notification.getEntityId()))
@@ -186,7 +186,7 @@ public class VOBuilder {
                                 .orElse(null)
                         )
                 );
-            } else if (notification.getEntityType() == NotificationEntityTypeEnum.POST) {
+            } else if (notification.getEntityType() == EntityTypeEnum.POST) {
                 notification.setPost(postMap.get(notification.getEntityId()));
             }
         });

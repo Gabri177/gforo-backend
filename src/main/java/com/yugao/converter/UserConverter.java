@@ -33,10 +33,11 @@ public class UserConverter {
         user.setPassword(PasswordUtil.encode(userRegisterDTO.getPassword()));
         user.setEmail(userRegisterDTO.getEmail());
         user.setHeaderUrl(userRegisterDTO.getHeaderUrl());
-        user.setType(0);
+        user.setExpPoints(0);
         user.setStatus(StatusEnum.NORMAL);
         user.setCreateTime(new Date());
         user.setNickname(userRegisterDTO.getUsername());
+        user.setTitleId(1L);
         return user;
     }
 

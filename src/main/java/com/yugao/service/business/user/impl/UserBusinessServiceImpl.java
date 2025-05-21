@@ -2,8 +2,10 @@ package com.yugao.service.business.user.impl;
 
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.RedisKeyConstants;
+import com.yugao.controller.title.TitleController;
 import com.yugao.converter.CommentConverter;
 import com.yugao.converter.PostConverter;
+import com.yugao.converter.TitleConverter;
 import com.yugao.converter.UserConverter;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
@@ -21,9 +23,12 @@ import com.yugao.service.builder.EmailBuilder;
 import com.yugao.service.builder.VOBuilder;
 import com.yugao.service.business.captcha.CaptchaService;
 import com.yugao.service.business.like.LikeService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.business.user.UserBusinessService;
 import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.data.title.TitleService;
+import com.yugao.service.data.title.UserTitleService;
 import com.yugao.service.data.user.UserService;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.service.handler.TokenHandler;
@@ -68,6 +73,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     private final UserHandler userHandler;
     private final TokenHandler tokenHandler;
     private final EventHandler eventHandler;
+    private final TitleService titleService;
 
 
     @Override
@@ -90,6 +96,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         userInfoVO.setCommentCount(commentService.getCommentCountByUserId(curUserId));
         userInfoVO.setAccessControl(voBuilder.buildAccessControlVO(curUserId));
         userInfoVO.setGetLikeCount(likeService.countUserGetLikes(curUserId));
+        userInfoVO.setTitle(TitleConverter.toSimpleTitleVO(titleService.findTitleByUserId(curUserId)));
         return ResultResponse.success(userInfoVO);
     }
 

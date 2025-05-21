@@ -2,19 +2,19 @@ package com.yugao.service.handler;
 
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.KafkaTopicConstants;
-import com.yugao.converter.NotificationConverter;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.title.Title;
 import com.yugao.domain.user.User;
-import com.yugao.dto.notification.AdminAddNotificationDTO;
 import com.yugao.enums.CommentEntityTypeEnum;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 import com.yugao.enums.StatusEnum;
 import com.yugao.event.EventProducer;
+import com.yugao.service.data.title.TitleService;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,6 +25,7 @@ public class EventHandler {
 
     private final EventProducer eventProducer;
     private final UserHandler userHandler;
+    private final TitleService titleService;
 
     public void notifyComment(Long toUserId, Comment comment, Boolean isPost){
 
@@ -41,7 +42,7 @@ public class EventHandler {
         else
             not.setType(NotificationTypeEnum.COMMENT_COMMENT);
         not.setTargetId(toUserId);
-        not.setEntityType(NotificationEntityTypeEnum.COMMENT);
+        not.setEntityType(EntityTypeEnum.COMMENT);
         not.setEntityId(comment.getId());
         not.setStatus(StatusEnum.NORMAL);
         // 发送评论事件
@@ -62,9 +63,9 @@ public class EventHandler {
         not.setType(NotificationTypeEnum.LIKE);
         not.setTargetId(toUserId);
         if (isPost)
-            not.setEntityType(NotificationEntityTypeEnum.POST);
+            not.setEntityType(EntityTypeEnum.POST);
         else
-            not.setEntityType(NotificationEntityTypeEnum.COMMENT);
+            not.setEntityType(EntityTypeEnum.COMMENT);
         not.setEntityId(entityId);
         not.setStatus(StatusEnum.NORMAL);
         // 发送点赞事件
@@ -114,7 +115,7 @@ public class EventHandler {
         not.setSenderId(currentUserId);
         not.setType(NotificationTypeEnum.ADMIN);
         not.setTargetId(toUserId);
-        not.setEntityType(NotificationEntityTypeEnum.NULL);
+        not.setEntityType(EntityTypeEnum.NULL);
         not.setStatus(StatusEnum.NORMAL);
         if (clazz == Comment.class){
             not.setTitle("Your comment has been deleted");
@@ -135,11 +136,35 @@ public class EventHandler {
 
     }
 
-    public void notifyRefreshUserInfo(Long userId){
-        User user = userHandler.getUser(userId);
+    public void notifyRefreshUserInfo(Long toUserId){
+        User user = userHandler.getUser(toUserId);
         eventProducer.send(
                 KafkaTopicConstants.REFRESH,
                 Event.create(KafkaEventType.REFRESH_USER_INFO, "Notification", "null", user)
+        );
+    }
+
+    public void notifyNewTitle(Long toUserId, Long titleId){
+
+        Long currentUserId = SecurityUtils.mustGetLoginUserId();
+        Title title = titleService.getTitleById(titleId);
+        Notification not = new Notification();
+        not.setSenderId(currentUserId);
+        not.setType(NotificationTypeEnum.ADMIN);
+        not.setTargetId(toUserId);
+        not.setEntityType(EntityTypeEnum.TITLE);
+        not.setStatus(StatusEnum.NORMAL);
+        not.setEntityId(titleId);
+        not.setTitle("New title has been granted");
+        not.setContent("You have been granted a new title: " + title.getName());
+        eventProducer.send(
+                KafkaTopicConstants.POP_UP_HINT,
+                Event.create(
+                        KafkaEventType.NEW_TITLE,
+                        "Notification",
+                        "null",
+                        not
+                )
         );
     }
 

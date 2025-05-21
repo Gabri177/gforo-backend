@@ -3,7 +3,7 @@ package com.yugao.converter;
 import com.yugao.domain.notification.Notification;
 import com.yugao.dto.notification.AdminAddNotificationDTO;
 import com.yugao.dto.notification.AdminUpdateNotificationDTO;
-import com.yugao.enums.NotificationEntityTypeEnum;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.NotificationTypeEnum;
 import com.yugao.enums.StatusEnum;
 import com.yugao.vo.notification.AdminNotificationVO;
@@ -46,7 +46,7 @@ public class NotificationConverter {
         notification.setSenderId(senderId);
         notification.setTargetId(targetId);
         notification.setEntityId(0L);
-        notification.setEntityType(NotificationEntityTypeEnum.NULL);
+        notification.setEntityType(EntityTypeEnum.NULL);
         return notification;
     }
 

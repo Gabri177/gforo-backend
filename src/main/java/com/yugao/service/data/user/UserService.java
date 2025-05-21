@@ -14,6 +14,8 @@ public interface UserService {
 
     Long getUserCountWithLowerLevel(Long userId, Integer level);
 
+    Long getUserCountWithLowerLevel(Long userId, Integer level, String usernameKeyWord);
+
     User getUserById(Long Id);
 
     List<User> getUsersByIds(List<Long> ids);
@@ -23,6 +25,9 @@ public interface UserService {
     User getUserByEmail(String email);
 
     List<User> getUsers(Long id, Integer currentPage, Integer pageSize, Integer curUserLevel);
+
+    List<User> getUsers(Long userId, String usernameKeyWord,
+                        Integer currentPage, Integer pageSize, Integer curUserLevel);
 
     boolean updateUser(User user);
 
@@ -51,4 +56,8 @@ public interface UserService {
     Double getMonthGrowthRate();
 
     List<MonthlyUserStatsVO> getMonthlyRegisterStats();
+
+    void increaseExp(Long userId, Integer exp);
+
+    void decreaseExp(Long userId, Integer exp);
 }

@@ -15,6 +15,7 @@ import com.yugao.vo.statistics.MonthlyUserStatsVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -37,6 +38,12 @@ public class UserServiceImpl implements UserService {
     public Long getUserCountWithLowerLevel(Long userId, Integer level) {
 
         return userMapper.countUsersWithLowerRoleLevel(userId, level);
+    }
+
+    @Override
+    public Long getUserCountWithLowerLevel(Long userId, Integer level, String usernameKeyWord) {
+
+        return userMapper.countUsersWithLowerRoleLevelAndUsernameLike(userId, level, usernameKeyWord);
     }
 
     @Override
@@ -77,6 +84,19 @@ public class UserServiceImpl implements UserService {
                 curUserLevel
         );
     }
+
+    @Override
+    public List<User> getUsers(Long userId, String usernameKeyWord, Integer currentPage, Integer pageSize, Integer curUserLevel) {
+
+        return userMapper.getUsersWithLowerRoleLevelAndUsernameLike(
+                new Page<>(currentPage, pageSize),
+                userId,
+                curUserLevel,
+                usernameKeyWord
+        );
+
+    }
+
 
     @Override
     public boolean updateUser(User user) {
@@ -195,6 +215,23 @@ public class UserServiceImpl implements UserService {
     public List<MonthlyUserStatsVO> getMonthlyRegisterStats() {
 
         return userMapper.getMonthlyRegisterStats();
+    }
+
+    @Override
+    public void increaseExp(Long userId, Integer exp) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId, userId)
+                .setSql("exp_points = exp_points + " + exp);
+        userMapper.update(null, wrapper);
+    }
+
+    @Override
+    public void decreaseExp(Long userId, Integer exp) {
+
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId, userId)
+                .setSql("exp_points = exp_points - " + exp);
+        userMapper.update(null, wrapper);
     }
 
 

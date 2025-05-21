@@ -11,6 +11,7 @@ import com.yugao.service.base.RedisService;
 import com.yugao.service.business.like.LikeService;
 import com.yugao.service.data.comment.CommentService;
 import com.yugao.service.data.post.DiscussPostService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class LikeServiceImpl implements LikeService {
     private final DiscussPostService discussPostService;
     private final CommentService commentService;
     private final EventHandler eventHandler;
+    private final TitleBusinessService titleBusinessService;
 
     private void incrPostLike(Long postId){
         String key = RedisKeyConstants.buildLikeKeyWithTargetId(postId, LikeTypeEnum.POST);
@@ -77,22 +79,17 @@ public class LikeServiceImpl implements LikeService {
             redisService.delete(key);
             decrPostLike(postId);
             decrUserLike(targetUserId);
-//            Notification not = notificationService.get(
-//                    userId,
-//                    targetUserId,
-//                    postId,
-//                    NotificationEntityTypeEnum.POST,
-//                    NotificationTypeEnum.LIKE
-//            );
-//            if (not != null)
-//                eventProducer.send(
-//                        KafkaTopicConstants.NOTIFICATION_LIKE,
-//                        Event.create(KafkaEventType.DISLIKE_POST, "Notification", "null", not)
-//                );
+
+            // TODO: 可能要优化
+            titleBusinessService.subtractExp(targetUserId, 1, "被取消点赞帖子", EntityTypeEnum.POST, postId);
+
         } else {
             redisService.set(key, BooleanEnum.TRUE.getValue());
             incrPostLike(postId);
             incrUserLike(targetUserId);
+
+            // TODO: 可能要优化
+            titleBusinessService.addExp(targetUserId, 1, "被点赞帖子", EntityTypeEnum.POST, postId);
             // 通知用户
             eventHandler.notifyLike(targetUserId, postId, true);
         }
@@ -120,10 +117,14 @@ public class LikeServiceImpl implements LikeService {
             redisService.delete(key);
             decrCommentLike(commentId);
             decrUserLike(targetUserId);
+
+            titleBusinessService.subtractExp(targetUserId, 1, "被取消点赞评论", EntityTypeEnum.COMMENT, commentId);
         } else {
             redisService.set(key, BooleanEnum.TRUE.getValue());
             incrCommentLike(commentId);
             incrUserLike(targetUserId);
+
+            titleBusinessService.addExp(targetUserId, 1, "被点赞评论", EntityTypeEnum.COMMENT, commentId);
             // 通知用户
             eventHandler.notifyLike(targetUserId, commentId, false);
         }

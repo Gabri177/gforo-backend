@@ -5,6 +5,7 @@ import com.yugao.domain.post.DiscussPost;
 import com.yugao.vo.comment.CommentVO;
 import com.yugao.vo.post.PostDetailVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
+import com.yugao.vo.title.SimpleTitleVO;
 import com.yugao.vo.user.SimpleUserVO;
 
 import java.util.List;
@@ -15,7 +16,8 @@ public class PostConverter {
                                               SimpleUserVO auther,
                                               List<CommentVO> replies,
                                               Integer likeCount,
-                                              Boolean isLike) {
+                                              Boolean isLike,
+                                              SimpleTitleVO authorTitle) {
 
         PostDetailVO vo = new PostDetailVO();
         vo.setId(discussPost.getId());
@@ -27,6 +29,7 @@ public class PostConverter {
         vo.setLikeCount(likeCount);
         vo.setIsLike(isLike);
         vo.setType(discussPost.getType());
+        vo.setAuthorTitle(authorTitle);
         return vo;
     }
 
@@ -34,7 +37,8 @@ public class PostConverter {
                                               SimpleUserVO auther,
                                               List<CommentVO> replies,
                                               Integer likeCount,
-                                              Boolean isLike) {
+                                              Boolean isLike,
+                                              SimpleTitleVO authorTitle) {
 
         PostDetailVO vo = new PostDetailVO();
         vo.setId(comment.getId());
@@ -45,6 +49,7 @@ public class PostConverter {
         vo.setReplies(replies);
         vo.setLikeCount(likeCount);
         vo.setIsLike(isLike);
+        vo.setAuthorTitle(authorTitle);
         return vo;
     }
 

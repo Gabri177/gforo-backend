@@ -54,4 +54,38 @@ public interface UserMapper extends BaseMapper<User> {
             @Param("curUserLevel") Integer curUserLevel
     );
 
+    @Select("""
+    SELECT u.* FROM user u
+    LEFT JOIN user_role ur ON u.id = ur.user_id
+    LEFT JOIN role r ON ur.role_id = r.id
+    WHERE u.id != #{curUserId}
+      AND u.username LIKE CONCAT('%', #{keyword}, '%')
+    GROUP BY u.id
+    HAVING MIN(r.level) > #{curUserLevel}
+    """)
+    List<User> getUsersWithLowerRoleLevelAndUsernameLike(
+            Page<?> page,
+            @Param("curUserId") Long curUserId,
+            @Param("curUserLevel") Integer curUserLevel,
+            @Param("keyword") String keyword
+    );
+
+    @Select("""
+    SELECT COUNT(*) FROM (
+        SELECT u.id FROM user u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN role r ON ur.role_id = r.id
+        WHERE u.id != #{curUserId}
+          AND u.username LIKE CONCAT('%', #{keyword}, '%')
+        GROUP BY u.id
+        HAVING MIN(r.level) > #{curUserLevel}
+    ) temp
+    """)
+    long countUsersWithLowerRoleLevelAndUsernameLike(
+            @Param("curUserId") Long curUserId,
+            @Param("curUserLevel") Integer curUserLevel,
+            @Param("keyword") String keyword
+    );
+
+
 }
