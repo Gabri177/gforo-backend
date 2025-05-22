@@ -7,18 +7,26 @@ import com.yugao.converter.TitleConverter;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
+import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.title.Title;
 import com.yugao.domain.user.User;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.util.WsUtil;
+import com.yugao.service.business.search.ElasticSearchService;
+import com.yugao.service.business.title.TitleBusinessService;
 import com.yugao.service.data.notification.NotificationService;
 import com.yugao.service.data.title.TitleService;
 import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.serialize.SerializeUtil;
 import com.yugao.vo.title.SimpleTitleVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +37,8 @@ public class EventConsumer {
     private final WsUtil wsUtil;
     private final NotificationService notificationService;
     private final TitleService titleService;
+    private final TitleBusinessService titleBusinessService;
+    private final ElasticSearchService elasticSearchService;
 
     // TODO: 下面除了邮件发送是正确的其他的逻辑还要再次修改
 
@@ -52,10 +62,7 @@ public class EventConsumer {
                         not.getTargetId().toString(),WsMessageTypeEnum.LIKE_POST, "你有新的帖子被点赞了");
                 notificationService.addNotification(not);
                 break;
-//            case KafkaEventType.DISLIKE_POST:
-//                // notificationService.deleteNotification(notification.getTargetId());
-//                System.out.println("收到取消点赞帖子的通知");
-//                break;
+
         }
 
     }
@@ -81,11 +88,6 @@ public class EventConsumer {
                 notificationService.addNotification(not);
                 break;
         }
-    }
-
-    @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_FOLLOW)
-    public void handleNotificationFollow(Event<User> event){
-        System.out.println("Received event: " + event);
     }
 
     @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_MESSAGE)
@@ -128,7 +130,7 @@ public class EventConsumer {
         System.out.println("消费者： 发送验证邮件成功");
     }
 
-    @KafkaListener(topics = KafkaTopicConstants.REFRESH)
+    @KafkaListener(topics = KafkaTopicConstants.REFRESH_USER_INFO)
     public void handleRefresh(Event<User> event){
         System.out.println("Received event: " + event);
         User user = event.getPayloadAs(User.class, objectMapper);
@@ -159,4 +161,44 @@ public class EventConsumer {
                 break;
         }
     }
+
+    @KafkaListener(topics = KafkaTopicConstants.EXP_CHANGE)
+    public void handleExpChange(Event<?> event){
+
+        EntityTypeEnum type = EntityTypeEnum.fromValue(
+                event.getMetadataValue("entityType", Integer.class, objectMapper));
+        Long entityId = event.getMetadataValue("entityId", Long.class, objectMapper);
+        Integer exp = event.getMetadataValue("exp", Integer.class, objectMapper);
+        Long userId = event.getMetadataValue("userId", Long.class, objectMapper);
+        if (entityId != null && exp != null && userId != null) {
+            if (type == EntityTypeEnum.POST && exp > 0)
+                titleBusinessService.addExp(userId, exp, "发布帖子", type, entityId);
+            else if (type == EntityTypeEnum.POST && exp < 0)
+                titleBusinessService.subtractExp(userId, -exp, "删除帖子", type, entityId);
+            else if (type == EntityTypeEnum.COMMENT && exp > 0)
+                titleBusinessService.addExp(userId, exp, "发布评论", type, entityId);
+            else if (type == EntityTypeEnum.COMMENT && exp < 0)
+                titleBusinessService.subtractExp(userId, -exp, "删除评论", type, entityId);
+        }
+
+    }
+
+    @KafkaListener(topics = KafkaTopicConstants.ELASTICSEARCH)
+    public void handleElasticSearch(Event<?> event) {
+        System.out.println("Received event: " + event);
+        if (Objects.equals(event.getEventType(), KafkaEventType.NULL)) {
+            DiscussPost post = event.getPayloadAs(DiscussPost.class, objectMapper);
+            if (post == null)
+                return;
+            elasticSearchService.savePost(post);
+            System.out.println("保存帖子到es");
+        } else if (Objects.equals(event.getEventType(), KafkaEventType.DELETE)) {
+            Long postId = event.getMetadataValue("postId", Long.class, objectMapper);
+            if (postId == null)
+                return;
+            elasticSearchService.deletePost(postId);
+            System.out.println("删除es中的帖子");
+        }
+    }
+
 }

@@ -18,4 +18,6 @@ public interface PostService {
     ResponseEntity<ResultFormat> getPosts(Long userId, Long boardId, Integer currentPage, Integer pageSize, Integer orderMode);
 
     ResponseEntity<ResultFormat> changePostType(Long postId, Integer type);
+
+    ResponseEntity<ResultFormat> searchPost(String keyword, Integer currentPage, Integer pageSize);
 }

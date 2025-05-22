@@ -18,6 +18,15 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("/search")
+    public ResponseEntity<ResultFormat> searchPost(
+            @RequestParam String keyword,
+            @RequestParam (defaultValue = "1", name = "currentPage", required = false) Integer currentPage,
+            @RequestParam (defaultValue = "10", name = "pageSize", required = false) Integer pageSize
+            ) {
+        return postService.searchPost(keyword, currentPage, pageSize);
+    }
+
     @GetMapping("/detail/{postId}")
     public ResponseEntity<ResultFormat> getPostDetail(
             @PathVariable Long postId,

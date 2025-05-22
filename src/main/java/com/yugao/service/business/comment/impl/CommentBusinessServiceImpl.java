@@ -32,7 +32,6 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
     private final CommentService commentService;
     private final CommentValidator commentValidator;
     private final EventHandler eventHandler;
-    private final TitleBusinessService titleBusinessService;
 
     @Override
     public ResponseEntity<ResultFormat> addCommentToPost(CommentToPostDTO commentToPostDTO) {
@@ -43,9 +42,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
 //        System.out.println("addCommentToPost: " + newComment);
         commentService.addComment(newComment);
 
-        // TODO: 可能要优化
-        titleBusinessService.addExp(currentUserId, 1, "评论帖子", EntityTypeEnum.COMMENT, newComment.getId());
-
+        // 发送经验变动事件
+        eventHandler.handleExpChange(currentUserId, EntityTypeEnum.COMMENT, newComment.getId(), 1);
+        // 发送评论通知事件
         eventHandler.notifyComment(commentToPostDTO.getToPostUserId(), newComment);
 
         return ResultResponse.success(null);
@@ -60,9 +59,9 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
 //        System.out.println("addCommentToComment: " + newComment);
         commentService.addComment(newComment);
 
-        // TODO: 可能要优化
-        titleBusinessService.addExp(currentUserId, 1, "评论评论", EntityTypeEnum.COMMENT, newComment.getId());
-
+        // 发送经验变动事件
+        eventHandler.handleExpChange(currentUserId, EntityTypeEnum.COMMENT, newComment.getId(), 1);
+        // 发送评论通知事件
         eventHandler.notifyComment(commentToCommentDTO.getToCommentUserId(), newComment);
 
         return ResultResponse.success(null);
@@ -79,8 +78,8 @@ public class CommentBusinessServiceImpl implements CommentBusinessService {
             throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         commentService.deleteComment(commentId);
 
-        // TODO: 可能要优化
-        titleBusinessService.subtractExp(currentUserId, 1, "删除评论", EntityTypeEnum.COMMENT, commentId);
+        // 发送经验变动事件
+        eventHandler.handleExpChange(currentUserId, EntityTypeEnum.COMMENT, commentId, -1);
         return ResultResponse.success(null);
     }
 

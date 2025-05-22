@@ -2,6 +2,7 @@ package com.yugao.service.business.admin.impl;
 
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.post.DiscussPost;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
@@ -56,6 +57,9 @@ public class AdminCommentServiceImpl implements AdminCommentService {
                 throw new BusinessException(ResultCodeEnum.NO_PERMISSION);
         }
         commentService.deleteComment(commentId);
+        // 通知用户评论被删除事件
+        eventHandler.handleExpChange(comment.getUserId(), EntityTypeEnum.COMMENT, commentId, -1);
+        // 通知用户评论被删除事件
         eventHandler.notifyDelete(comment.getUserId(), Comment.class, comment);
         return ResultResponse.success(null);
     }

@@ -1,6 +1,7 @@
 package com.yugao.service.business.admin.impl;
 
 import com.yugao.domain.post.DiscussPost;
+import com.yugao.enums.EntityTypeEnum;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.result.ResultFormat;
@@ -40,7 +41,11 @@ public class AdminPostServiceImpl implements AdminPostService {
                 throw new BusinessException(ResultCodeEnum.USER_NOT_AUTHORIZED);
         }
         discussPostService.deleteDiscussPost(postId);
+
+        // 通知用户帖子被删除事件
         eventHandler.notifyDelete(post.getUserId(), DiscussPost.class, post);
+        // 扣除用户经验值
+        eventHandler.handleExpChange(post.getUserId(), EntityTypeEnum.POST, postId, -3);
         return ResultResponse.success(null);
     }
 }

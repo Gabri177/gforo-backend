@@ -19,6 +19,8 @@ import com.yugao.util.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 public class EventHandler {
@@ -139,14 +141,16 @@ public class EventHandler {
     public void notifyRefreshUserInfo(Long toUserId){
         User user = userHandler.getUser(toUserId);
         eventProducer.send(
-                KafkaTopicConstants.REFRESH,
+                KafkaTopicConstants.REFRESH_USER_INFO,
                 Event.create(KafkaEventType.REFRESH_USER_INFO, "Notification", "null", user)
         );
     }
 
     public void notifyNewTitle(Long toUserId, Long titleId){
 
-        Long currentUserId = SecurityUtils.mustGetLoginUserId();
+        Long currentUserId = SecurityUtils.getLoginUserId();
+        if (currentUserId == null)
+            currentUserId = toUserId;
         Title title = titleService.getTitleById(titleId);
         Notification not = new Notification();
         not.setSenderId(currentUserId);
@@ -165,6 +169,48 @@ public class EventHandler {
                         "null",
                         not
                 )
+        );
+    }
+
+    public void handleExpChange(Long userId ,EntityTypeEnum type, Long entityId, Integer exp){
+
+        Map<String, Object> map = Map.of(
+                "userId", userId,
+                "entityType", type.getValue(),
+                "entityId", entityId,
+                "exp", exp
+        );
+        Event<Object> event = Event.builder()
+                .metadata(map)
+                .build();
+        eventProducer.send(
+                KafkaTopicConstants.EXP_CHANGE,
+                event
+        );
+    }
+
+    public void handleSavePost(DiscussPost post){
+        eventProducer.send(
+                KafkaTopicConstants.ELASTICSEARCH,
+                Event.create(
+                        KafkaEventType.NULL,
+                        "null",
+                        "null",
+                        post
+                )
+        );
+    }
+
+    public void handleDeletePost(Long postId){
+        Map<String, Object> map = Map.of(
+                "postId", postId
+        );
+        Event<Object> event = Event.builder()
+                .metadata(map)
+                .build();
+        eventProducer.send(
+                KafkaTopicConstants.ELASTICSEARCH,
+                event
         );
     }
 
