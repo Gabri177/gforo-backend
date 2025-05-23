@@ -30,7 +30,7 @@ public class WebSocketServer {
                     .channel(NioServerSocketChannel.class)
                     .childHandler(webSocketChannelInitializer);
 
-            Channel channel = bootstrap.bind(port).sync().channel();
+            Channel channel = bootstrap.bind("0.0.0.0", port).sync().channel();
             System.out.println("✅ Netty WebSocket 服务器启动: ws://localhost:" + port + "/ws");
         } catch (Exception e) {
             e.printStackTrace();

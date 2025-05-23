@@ -43,14 +43,14 @@ public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullH
         String[] segments = path.split("/");
         System.out.println(Arrays.stream(segments).toList());
         String deviceId = segments.length >= 2 ? segments[1] : null;
-        System.out.println("deviceId: " + deviceId);
+
 
         // ✅ 示例：从查询参数中提取token
         QueryStringDecoder decoder = new QueryStringDecoder(req.uri());
         String token = Optional.ofNullable(decoder.parameters().get("token"))
                 .map(list -> list.get(0)).orElse(null);
         String userId = jwtUtil.getUserIdWithToken(token);
-        System.out.println("userId: " + userId);
+        System.out.println("⭕️ UserId: " + userId + " DeviceId: " + deviceId);
         if (userId == null || deviceId == null) {
             System.out.println("userId == null || deviceId == null");
             sendResponse(ctx, ResultCodeEnum.ACCESSION_UNAUTHORIZED, HttpResponseStatus.UNAUTHORIZED);
