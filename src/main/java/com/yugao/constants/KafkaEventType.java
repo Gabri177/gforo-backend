@@ -18,4 +18,5 @@ public final class KafkaEventType {
     public static final String REFRESH_USER_INFO = "refresh_user_info";
     public static final String NEW_TITLE = "new_title";
     public static final String NULL = "null";
+    public static final String HANDLE_REPORT = "handle_report";
 }

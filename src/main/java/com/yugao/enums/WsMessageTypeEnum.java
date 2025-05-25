@@ -11,6 +11,7 @@ public enum WsMessageTypeEnum {
     COMMENT_COMMENT( "COMMENT_COMMENT", "回复评论"),
     COMMENT_POST("COMMENT_POST", "回复帖子"),
     DELETE_ENTITY( "DELETE_ENTITY", "删除实体"),
+    HANDLE_REPORT( "HANDLE_REPORT", "处理举报"),
     REFRESH_USER_INFO( "REFRESH_USER_INFO", "刷新用户信息"),
     SYSTEM( "SYSTEM", "系统消息"),
     HEARTBEAT( "pong", "心跳"),

@@ -36,7 +36,10 @@ public class CaptchaServiceImpl implements CaptchaService {
     // 判断是否通过验证码
     public boolean verifyGraphCaptcha(String captchaId, String captchaCode) {
         String captchaText = redisService.get(RedisKeyConstants.buildGraphCaptchaKey(captchaId));
-        return captchaCode != null && captchaCode.equals(captchaText);
+
+        System.out.println("catchaId = " + captchaId);
+        System.out.println("captchaText = " + captchaText);
+        return captchaCode != null && captchaCode.toLowerCase().equals(captchaText);
     }
 
     @Override

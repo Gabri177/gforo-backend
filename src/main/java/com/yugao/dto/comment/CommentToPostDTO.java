@@ -12,7 +12,7 @@ public class CommentToPostDTO {
     private Long entityId; // 评论的帖子Id
 
     @NotBlank(message = "Content cannot be empty")
-    @Size(min = 1, max = 500, message = "Content length must be between 1 and 500")
+    @Size(min = 1, max = 2000, message = "Content length must be between 1 and 2000")
     private String content; // 评论内容
 
     @NotNull(message = "toPostUserId cannot be null")

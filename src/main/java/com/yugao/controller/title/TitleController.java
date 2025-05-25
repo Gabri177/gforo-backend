@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TitleController {
 
+    // TODO: 权限控制
+
     private final TitleBusinessService titleBusinessService;
 
     @GetMapping("/my")

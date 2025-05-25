@@ -21,11 +21,9 @@ import com.yugao.util.mail.MailClientUtil;
 import com.yugao.util.serialize.SerializeUtil;
 import com.yugao.vo.title.SimpleTitleVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -95,16 +93,31 @@ public class EventConsumer {
         System.out.println("Received event: " + event);
     }
 
-    @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_DELETE)
-    public void handleNotificationDelete(Event<Notification> event){
+    @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_ADMIN)
+    public void handleNotificationAdmin(Event<Notification> event){
+
         System.out.println("Received event: " + event);
         Notification not = event.getPayloadAs(Notification.class, objectMapper);
         if (not == null)
             return;
-        System.out.println("用户的实体被有权限的人删除 通知UserId: " + not.getTargetId());
-        wsUtil.sendMsg(
-                not.getTargetId().toString(), WsMessageTypeEnum.DELETE_ENTITY, "你的内容被删除了");
-        notificationService.addNotification(not);
+        switch (event.getEventType()){
+            case KafkaEventType.DELETE:
+
+                System.out.println("用户的实体被有权限的人删除 通知UserId: " + not.getTargetId());
+                wsUtil.sendMsg(
+                        not.getTargetId().toString(), WsMessageTypeEnum.DELETE_ENTITY, "你的内容被删除了");
+                notificationService.addNotification(not);
+                break;
+            case KafkaEventType.HANDLE_REPORT:
+
+                System.out.println("用户Report被处理 通知用户: " + not.getTargetId());
+                wsUtil.sendMsg(
+                        not.getTargetId().toString(), WsMessageTypeEnum.HANDLE_REPORT, "你的举报被处理了");
+                notificationService.addNotification(not);
+                break;
+            default:
+                break;
+        }
     }
 
     @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_SYSTEM)

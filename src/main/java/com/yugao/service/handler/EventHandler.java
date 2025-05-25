@@ -7,6 +7,7 @@ import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
 import com.yugao.domain.post.DiscussPost;
+import com.yugao.domain.report.Report;
 import com.yugao.domain.title.Title;
 import com.yugao.domain.user.User;
 import com.yugao.enums.CommentEntityTypeEnum;
@@ -132,7 +133,7 @@ public class EventHandler {
         }
         // 发送删除事件
         eventProducer.send(
-                KafkaTopicConstants.NOTIFICATION_DELETE,
+                KafkaTopicConstants.NOTIFICATION_ADMIN,
                 Event.create(KafkaEventType.DELETE, "Notification", "null", not)
         );
 
@@ -143,6 +144,27 @@ public class EventHandler {
         eventProducer.send(
                 KafkaTopicConstants.REFRESH_USER_INFO,
                 Event.create(KafkaEventType.REFRESH_USER_INFO, "Notification", "null", user)
+        );
+    }
+
+    public void notifyHandleReport(Long toUserId, Report rep){
+
+        Long currentUserId = SecurityUtils.mustGetLoginUserId();
+
+        if (currentUserId.equals(toUserId))
+            return;
+        Notification not = new Notification();
+        not.setSenderId(currentUserId);
+        not.setType(NotificationTypeEnum.ADMIN);
+        not.setTargetId(toUserId);
+        not.setEntityType(EntityTypeEnum.NULL);
+        not.setStatus(StatusEnum.NORMAL);
+        not.setTitle("Your Report has been handled");
+        not.setContent("Detail: " + rep.getHandleNote());
+        // 发送删除事件
+        eventProducer.send(
+                KafkaTopicConstants.NOTIFICATION_ADMIN,
+                Event.create(KafkaEventType.HANDLE_REPORT, "Notification", "null", not)
         );
     }
 

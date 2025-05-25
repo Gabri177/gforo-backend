@@ -8,6 +8,7 @@ import com.yugao.domain.board.Board;
 import com.yugao.domain.notification.NotificationRead;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.domain.permission.Role;
+import com.yugao.domain.report.Report;
 import com.yugao.domain.user.User;
 import com.yugao.enums.EntityTypeEnum;
 import com.yugao.service.business.like.LikeService;
@@ -25,6 +26,7 @@ import com.yugao.vo.comment.SimpleCommentVO;
 import com.yugao.vo.notification.UserNotificationVO;
 import com.yugao.vo.post.CurrentPageItemVO;
 import com.yugao.vo.post.SimpleDiscussPostVO;
+import com.yugao.vo.report.ReportInfoVO;
 import com.yugao.vo.user.SimpleUserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -192,5 +194,72 @@ public class VOBuilder {
         });
         return res;
     }
+
+    public List<ReportInfoVO> assembleReportInfoVOList(List<Report> reports) {
+        if (reports == null || reports.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 获取举报人和被举报人的信息
+        Set<Long> reporterIds = reports.stream()
+                .map(Report::getReporterId)
+                .collect(Collectors.toSet());
+
+
+        Map<Long, SimpleUserVO> userMap = userService.getUsersByIds(reporterIds.stream().toList())
+                .stream()
+                .map(UserConverter::toSimpleVO)
+                .collect(Collectors.toMap(SimpleUserVO::getId, Function.identity()));
+
+        // 获取帖子和评论信息
+
+        Set<Long> commentIds = reports.stream()
+                .filter(report -> report.getTargetType() == EntityTypeEnum.COMMENT)
+                .map(Report::getTargetId)
+                .collect(Collectors.toSet());
+
+        Map<Long, SimpleCommentVO> commentMap = commentService.findCommentsByIds(new ArrayList<>(commentIds))
+                .stream()
+                .map(CommentConverter::toSimpleCommentVO)
+                .collect(Collectors.toMap(SimpleCommentVO::getId, Function.identity()));
+
+        Set<Long> postIds = reports.stream()
+                .filter(report -> report.getTargetType() == EntityTypeEnum.POST)
+                .map(Report::getTargetId)
+                .collect(Collectors.toSet());
+
+        Set<Long> postIdsFromComments = commentMap.values().stream()
+                .map(SimpleCommentVO::getPostId)
+                .collect(Collectors.toSet());
+
+        Set<Long> allPostIds = new HashSet<>(postIds);
+        allPostIds.addAll(postIdsFromComments);
+
+        Map<Long, SimpleDiscussPostVO> postMap = discussPostService.getDiscussPostsByIds(new ArrayList<>(allPostIds))
+                .stream()
+                .map(DiscussPostConverter::toSimpleDiscussPostVO)
+                .collect(Collectors.toMap(SimpleDiscussPostVO::getId, Function.identity()));
+
+        // 构建举报信息列表
+        return reports.stream()
+                .map(report -> {
+            ReportInfoVO reportInfoVO = new ReportInfoVO();
+            reportInfoVO.setId(report.getId());
+            reportInfoVO.setReporterInfo(userMap.get(report.getReporterId()));
+            reportInfoVO.setEntityType(report.getTargetType());
+            reportInfoVO.setReason(report.getReason());
+            reportInfoVO.setStatus(report.getStatus());
+            if (report.getTargetType() == EntityTypeEnum.COMMENT){
+                reportInfoVO.setComment(commentMap.get(report.getTargetId()));
+                reportInfoVO.setPost(postMap.get(commentMap.get(report.getTargetId()).getPostId()));
+            } else {
+                reportInfoVO.setPost(postMap.get(report.getTargetId()));
+            }
+            reportInfoVO.setCreateTime(report.getCreateTime());
+            return reportInfoVO;
+        })
+                .collect(Collectors.toList());
+    }
+
 
 }

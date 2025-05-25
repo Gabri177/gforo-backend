@@ -81,6 +81,7 @@ public enum ResultCodeEnum {
     UNKNOWN_TITLE_CONDITION(70015, "Unknown title condition"),
     TITLE_NOT_EXIST(70016, "Title not exist"),
     TITLE_BUILTIN(70017, "Title is built-in"),
+    REPORT_NOT_FOUND(70018, "Report not found"),
 
 
     // 系统异常

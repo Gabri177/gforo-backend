@@ -19,7 +19,7 @@ public class CommonContentDTO {
     @NotBlank(message = "Content cannot be empty", groups = ValidationGroups.DefaultGroup.class)
     @Size.List({
             @Size(min = 1, max = 5000, message = "Content length must be between 1 and 5000", groups = ValidationGroups.Post.class),
-            @Size(min = 1, max = 500, message = "Content length must be between 1 and 500", groups = ValidationGroups.Comment.class)
+            @Size(min = 1, max = 2000, message = "Content length must be between 1 and 500", groups = ValidationGroups.Comment.class)
     })
     private String content;
 }
