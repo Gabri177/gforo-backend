@@ -6,7 +6,6 @@ import com.yugao.dto.chat.PrivateMessageDTO;
 import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.base.RedisService;
-import com.yugao.service.base.impl.RedisServiceImpl;
 import com.yugao.service.handler.EventHandler;
 import com.yugao.util.serialize.SerializeUtil;
 import lombok.RequiredArgsConstructor;

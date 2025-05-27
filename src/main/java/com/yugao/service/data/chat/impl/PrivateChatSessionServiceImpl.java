@@ -2,7 +2,6 @@ package com.yugao.service.data.chat.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yugao.domain.chat.PrivateChatSession;
-import com.yugao.domain.chat.PrivateMessage;
 import com.yugao.mapper.chat.PrivateChatSessionMapper;
 import com.yugao.service.data.chat.PrivateChatSessionService;
 import org.springframework.stereotype.Service;

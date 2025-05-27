@@ -7,7 +7,6 @@ import com.yugao.netty.dispatcher.ChatMessageDispatcher;
 import com.yugao.netty.registry.ChannelRegistry;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.business.session.SessionService;
-import com.yugao.service.handler.TokenHandler;
 import com.yugao.util.serialize.SerializeUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
