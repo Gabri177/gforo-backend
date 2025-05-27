@@ -37,7 +37,7 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic notificationMessageTopic() {
-        return TopicBuilder.name(KafkaTopicConstants.NOTIFICATION_MESSAGE)
+        return TopicBuilder.name(KafkaTopicConstants.MESSAGE)
                 .partitions(5) // 可根据实际并发量设置
                 .replicas(1)
                 .build();

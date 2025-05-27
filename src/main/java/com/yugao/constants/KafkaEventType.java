@@ -19,4 +19,6 @@ public final class KafkaEventType {
     public static final String NEW_TITLE = "new_title";
     public static final String NULL = "null";
     public static final String HANDLE_REPORT = "handle_report";
+    public static final String SAVE_PRIVATE_MESSAGE = "save_private_message";
+    public static final String DELETE_CHAT_SESSION = "delete_chat_session";
 }

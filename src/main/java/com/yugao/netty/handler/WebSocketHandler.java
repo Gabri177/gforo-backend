@@ -1,7 +1,9 @@
 package com.yugao.netty.handler;
 
 import com.yugao.domain.websocket.WsMessage;
+import com.yugao.dto.chat.PrivateMessageDTO;
 import com.yugao.enums.WsMessageTypeEnum;
+import com.yugao.netty.dispatcher.ChatMessageDispatcher;
 import com.yugao.netty.registry.ChannelRegistry;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.business.session.SessionService;
@@ -20,10 +22,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-    private final TokenHandler tokenHandler;
     private final WsUtil wsUtil;
     private final ChannelRegistry channelRegistry;
     private final SessionService sessionService;
+    private final ChatMessageDispatcher chatMessageDispatcher;
+
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
@@ -49,7 +52,11 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 break;
             case "chat":
                 System.out.println("收到消息 chat：" + text);
-                wsUtil.sendMsg(userId, WsMessageTypeEnum.CHAT, message);
+                chatMessageDispatcher.dispatchChatMessage(
+                        userId,
+                        getReceiverIdFromChatMessage(message),  // 需要从 content 中解析出 toUserId
+                        message.getContent()
+                );
                 break;
             default:
                 System.out.println("未识别的消息类型: " + type);
@@ -66,5 +73,16 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
         channelRegistry.removeByChannel(ctx.channel());
         System.out.println("🔴 连接断开：" + ctx.channel().id());
     }
+
+    private String getReceiverIdFromChatMessage(WsMessage message) {
+        try {
+            PrivateMessageDTO dto = SerializeUtil.fromJson(message.getContent(), PrivateMessageDTO.class);
+            return String.valueOf(dto.getReceiverId());
+        } catch (Exception e) {
+            System.out.println("❌ 解析 chat 消息失败：" + e.getMessage());
+            return null;
+        }
+    }
+
 
 }

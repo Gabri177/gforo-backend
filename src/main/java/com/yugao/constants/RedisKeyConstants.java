@@ -45,6 +45,8 @@ public final class RedisKeyConstants {
     // 点赞相关
     private static final String LIKE = "like";
 
+    // 聊天相关
+    private static final String CHAT_LIMITED = "chat_limit";
 
     // 图形验证码
     public static String buildGraphCaptchaKey(String captchaId) {
@@ -100,6 +102,10 @@ public final class RedisKeyConstants {
 
     public static String buildSystemUvKey(LocalDate date) {
         return SYSTEM_UV + SPLIT + date.toString();
+    }
+
+    public static String buildChatLimitedKey(Long userId, Long toUserId) {
+        return CHAT_LIMITED + SPLIT + userId + SPLIT + toUserId;
     }
 
 }

@@ -8,7 +8,7 @@ public final class SecurityWhiteListConstants {
             "/api/register",
             "/api/register/activate",
             "/api/captcha/**",
-            "api/board/**",
+            "api/board",
             "/api/post/detail/*", // 未登录状态下放行帖子查看的接口
             "/api/post/board/*", // 未登录状态下放行帖子查看的接口
             "/api/post/search", // 未登录状态下放行帖子查看的接口

@@ -16,6 +16,8 @@ public enum WsMessageTypeEnum {
     SYSTEM( "SYSTEM", "系统消息"),
     HEARTBEAT( "pong", "心跳"),
     CHAT( "CHAT", "聊天"),
+    DELETE_SESSION( "DELETE_SESSION", "删除会话"),
+    CHAT_LIMIT( "CHAT_LIMIT", "聊天限制"),
     NEW_TITLE( "NEW_TITLE", "新称号"),;
 
     private final String code;

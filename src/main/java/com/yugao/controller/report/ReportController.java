@@ -7,6 +7,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.report.ReportBusinessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ public class ReportController {
 
     private final ReportBusinessService reportBusinessService;
 
+    @PreAuthorize("hasAnyAuthority('report:submit:own')")
     @PostMapping("/submit")
     public ResponseEntity<ResultFormat> submitReport(
             @Validated @RequestBody ReportDTO dto
@@ -24,6 +26,7 @@ public class ReportController {
         return reportBusinessService.submitReport(dto);
     }
 
+    @PreAuthorize("hasAnyAuthority('report:info:any')")
     @GetMapping("/all")
     public ResponseEntity<ResultFormat> getAllReport(
             @RequestParam (value = "currentPage", defaultValue = "1") Integer currentPage,
@@ -34,6 +37,7 @@ public class ReportController {
         return reportBusinessService.getAllReport(currentPage, pageSize, StatusEnum.fromValue(status));
     }
 
+    @PreAuthorize("hasAnyAuthority('report:handle:any')")
     @PutMapping("/handle")
     public ResponseEntity<ResultFormat> handleReport(
             @Validated @RequestBody HandleReportDTO dto

@@ -6,6 +6,7 @@ import com.yugao.domain.board.Board;
 import com.yugao.enums.StatusEnum;
 import com.yugao.mapper.board.BoardMapper;
 import com.yugao.service.data.board.BoardService;
+import org.apache.kafka.common.metrics.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +36,25 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void addBoard(Board board) {
+
+        boardMapper.insert(board);
+    }
+
+    @Override
     public Boolean updateBoard(Long boardId, String boardName, String boardDesc) {
         LambdaUpdateWrapper<Board> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Board::getId, boardId);
         updateWrapper.set(Board::getName, boardName);
         updateWrapper.set(Board::getDescription, boardDesc);
         return boardMapper.update(null, updateWrapper) > 0;
+    }
+
+    @Override
+    public void updateBoard(Board board) {
+
+        int count = boardMapper.updateById(board);
+        System.out.println("Update count: " + count);
     }
 
     @Override
@@ -61,11 +75,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<Board> getAllBoard() {
+    public List<Board> getAllBoard(StatusEnum status) {
         LambdaQueryWrapper<Board> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Board::getStatus, StatusEnum.NORMAL);
+        queryWrapper.eq(status != StatusEnum.NULL, Board::getStatus, status);
         queryWrapper.orderByDesc(Board::getCreateTime);
         return boardMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Board getBoardById(Long boardId) {
+
+        LambdaQueryWrapper<Board> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Board::getId, boardId);
+        return boardMapper.selectOne(queryWrapper);
     }
 
 

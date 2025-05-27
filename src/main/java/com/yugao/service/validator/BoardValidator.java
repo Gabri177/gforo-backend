@@ -2,6 +2,7 @@ package com.yugao.service.validator;
 
 import com.yugao.domain.board.Board;
 import com.yugao.enums.ResultCodeEnum;
+import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.service.data.board.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class BoardValidator {
     private final BoardService boardService;
 
     public void checkBoardIds(List<Long> ids) {
-        List<Long> boardIds = boardService.getAllBoard()
+        List<Long> boardIds = boardService.getAllBoard(StatusEnum.NORMAL)
                 .stream()
                 .map(Board::getId)
                 .toList();

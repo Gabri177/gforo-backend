@@ -1,8 +1,6 @@
 package com.yugao.domain.board;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.yugao.enums.StatusEnum;
 import lombok.Data;
 
@@ -21,6 +19,7 @@ public class Board {
 
     private StatusEnum status;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     private String iconUrl;

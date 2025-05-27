@@ -6,6 +6,7 @@ import com.yugao.result.ResultFormat;
 import com.yugao.service.business.title.TitleBusinessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,16 +15,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TitleController {
 
-    // TODO: 权限控制
-
     private final TitleBusinessService titleBusinessService;
 
+    @PreAuthorize("hasAnyAuthority('title:list:own')")
     @GetMapping("/my")
     public ResponseEntity<ResultFormat> getMyTitles() {
 
         return titleBusinessService.getUserTitleList(null);
     }
 
+    @PreAuthorize("hasAnyAuthority('title:update:own')")
     @PutMapping("/my/{titleId}")
     public ResponseEntity<ResultFormat> setMyTitle(
             @PathVariable Long titleId) {
@@ -31,7 +32,7 @@ public class TitleController {
         return titleBusinessService.setUserTitle(titleId);
     }
 
-
+    @PreAuthorize("hasAnyAuthority('title:user-info:any')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<ResultFormat> getUserTitles(
             @PathVariable Long userId) {
@@ -40,13 +41,14 @@ public class TitleController {
     }
 
 
-
+    @PreAuthorize("hasAnyAuthority('title:list:any')")
     @GetMapping("/list")
     public ResponseEntity<ResultFormat> getTitleListWithoutExp() {
 
         return titleBusinessService.getTitleListWithoutExp();
     }
 
+    @PreAuthorize("hasAnyAuthority('title:update:any')")
     @PutMapping("/update")
     public ResponseEntity<ResultFormat> updateTitle(
             @Validated @RequestBody UpdateTitleDTO dto
@@ -55,6 +57,7 @@ public class TitleController {
         return titleBusinessService.updateTitle(dto);
     }
 
+    @PreAuthorize("hasAnyAuthority('title:delete:any')")
     @DeleteMapping("/{titleId}")
     public ResponseEntity<ResultFormat> deleteTitle(
             @PathVariable Long titleId) {
@@ -62,6 +65,7 @@ public class TitleController {
         return titleBusinessService.deleteTitle(titleId);
     }
 
+    @PreAuthorize("hasAnyAuthority('title:grant:any')")
     @PutMapping("/grant/{userId}/{titleId}")
     public ResponseEntity<ResultFormat> grantTitle(
             @PathVariable Long userId,
@@ -70,6 +74,7 @@ public class TitleController {
         return titleBusinessService.grantTitle(userId, titleId);
     }
 
+    @PreAuthorize("hasAnyAuthority('title:add:any')")
     @PostMapping("/add")
     public ResponseEntity<ResultFormat> addTitle(
             @Validated @RequestBody AddTitleDTO dto

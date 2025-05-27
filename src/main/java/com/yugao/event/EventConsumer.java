@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.KafkaTopicConstants;
 import com.yugao.converter.TitleConverter;
+import com.yugao.domain.chat.PrivateMessage;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
 import com.yugao.domain.notification.Notification;
@@ -15,6 +16,7 @@ import com.yugao.enums.WsMessageTypeEnum;
 import com.yugao.netty.util.WsUtil;
 import com.yugao.service.business.search.ElasticSearchService;
 import com.yugao.service.business.title.TitleBusinessService;
+import com.yugao.service.data.chat.PrivateMessageService;
 import com.yugao.service.data.notification.NotificationService;
 import com.yugao.service.data.title.TitleService;
 import com.yugao.util.mail.MailClientUtil;
@@ -37,6 +39,7 @@ public class EventConsumer {
     private final TitleService titleService;
     private final TitleBusinessService titleBusinessService;
     private final ElasticSearchService elasticSearchService;
+    private final PrivateMessageService privateMessageService;
 
     // TODO: 下面除了邮件发送是正确的其他的逻辑还要再次修改
 
@@ -88,9 +91,27 @@ public class EventConsumer {
         }
     }
 
-    @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_MESSAGE)
-    public void handleNotificationMessage(Event<User> event){
-        System.out.println("Received event: " + event);
+    @KafkaListener(topics = KafkaTopicConstants.MESSAGE)
+    public void handleNotificationMessage(Event<Object> event){
+
+        switch (event.getEventType()){
+            case KafkaEventType.DELETE_CHAT_SESSION:
+                System.out.println("删除会话 通知UserId: " + event.getMetadataValue("userId", Long.class, objectMapper));
+                Long toUserId = event.getMetadataValue("toUserId", Long.class, objectMapper);
+                Long sessionId = event.getMetadataValue("sessionId", Long.class, objectMapper);
+                wsUtil.sendMsg(
+                        toUserId.toString(), WsMessageTypeEnum.DELETE_SESSION, sessionId);
+                break;
+            case KafkaEventType.SAVE_PRIVATE_MESSAGE:
+                System.out.println("Received event: " + event);
+                PrivateMessage msg = event.getPayloadAs(PrivateMessage.class, objectMapper);
+                if (msg == null)
+                    return;
+                privateMessageService.sendMessage(msg);
+                break;
+            default:
+                break;
+        }
     }
 
     @KafkaListener(topics = KafkaTopicConstants.NOTIFICATION_ADMIN)

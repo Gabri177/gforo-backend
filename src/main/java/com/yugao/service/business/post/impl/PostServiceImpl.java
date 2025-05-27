@@ -1,10 +1,12 @@
 package com.yugao.service.business.post.impl;
 
 import com.yugao.converter.DiscussPostConverter;
+import com.yugao.domain.board.Board;
 import com.yugao.domain.post.DiscussPost;
 import com.yugao.dto.comment.CommonContentDTO;
 import com.yugao.dto.post.NewDiscussPostDTO;
 import com.yugao.enums.EntityTypeEnum;
+import com.yugao.enums.StatusEnum;
 import com.yugao.exception.BusinessException;
 import com.yugao.enums.ResultCodeEnum;
 import com.yugao.result.ResultFormat;
@@ -124,6 +126,9 @@ public class PostServiceImpl implements PostService {
         visitStatisticsHandler.recordVisit(SecurityUtils.getLoginUserId());
         // orderMode 0: 按照时间排序 1: 按照热度排序
         // 总帖子数量，用于分页
+        Board board = boardService.getBoardById(boardId);
+        if (board == null || board.getStatus() != StatusEnum.NORMAL)
+            throw new BusinessException(ResultCodeEnum.BOARD_NOT_FOUND);
         Long totalRows = discussPostService.getDiscussPostRows(userId, boardId);
 
         // 分页查询帖子

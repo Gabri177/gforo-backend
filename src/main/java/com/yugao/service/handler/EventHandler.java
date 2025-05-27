@@ -2,6 +2,7 @@ package com.yugao.service.handler;
 
 import com.yugao.constants.KafkaEventType;
 import com.yugao.constants.KafkaTopicConstants;
+import com.yugao.domain.chat.PrivateMessage;
 import com.yugao.domain.comment.Comment;
 import com.yugao.domain.email.HtmlEmail;
 import com.yugao.domain.event.Event;
@@ -233,6 +234,34 @@ public class EventHandler {
         eventProducer.send(
                 KafkaTopicConstants.ELASTICSEARCH,
                 event
+        );
+    }
+
+    public void notifyDeleteSession(Long toUserId, Long sessionId) {
+        Map<String, Object> map = Map.of(
+                "toUserId", toUserId,
+                "sessionId", sessionId
+        );
+        Event<Object> event = Event.builder()
+                .eventType(KafkaEventType.DELETE_CHAT_SESSION)
+                .metadata(map)
+                .build();
+        eventProducer.send(
+                KafkaTopicConstants.MESSAGE,
+                event
+        );
+    }
+
+    public void handleSaveChatMessage(PrivateMessage msg) {
+        eventProducer.send(
+                KafkaTopicConstants.MESSAGE,
+                msg.getSenderId().toString(),
+                Event.create(
+                        KafkaEventType.SAVE_PRIVATE_MESSAGE,
+                        "PrivateMessage",
+                        "null",
+                        msg
+                )
         );
     }
 
