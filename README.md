@@ -91,41 +91,129 @@ Gforo is a modular community forum system built with Spring Boot. It features re
 
 ---
 
+## 🧩 模块构成 | Module Overview
+
+模块划分清晰、职责单一，支持可插拔式扩展：
+
+| 模块名 | 功能说明 | 英文说明 |
+|--------|----------|----------|
+| `auth` | 登录注册、邮箱验证、忘记密码流程 | Authentication & Account Activation |
+| `user` | 用户信息、用户等级、经验变动、修改资料等 | User Profile, Level, Exp System |
+| `post` | 发帖、分页加载、详情查看 | Post Management |
+| `comment` | 评论与子评论嵌套结构、分页加载 | Nested Comments |
+| `like` | 点赞功能（帖子/评论）| Like System |
+| `notification` | 系统与互动通知（点赞/评论/私信）| Notification System |
+| `title` | 经验称号系统、自动授予称号、用户称号管理 | Title System Based on Experience |
+| `report` | 举报功能、后台处理、忽略等操作 | Report & Moderation |
+| `permission` | 角色权限系统、论坛管理员控制板块权限 | Role-Based Access Control |
+| `chat` | 私信系统，基于 Netty WebSocket 实现 | Private Messaging via WebSocket |
+| `layout` | 首页轮播图配置等页面组件 | Homepage Carousel, Layout Elements |
+| `statistic` | 活跃用户统计、日/月度趋势分析 | User Activity Statistics |
+| `search` | 基于 Elasticsearch 的帖子搜索 | Post Search Engine |
+
+---
+
 ## 🏗️ 后端分层结构 | Backend Layered Structure
 
 ```
 src
 └── main
     ├── java/com/yugao
-    │   ├── GforoApplication.java             // 启动类 | Main Application
-    │   ├── config                            // 第三方组件配置 | Configurations (Redis, Kafka, MyBatisPlus, Security, etc.)
-    │   ├── constants                         // 全局常量定义 | Constant Enums and Keys
-    │   ├── controller                        // 控制器层（含 admin, post, user 等）| REST Controllers (incl. admin/post/user...)
-    │   ├── converter                         // DTO/Entity/VO 转换器 | Entity ↔ DTO ↔ VO Converters
-    │   ├── domain                            // 实体类（聚合根）| Entity Layer (Domain Models)
-    │   ├── dto                               // 数据传输对象 | DTOs for input
-    │   ├── enums                             // 枚举类 | Enums for statuses, types, etc.
-    │   ├── event                             // Kafka 事件处理 | Kafka Event Producer/Consumer
-    │   ├── exception                         // 自定义异常与处理器 | Custom Exceptions and Global Handler
-    │   ├── filter                            // 安全过滤器 | JWT and Login Filter
-    │   ├── handler                           // 通用业务处理器 | Common Business Handlers (Token, Post, User, etc.)
-    │   ├── mapper                            // MyBatis-Plus 映射接口 | DAO Mappers
-    │   ├── netty                             // WebSocket 服务 | Netty WebSocket Real-Time Communication
-    │   ├── result                            // 通用返回封装 | Standardized Response Format
-    │   ├── security                          // Spring Security 用户信息实现 | Spring Security LoginUser
+    │   ├── config             → 第三方框架配置（Kafka、Redis、Security）
+    │   ├── controller         → 控制器层，REST API入口
     │   ├── service
-    │   │   ├── base                          // 基础服务层（Redis）| Base Service (e.g. Redis)
-    │   │   ├── builder                       // 构造器（邮件、VO）| Builder (e.g. Email, VO Assembler)
-    │   │   ├── business                      // 业务逻辑服务 | Main Business Services
-    │   │   └── data                          // 数据访问服务封装 | Data-Oriented Service Layer
-    │   ├── util                              // 工具类（加密、验证码、序列化等）| Utilities (Crypto, Captcha, Serializer, etc.)
-    │   ├── validator                         // 参数校验器 | Custom Validators
-    │   ├── validation                        // 分组校验注解组 | Bean Validation Groups
-    │   └── vo                                // 响应对象 | View Objects for API output
+    │   │   ├── business       → 核心业务逻辑（封装流程/规则）
+    │   │   └── data           → 具体数据操作服务（数据库交互）
+    │   ├── mapper             → MyBatis-Plus 的 Mapper 接口
+    │   ├── domain             → 实体类（聚合根，对应数据库表）
+    │   ├── dto / vo           → 输入/输出对象
+    │   ├── converter          → DTO ↔ Entity ↔ VO 转换器
+    │   ├── netty              → WebSocket 实现模块（连接管理、消息调度）
+    │   ├── event              → Kafka 事件系统（Producer/Consumer）
+    │   ├── enums / constants  → 枚举与常量定义
+    │   ├── exception / result → 通用异常与响应格式封装
+    │   ├── util / validator   → 工具类与参数校验器
+    │   └── security           → Spring Security 用户上下文实现
     └── resources
-        ├── application.yml                  // 全局配置 | Main Config
-        ├── static                           // 静态资源 | Static Files
-        └── templates                        // 模板文件 | HTML Templates
+        ├── application.yml
+        └── templates / static
+```
+---
+
+## 🔐 权限与认证机制设计 | Permission & Authentication System
+
+---
+
+### 🧩 1. 多权限细分设计（四表分离）  
+### Fine-Grained Role-Based Access Control (RBAC)
+
+本系统采用细粒度权限控制，基于「角色-权限」中间表建模，扩展出四张权限核心表，实现灵活分配与动态扩展。
+
+> The project uses a fine-grained Role-Based Access Control (RBAC) mechanism using 4 tables to support flexible, extensible, and hierarchical permission control.
+
+#### 📄 权限相关四张核心表 | Four Core Permission Tables
+
+| 表名 | 说明 | 英文解释 |
+|------|------|-----------|
+| `permission` | 权限资源表（按钮、菜单、接口）| Permission resource registry |
+| `role` | 角色表（管理员、版主、普通用户等）| Role types: admin, moderator, user |
+| `role_permission` | 角色与权限的关联关系 | Role-permission mapping table |
+| `user_role` | 用户与角色的关联关系 | User-role assignment table |
+
+#### 🧠 支持功能 | Supported Features
+- 管理员自定义角色与权限组合
+- 可扩展板块管理权限（如每个板块设置不同版主）
+- 接口权限标注使用 `@PreAuthorize`
+- 支持前端动态按钮权限渲染（基于传回的权限标识码）
+
+---
+
+### 🪪 2. Two Token 身份认证机制  
+### Secure Two-Token Authentication Strategy
+
+为提升安全性与用户体验，本系统采用「Access Token + Refresh Token」双令牌机制，配合 Redis 管理会话状态。
+
+> To improve security and usability, the system implements a Two-Token authentication strategy using JWT + Redis for token validation and session control.
+
+#### 🧱 核心组成 | Core Components
+
+| 名称 | 说明 |
+|------|------|
+| **Access Token** | 有效期较短（默认30分钟），用于访问受保护接口 |
+| **Refresh Token** | 有效期较长（默认7天），用于刷新 Access Token |
+| **Redis Session** | 存储用户设备信息 + 过期时间，用于控制会话数量及踢出设备 |
+
+#### 🔁 登录流程 | Login Flow
+
+1. 用户登录成功后服务器颁发 Access Token 与 Refresh Token。
+2. Access Token 放入响应头/LocalStorage，用于后续接口访问。
+3. 每次请求后台校验 JWT 是否有效 + 是否在 Redis 中已登记。
+4. 若 Access Token 过期，可携带 Refresh Token 请求刷新。
+5. Redis 可控制：
+   - 限制用户同时在线设备数（如最多3个）
+   - 手动登出/管理员强制踢人
+
+#### 📦 技术细节 | Implementation
+
+- 使用 `JwtUtil` 工具类进行签发与解析
+- 使用 Redis ZSet 记录设备 session 信息（支持过期控制、排序）
+- 集成 Spring Security，自定义 `LoginUser` 作为认证载体
+- 支持前后端统一拦截器刷新令牌（无感续期）
+
+---
+
+### ✅ 整体示意图 | Overall Structure (Text Form)
+
+```text
+[ User ] ⇄ [ Login API ]
+          ⇩ Access + Refresh Tokens
+       [ Frontend Stores Tokens ]
+             ⇅
+    [ API with Access Token ] ──▶ [ Spring Security ]
+                                └─▶ Validate JWT + Redis
+                                    ↳ Allow / Deny
+             ⇵
+     [ Refresh Token API ] ──▶ Refresh if access expired
 ```
 
 ---
@@ -134,11 +222,10 @@ src
 
 ```
 src/test/java/com/yugao
-├── controller          // Controller 层测试 | REST API Test
-├── log                 // 日志系统测试 | Logger Test
-├── service             // 服务层测试 | Service Unit Test
-├── util                // 工具类测试 | Utility Test
-└── GforoApplicationTests.java // 集成测试入口 | Global Boot Test
+├── controller          → 控制层测试（接口验证）
+├── service             → 业务与数据层单元测试
+├── util / log          → 工具类与日志测试
+├── GforoApplicationTests.java → 启动与集成测试
 ```
 
 ---
@@ -157,6 +244,8 @@ src/test/java/com/yugao
 | 构建部署 | Docker + Docker Compose |
 
 ---
+
+
 
 ## 📦 项目展示
 
