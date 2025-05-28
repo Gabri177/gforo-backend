@@ -7,9 +7,9 @@ spring:
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
-    host: smtp.gmail.com
-    username: gabrillo177@gmail.com
-    password: daoikogzxbbmqflr
+    host: # You need to change this to your SMTP server, e.g., smtp.gmail.com
+    username: # Your email address, e.g.,
+    password: # Your email password or app password
     port: 587
     protocol: smtp
     properties:
