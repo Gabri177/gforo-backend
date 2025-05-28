@@ -4,34 +4,41 @@ This guide helps you set up and run the Gforo forum project including backend, d
 本指南将帮助你本地部署并运行 Gforo 论坛项目，包括后端、数据库、Redis、Kafka 和前端部分。
 
 ---
-
 ## 🛠 Deployment Instructions | 部署说明
 
 ### 📦 Backend + Infrastructure Setup | 后端与基础设施配置
+<img width="714" alt="iShot_2025-05-28_02 00 21" src="https://github.com/user-attachments/assets/e967597e-0fec-417d-aebd-900c4e48cf1d" />
+<img width="598" alt="iShot_2025-05-28_02 00 42" src="https://github.com/user-attachments/assets/6b09ead6-30d2-4b4a-aeb7-0685ada328d0" />
 
 #### English
 1. Ensure [Docker](https://www.docker.com/products/docker-desktop) and [Docker Compose](https://docs.docker.com/compose/) are installed.
-2. Navigate to the deployment directory:
+2. ⚠️ **If you plan to use email verification, edit `application.yml` first:**
+   - Update the `spring.mail` section with your **SMTP server**, email, and password (e.g. for Gmail use `smtp.gmail.com`, port `587`).
+3. ⚠️ **If your computer uses x86 architecture, remove all `platform: linux/amd64` lines** from the Docker Compose YAML file before deployment.
+4. Navigate to the deployment directory:
    ```bash
    cd ./deploy
    ```
-3. Start all backend and infrastructure services:
+5. Start all backend and infrastructure services:
    ```bash
    docker compose up -d
    ```
-4. The backend will start and listen on port `80` by default.
+6. The backend will start and listen on port `80` by default.
 
 #### 中文
 1. 请确保已安装 [Docker](https://www.docker.com/products/docker-desktop) 和 [Docker Compose](https://docs.docker.com/compose/)。
-2. 进入部署目录：
+2. ⚠️ **如果需要使用邮箱验证功能，请先修改 `application.yml` 配置文件：**
+   - 在 `spring.mail` 下配置你自己的 **SMTP 邮件服务器**、邮箱账号及密码（例如使用 Gmail：`smtp.gmail.com`，端口 `587`）。
+3. ⚠️ **如果你使用的是 x86 架构计算机，请在部署前删除 Docker Compose 文件中所有 `platform: linux/amd64` 的语句。**
+4. 进入部署目录：
    ```bash
    cd ./deploy
    ```
-3. 启动后端与基础设施容器：
+5. 启动后端与基础设施容器：
    ```bash
    docker compose up -d
    ```
-4. 默认后端服务监听 `80` 端口。
+6. 默认后端服务监听 `80` 端口。
 
 ---
 
@@ -69,7 +76,6 @@ This guide helps you set up and run the Gforo forum project including backend, d
    npm run dev
    ```
 
----
 
 ## ✅ Done! | 部署完成！
 
