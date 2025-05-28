@@ -272,7 +272,6 @@ You can try out the deployed version of Gforo here:
 <img width="930" alt="iShot_2025-05-28_02 10 11" src="https://github.com/user-attachments/assets/a4eb049f-ae09-4880-95df-c5b4749abfcd" />
 <img width="1430" alt="iShot_2025-05-25_04 17 00" src="https://github.com/user-attachments/assets/7f795e14-b0a4-45ff-900a-c19393a65c1e" />
 <img width="1393" alt="iShot_2025-05-25_04 16 25" src="https://github.com/user-attachments/assets/e75d8e66-5597-4595-90f9-4887fa4aa2ee" />
-![iShot_2025-05-23_11 30 34](https://github.com/user-attachments/assets/2ed615c0-c6af-46ec-9ead-1f642592fa26)
 
 
 
