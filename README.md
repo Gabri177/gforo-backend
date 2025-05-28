@@ -158,18 +158,22 @@ src/test/java/com/yugao
 
 ---
 
-## 📦 推荐文档结构嵌入方式（用于项目展示）
+## 📦 项目展示
 
-可以将此结构部分导出图片：
-1. 将结构复制到 [https://tree.nathanfriend.io/](https://tree.nathanfriend.io/)
-2. 调整方向、主题，点击右上角导出 PNG 或 SVG
-3. 在 Markdown 中引用导出的图片：
+<img width="1339" alt="iShot_2025-05-25_04 14 37" src="https://github.com/user-attachments/assets/22f56f55-f354-48b7-b51d-edef327c2462" />
+<img width="1356" alt="iShot_2025-05-25_04 14 45" src="https://github.com/user-attachments/assets/236c515e-09c5-4f14-b3eb-288f6bfac171" />
+<img width="1393" alt="iShot_2025-05-25_04 14 55" src="https://github.com/user-attachments/assets/8919c936-3b7c-4c2f-9aba-6b28f198f22f" />
+<img width="1393" alt="iShot_2025-05-25_04 15 32" src="https://github.com/user-attachments/assets/fe145f84-3a8f-4a13-9f21-57ca971c70b5" />
+<img width="1393" alt="iShot_2025-05-25_04 16 06" src="https://github.com/user-attachments/assets/9435d6e7-144a-4319-ba68-b41b5b9ba4e7" />
+<img width="617" alt="iShot_2025-05-28_02 09 24" src="https://github.com/user-attachments/assets/e4db9365-71cb-43a4-98aa-0a415d433bd8" />
+<img width="1096" alt="iShot_2025-05-28_02 10 01" src="https://github.com/user-attachments/assets/4e0155b7-811b-4ccc-b0e6-39b1688c8f85" />
+<img width="1003" alt="iShot_2025-05-28_02 10 56" src="https://github.com/user-attachments/assets/6a03b291-5846-429d-8f7a-af8203dab082" />
+<img width="864" alt="iShot_2025-05-28_02 10 42" src="https://github.com/user-attachments/assets/9547cd90-cc2f-4d50-98f3-bf16e0ab4a18" />
+<img width="930" alt="iShot_2025-05-28_02 10 11" src="https://github.com/user-attachments/assets/a4eb049f-ae09-4880-95df-c5b4749abfcd" />
+<img width="1430" alt="iShot_2025-05-25_04 17 00" src="https://github.com/user-attachments/assets/7f795e14-b0a4-45ff-900a-c19393a65c1e" />
+<img width="1393" alt="iShot_2025-05-25_04 16 25" src="https://github.com/user-attachments/assets/e75d8e66-5597-4595-90f9-4887fa4aa2ee" />
+![iShot_2025-05-23_11 30 34](https://github.com/user-attachments/assets/2ed615c0-c6af-46ec-9ead-1f642592fa26)
 
-```markdown
-![Backend Structure](./docs/images/backend-structure.png)
-```
 
----
 
-如需我把完整结构转为 Mermaid 代码块、PlantUML 或导出成 SVG 结构图，也可以继续告诉我。
 
