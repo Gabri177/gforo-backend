@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    platform: linux/amd64
+    image: mysql:8.0
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: gforo
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    platform: linux/amd64
+    image: redis:7
+    restart: always
+    container_name: redis
+    volumes:
+      - redis-data:/data
+
+  zookeeper:
+    platform: linux/amd64
+    image: bitnami/zookeeper:3.8
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    platform: linux/amd64
+    image: bitnami/kafka:3
+    container_name: kafka
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+
+  elasticsearch:
+    platform: linux/amd64
+    image: elasticsearch:8.7.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  gforo-backend:
+    build:
+      context: ./backend/gforo
+      dockerfile: Dockerfile
+    container_name: gforo-backend
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+      - elasticsearch
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - gforo-backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: always
+
+volumes:
+  mysql-data:
+  redis-data:
+  es-data:
+  kafka-data:
+
+
