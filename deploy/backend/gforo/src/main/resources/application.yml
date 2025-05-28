@@ -1,0 +1,98 @@
+spring:
+  application:
+    name: gforo
+  datasource:
+    url: jdbc:mysql://mysql:3306/gforo
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: # You need to change this to your SMTP server, e.g., smtp.gmail.com
+    username: # Your email address, e.g.,
+    password: # Your email password or app password
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  main:
+    banner-mode: off # ??springboot ? banner
+  data:
+    redis: # redis ??
+      password: Redis123456
+      connect-timeout: 1000
+      database: 0
+      host: redis
+      port: 6379
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: gforo-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      auto-commit-interval: 3000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: 'com.yugao'
+        spring.json.value.default.type: com.yugao.domain.event.Event
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  elasticsearch:
+    uris: http://elasticsearch:9200
+    connection-timeout: 1s
+    socket-timeout: 10s
+
+server:
+  port: 8080
+
+
+
+frontend:
+    url: http://localhost:5173
+
+mybatis-plus:
+  global-config:
+    banner: false # ??mybatis-plus ? banner
+
+jwt:
+  secretKey: aHR0cHM6Ly93d3cueXVnYW8uY29tL3NlY3JldC1rZXk=
+  accessTokenExpiredMillis: 20000 # 3600000  # 1 hour 这里别忘了改回来 现在是20s过期
+  refreshTokenExpiredMillis: 2592000000 # 30 days
+
+captcha:
+  expire-time-minutes: 3
+  verified-expire-time-minutes: 3
+  sixDigVerifyCodeExpireTimeMinutes: 3
+  verifiedSixDigVerifyCodeExpireTimeMinutes: 3
+
+email:
+  active-account:
+    request-expire-time-minutes: 3
+    request-interval-time-minutes: 1
+
+change:
+  email-change-interval-limit-days: 30
+  username-change-interval-limit-days: 30
+
+logging:
+  level:
+    root: INFO
+    com.yugao: INFO
+    org.springframework.security: INFO
+
+
+
+# logback
+
+#logging:
+#  level:
+#    root: debug
+#  file:
+#    path: /Users/gabrielgao/Desktop/my_practices/log/gforo.log
+
