@@ -240,6 +240,22 @@ src/test/java/com/yugao
 | Deployment | Docker + Docker Compose |
 
 
+---
+
+## 🔗 Live Demo | 在线体验地址
+
+You can try out the deployed version of Gforo here:  
+你可以在以下地址体验已部署的 Gforo 论坛：
+
+🌐 **[https://foro.mistsiete.com/](https://foro.mistsiete.com/)**
+
+> ⚠️ Note: Some admin functionalities may be restricted in the demo version.  
+> ⚠️ 注意：线上演示版本部分管理功能可能受限。
+
+### 🧪 Admin Test Account | 管理员体验账号
+
+- **Username | 用户名**: `AdminUser`  
+- **Password | 密码**: `333333`
 
 
 ## 📦 项目展示
