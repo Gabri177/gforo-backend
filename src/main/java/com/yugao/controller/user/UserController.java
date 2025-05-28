@@ -29,7 +29,7 @@ public class UserController {
         return userBusinessService.getUserInfo(userId);
     }
 
-    @PreAuthorize("hasAnyAuthority('user:password-change:own')")
+    @PreAuthorize("hasAnyAuthority('user:password:change:own')")
     @PutMapping ("/change-password")
     public ResponseEntity<ResultFormat> changePasswoed(
             @Validated @RequestBody UserChangePasswordDTO userChangePasswordDTO) {
