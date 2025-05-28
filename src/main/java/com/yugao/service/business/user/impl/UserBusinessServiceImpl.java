@@ -129,7 +129,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         Long currentUserId = SecurityUtils.mustGetLoginUserId();
         userValidator.validateEmailChangeInterval(currentUserId);
         emailRateLimiter.check(userVerifyEmailDTO.getEmail());
-        userValidator.validateEmailExists(userVerifyEmailDTO.getEmail());
+        User user = userService.getUserByEmail(userVerifyEmailDTO.getEmail());
+        if (user != null)
+            throw new BusinessException(ResultCodeEnum.EMAIL_ALERADY_REGISTERED);
         String code = captchaService.generateSixDigitCaptcha(
                 RedisKeyConstants.CHANGE_EMAIL,
                 userVerifyEmailDTO.getEmail());
