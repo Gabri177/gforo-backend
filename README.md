@@ -17,7 +17,8 @@ This guide helps you set up and run the Gforo forum project including backend, d
 3. ⚠️ **If your computer uses x86 architecture, remove all `platform: linux/amd64` lines** from the Docker Compose YAML file before deployment.
 4. Navigate to the deployment directory:
    ```bash
-   cd ./deploy
+   git clone https://github.com/Gabri177/gforo-backend.git
+   cd gforo-backend/deploy
    ```
 5. Start all backend and infrastructure services:
    ```bash
@@ -32,7 +33,8 @@ This guide helps you set up and run the Gforo forum project including backend, d
 3. ⚠️ **如果你使用的是 x86 架构计算机，请在部署前删除 Docker Compose 文件中所有 `platform: linux/amd64` 的语句。**
 4. 进入部署目录：
    ```bash
-   cd ./deploy
+   git clone https://github.com/Gabri177/gforo-backend.git
+   cd gforo-backend/deploy
    ```
 5. 启动后端与基础设施容器：
    ```bash
