@@ -75,11 +75,11 @@ This guide helps you set up and run the Gforo forum project including backend, d
 
 #### English
 Your application will be running at:  
-**http://localhost:5173
+**http://localhost:5173**
 
 #### 中文
 你的应用将运行在：  
-**http://localhost:5173
+**http://localhost:5173**
 
 # 🧱 Gforo 项目架构概览 | Gforo Project Architecture Overview
 
